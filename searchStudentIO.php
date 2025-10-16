@@ -1,0 +1,293 @@
+<?php
+session_start();
+include ("dbconnect.php");
+include("iqfunction.php");
+date_default_timezone_set("Asia/Kuala_Lumpur");
+
+
+
+// Check if the user is logged in, if not then redirect him to login page
+if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+    header("location: index.php");
+    exit;
+}
+
+if(isset($_POST['submit']))
+{
+
+$stdNo = $_POST['stdNo'];
+
+$timestamp = time()+28800;
+
+$date = new DateTime("@$timestamp");
+
+
+  $sql_events = mysqli_query($connection, "select * from student where stdNo='$stdNo' ") or die (mysql_error());
+  $count = mysqli_num_rows($sql_events);
+
+  if ($count == 1){
+
+    $sql_events1 = mysqli_query($connection, "select * from stdaccess,student where  student.stdNo=stdaccess.stdNo and stdAccess.stdNo='$stdNo' ") or die (mysql_error());
+    $count = mysqli_num_rows($sql_events1);
+
+    if ($count == 1){
+
+      while ($row = mysqli_fetch_array($sql_events1)) {
+
+        $fstat = $row["fstat"];
+        $stdName = $row["stdName"];
+        $nomatrik = $row["stdNo"];
+
+
+        if ($fstat==1)
+        {
+
+          $sql1  = "update stdaccess set fstat='2',  timestamp='$timestamp' where stdNo='$stdNo' ";
+          $mysqli->query($sql1);
+          $sql2 = "insert into access_log (stdNo,timestamp,cstat) values ('$stdNo','$timestamp','2')";
+          $mysqli->query($sql2);
+          $resultSearch = $stdName." (".$nomatrik.") telah kembali dah pada " .$date->format('h:i:s A');
+          $vstat = 2;
+        }
+        else {
+
+          $sql1  = "update stdaccess set fstat='1',  timestamp='$timestamp' where stdNo='$stdNo' ";
+          $mysqli->query($sql1);
+          $sql2 = "insert into access_log (stdNo,timestamp,cstat) values ('$stdNo','$timestamp','1')";
+          $mysqli->query($sql2);
+          $resultSearch = $stdName." (".$nomatrik.") telah keluar dah pada " .$date->format('h:i:s A');
+          $vstat = 1;
+        }
+      }
+
+    }
+    else {
+
+      $sql2 = "insert into stdaccess (stdNo,timestamp,fstat) values ('$stdNo','$timestamp','1')";
+      $mysqli->query($sql2);
+      $sql3 = "insert into access_log (stdNo,timestamp,cstat) values ('$stdNo','$timestamp','1')";
+      $mysqli->query($sql3);
+      $resultSearch = $stdName." (".$nomatrik.") telah keluar dah pada " .$date->format('h:i:s A');
+      $vstat = 1;
+    }
+
+
+  	}
+  else {
+    $resultSearch = "Error. tiada data";
+    $vstat = 0;
+  }
+
+
+}
+
+
+?>
+
+
+
+<!DOCTYPE html>
+
+<html lang="en" >
+	<!-- begin::Head -->
+	<head>
+		<meta charset="utf-8" />
+		<title>
+			AsidApps | Dashboard
+		</title>
+		<meta name="description" content="Latest updates and statistic charts">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<!--begin::Web font -->
+		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+		<script>
+          WebFont.load({
+            google: {"families":["Poppins:300,400,500,600,700","Roboto:300,400,500,600,700"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+          });
+		</script>
+		<!--end::Web font -->
+        <!--begin::Base Styles -->
+        <!--begin::Page Vendors -->
+        <link href="assets/vendors/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" type="text/css" />
+    		<!--end::Page Vendors -->
+    		<link href="assets/vendors/base/vendors.bundle.css" rel="stylesheet" type="text/css" />
+    		<link href="assets/demo/default/base/style.bundle.css" rel="stylesheet" type="text/css" />
+		<!--end::Base Styles -->
+		<link rel="shortcut icon" href="assets/demo/default/media/img/logo/favicon.ico" />
+	</head>
+	<!-- end::Head -->
+    <!-- end::Body -->
+	<body  class="m-page--fluid m--skin- m-content--skin-light2 m-header--fixed m-header--fixed-mobile m-aside-left--enabled m-aside-left--skin-dark m-aside-left--offcanvas m-footer--push m-aside--offcanvas-default"  >
+		<!-- begin:: Page -->
+		<div class="m-grid m-grid--hor m-grid--root m-page">
+			<!-- BEGIN: Header -->
+			<? include ("menuheader.php")?>
+			<!-- END: Header -->
+		<!-- begin::Body -->
+			<div class="m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body">
+				<!-- BEGIN: Left Aside -->
+				<button class="m-aside-left-close  m-aside-left-close--skin-dark " id="m_aside_left_close_btn">
+					<i class="la la-close"></i>
+				</button>
+				<!-- Start : Left Aside -->
+
+				<? include ("mainmenu.php")?>
+				<!-- END: Left Aside -->
+				<div class="m-grid__item m-grid__item--fluid m-wrapper">
+					<!-- BEGIN: Subheader -->
+
+					<!-- END: Subheader -->
+
+          <div class="m-content">
+						<!--Begin::Section-->
+						<!--begin:: Widgets/Stats-->
+
+						<!-- tables starts here -->
+            <div align="center"> <h2><? echo date("d M Y")?></h2> </div>
+            <br>
+            <? if ($vstat==0)
+            {
+            ?>
+            <div class="m-portlet m--bg-danger m-portlet--bordered-semi m-portlet--skin-dark ">
+              <div class="m-portlet__head">
+                <div class="m-portlet__head-caption">
+                  <div class="m-portlet__head-title">
+                    <h3 class="m-portlet__head-text"> <?echo $resultSearch; ?></h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <? }
+
+            else if ($vstat==1)
+            {
+            ?>
+            <div class="m-portlet m--bg-warning m-portlet--bordered-semi m-portlet--skin-dark ">
+              <div class="m-portlet__head">
+                <div class="m-portlet__head-caption">
+                  <div class="m-portlet__head-title">
+                    <h3 class="m-portlet__head-text"> <?echo $resultSearch; ?></h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <? }
+
+            else if ($vstat==2)
+            {
+            ?>
+            <div class="m-portlet m--bg-accent m-portlet--bordered-semi m-portlet--skin-dark ">
+              <div class="m-portlet__head">
+                <div class="m-portlet__head-caption">
+                  <div class="m-portlet__head-title">
+                    <h3 class="m-portlet__head-text"> <?echo $resultSearch; ?></h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <? }
+
+          else {
+            ?>
+            <div class="m-portlet m--bg-accent m-portlet--bordered-semi m-portlet--skin-dark ">
+              <div class="m-portlet__head">
+                <div class="m-portlet__head-caption">
+                  <div class="m-portlet__head-title">
+                    <h3 class="m-portlet__head-text"> <?echo $resultSearch; ?></h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <?
+
+          }?>
+
+						<div class="m-portlet">
+							<div class="m-portlet__head">
+								<div class="m-portlet__head-caption">
+									<div class="m-portlet__head-title">
+										<h3 class="m-portlet__head-text">Student In / Out System (Search Student)</h3>
+									</div>
+								</div>
+							</div>
+
+							<div class="m-portlet__body">
+								<div class="m-section__content">
+
+									<form class="m-form m-form--state m-form--fit m-form--label-align-right" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+										<div class="m-portlet__body">
+										<div class="m-form__section m-form__section--first">
+											<div class="form-group m-form__group row">
+												<input type="text" class="form-control m-input m-input--solid" name="stdNo" id="stdNo" aria-describedby="fName" placeholder="Please enter student no" autofocus>
+												<span class="m-form__help"></span>
+											</div>
+	                     </div><!--end of section one -->
+										</div>
+
+
+										<div class="m-portlet__foot m-portlet__foot--fit">
+											<div class="m-form__actions">
+												<button type="submit" name="submit"  class="btn btn-accent">Search</button>
+												<button type="reset" class="btn btn-secondary">Cancel</button>
+											</div>
+										</div>
+									</form>
+
+									<!-- end of content -->
+								</div>
+							 </div>
+						 </div>
+						<!-- tables stops here -->
+
+						<!--End::Section-->
+					</div>
+
+				</div>
+			</div>
+			<!-- end:: Body -->
+
+		</div>
+		<!-- end:: Page -->
+	    <!-- begin::Scroll Top -->
+		<div id="m_scroll_top" class="m-scroll-top">
+			<i class="la la-arrow-up"></i>
+		</div>
+		<!-- end::Scroll Top -->
+    	<!--begin::Base Scripts -->
+		<script src="assets/vendors/base/vendors.bundle.js" type="text/javascript"></script>
+		<script src="assets/demo/default/base/scripts.bundle.js" type="text/javascript"></script>
+		<script src="assets/vendors/custom/fullcalendar/fullcalendar.bundle.js" type="text/javascript"></script>
+    <script src="assets/vendors/custom/flot/flot.bundle.js" type="text/javascript"></script>
+	  <script src="assets/app/js/dashboard.js" type="text/javascript"></script>
+
+		<script>
+		 $('#calendar').fullCalendar({
+
+			  eventSources: [
+
+				{
+				  url: 'calHea.php',
+				  className:'m-fc-event--light m-fc-event--solid-warning'
+				},
+        {
+				  url: 'calCuti.php',
+				  className:'m-fc-event--light m-fc-event--solid-success'
+				},
+        {
+				  url: 'calExam.php',
+				  className:'m-fc-event--light m-fc-event--solid-danger'
+				},
+
+
+
+			  ]
+
+
+			});
+		</script>
+	</body>
+	<!-- end::Body -->
+</html>
