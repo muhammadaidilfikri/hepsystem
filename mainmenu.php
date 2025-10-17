@@ -161,7 +161,7 @@ else {
 												</a>
 											</li>
 
-											<li class="m-menu__item " aria-haspopup="true" >
+											<li class="m-menu__item" aria-haspopup="true" >
 												<a  href="clubActivities.php" class="m-menu__link ">
 													<i class="m-menu__link-bullet m-menu__link-bullet--dot">
 														<span></span>
@@ -303,6 +303,16 @@ else {
 												</i>
 												<span class="m-menu__link-text">
 												 Academic Session
+												</span>
+											</a>
+										</li>
+										<li class="m-menu__item " aria-haspopup="true" >
+											<a  href="sem_manage.php" class="m-menu__link ">
+												<i class="m-menu__link-bullet m-menu__link-bullet--dot">
+													<span></span>
+												</i>
+												<span class="m-menu__link-text">
+												 Semesters
 												</span>
 											</a>
 										</li>
