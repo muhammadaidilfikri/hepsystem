@@ -7,8 +7,18 @@
 		header("location: index.php");
 		exit;
 	}
+	//$sid = $_GET["club_id"];
+	$sid = filter_input(INPUT_GET, 'club_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-	$sid = $_GET["club_id"];
+	//$club_id = $_GET["club_id"];
+	//$token = generateToken(32);
+	
+	//$query = "select * from club where club_id=? ";
+	//$stmt = $mysqli->prepare($query);
+	//$stmt->bind_param("i", $club_id);
+	//$stmt->execute();
+	//$result = $stmt->get_result();
+	
 	?>
 
 	<!DOCTYPE html>
@@ -97,7 +107,7 @@
 						<form action="regStudent.php" method="post">
 
 							<?
-							$sql_events2 = mysqli_query($connection, "select * from club where club_id='$sid' ") or die (mysqli_error());
+							$sql_events2 = mysqli_query($connection, "select * from club where token='$sid' ") or die (mysqli_error());
 							while ($row = mysqli_fetch_array($sql_events2)) {
 
 								$club_id = $row["club_id"];
