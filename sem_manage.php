@@ -8,7 +8,6 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     exit;
 }
 
-// Handle activate/deactivate action
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kod_sem']) && $_POST['kod_sem'] != '') {
     $semester = mysqli_real_escape_string($connection, $_POST['kod_sem']);
 
@@ -24,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kod_sem']) && $_POST[
         $query = "UPDATE semesters SET is_active = $is_active WHERE kod_sem = '$semester'";
         $_SESSION['msg'] = mysqli_query($connection, $query)
             ? $msg
-            : "Error updating semester: " . mysqli_error($connection);
+            : "Error updating semester: ";
     }
 
     header("Location: " . $_SERVER['PHP_SELF']);
@@ -223,7 +222,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kod_sem']) && $_POST[
                                             <select class="form-control js-example-basic-single" name="kod_sem" style="width: 100%;">
                                                 <option value=''>Search or select a semester</option>
                                                 <?php
-                                                $sql_events1 = mysqli_query($connection, "SELECT * FROM semesters ORDER BY kod_sem") or die(mysqli_error($connection));
+                                                $sql_events1 = mysqli_query($connection, "SELECT * FROM semesters ORDER BY kod_sem");
                                                 while ($row = mysqli_fetch_array($sql_events1)) {
                                                     $sem_english = $row['sem_english'];
                                                     $active = $row['is_active'] == 1 ? " (Active)" : "";
@@ -279,7 +278,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kod_sem']) && $_POST[
                                         <tbody>
                                             <?php
                                             $query_active = "SELECT * FROM semesters WHERE is_active = 1 ORDER BY kod_sem";
-                                            $result_active = mysqli_query($connection, $query_active) or die(mysqli_error($connection));
+                                            $result_active = mysqli_query($connection, $query_active);
                                             $z = 1;
                                             while ($row = mysqli_fetch_array($result_active)) {
                                                 ?>

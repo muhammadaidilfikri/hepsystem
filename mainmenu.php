@@ -296,7 +296,7 @@ else {
 								<div class="m-menu__submenu ">
 									<span class="m-menu__arrow"></span>
 									<ul class="m-menu__subnav">
-										<li class="m-menu__item " aria-haspopup="true" >
+										<!-- <li class="m-menu__item " aria-haspopup="true" >
 											<a  href="sesiList.php" class="m-menu__link ">
 												<i class="m-menu__link-bullet m-menu__link-bullet--dot">
 													<span></span>
@@ -305,7 +305,7 @@ else {
 												 Academic Session
 												</span>
 											</a>
-										</li>
+										</li> -->
 										<li class="m-menu__item " aria-haspopup="true" >
 											<a  href="sem_manage.php" class="m-menu__link ">
 												<i class="m-menu__link-bullet m-menu__link-bullet--dot">
