@@ -91,7 +91,7 @@ $act_ida = $_GET["act_id"];
 									<span class="m-section__sub">
 					<form action="updateActivityMod.php" method="post">
 						<?
-
+						
 						$sql_events = mysqli_query($connection, "select * from club,club_advisor,club_activities,kew where kew.kew_id=club_activities.kew_id and club.club_id=club_activities.club_id and  club.club_id=club_advisor.club_id  and club_activities.act_id='$act_ida'") or die (mysqli_error());
 						while ($row = mysqli_fetch_array($sql_events)) {
 

@@ -20,7 +20,6 @@ $club_stat = $_POST['club_stat'];
 $kew_id = $_POST['kew_id'];
 $kod_sem = $_POST['kod_sem'];
 
-
 // Use prepared statement to prevent SQL injection
 $sql2 = "INSERT INTO club_activities (club_id, act_name, date_start, date_end, location, level_id, total_pax, budget, club_stat, act_allow, addedBy, date_added, kew_id, kod_sem, token) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";

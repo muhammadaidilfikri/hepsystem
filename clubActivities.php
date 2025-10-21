@@ -303,11 +303,12 @@ if ($has_active_semester) {
                   <?php
                     // Get activities for current semester with proper JOINs
                     if ($has_active_semester) {
-                        $sql_events = "SELECT ca.*, c.club_name, s.sem_english 
-                                       FROM club_activities ca 
-                                       JOIN club c ON ca.club_id = c.club_id 
-                                       LEFT JOIN semesters s ON ca.kod_sem = s.kod_sem 
-                                       WHERE ca.kod_sem = '$active_semester'";
+                            $sql_events = "SELECT ca.*, c.club_name, s.sem_english 
+                            FROM club_activities ca 
+                            JOIN club c ON ca.club_id = c.club_id 
+                            LEFT JOIN semesters s ON ca.kod_sem = s.kod_sem 
+                            WHERE ca.kod_sem = '$active_semester' 
+                            AND (ca.is_active = 1 OR ca.is_active IS NULL)";
                         if (!empty($c_id)) {
                             $sql_events .= " AND ca.club_id = '$c_id'";
                         }
