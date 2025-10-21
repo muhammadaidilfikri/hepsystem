@@ -75,7 +75,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 		<!-- begin:: Page -->
 		<div class="m-grid m-grid--hor m-grid--root m-page">
 			<!-- BEGIN: Header -->
-			<? include ("menuheader.php")?>
+			<?php include ("menuheader.php")?>
 			<!-- END: Header -->
 		<!-- begin::Body -->
 			<div class="m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body">
@@ -85,7 +85,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 				</button>
 				<!-- Start : Left Aside -->
 
-				<? include ("mainmenu.php")?>
+				<?php include ("mainmenu.php")?>
 				<!-- END: Left Aside -->
 				<div class="m-grid__item m-grid__item--fluid m-wrapper">
 					<!-- BEGIN: Subheader -->
@@ -110,7 +110,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                           Total Students
                         </span>
                         <span class="m-widget24__stats m--font-brand">
-                          <? countStudent();?>
+                          <?php countStudent();?>
                         </span>
                         <div class="m--space-10"></div>
                         <div class="progress m-progress--sm">
@@ -137,7 +137,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                           Total Staff
                         </span>
                         <span class="m-widget24__stats m--font-info">
-                          <? countAdministration();?>
+                          <?php countAdministration();?>
                         </span>
                         <div class="m--space-10"></div>
                         <div class="progress m-progress--sm">
@@ -163,7 +163,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                         <span class="m-widget24__desc">
                           Total Staff</span>
                         <span class="m-widget24__stats m--font-danger">
-                          <? countAcademic();?>
+                          <?php countAcademic();?>
                         </span>
                         <div class="m--space-10"></div>
                         <div class="progress m-progress--sm">
@@ -245,7 +245,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                   </tr>
                 </thead>
                 <tbody>
-                  <?
+                  <?php
                   $sql_events = mysqli_query($connection, "select * from sesi order by sesi_id desc  ") or die (mysqli_error());
                   $z =1;
 
@@ -257,14 +257,14 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
                   ?>
                   <tr>
-                    <th scope="row"><? echo $z ?></th>
+                    <th scope="row"><?php echo $z ?></th>
 
-                    <td><? echo $sesi_name ?></td>
-                    <td><? echo $sesi_intake ?></td>
+                    <td><?php echo $sesi_name ?></td>
+                    <td><?php echo $sesi_intake ?></td>
 
                     <td>
 
-                      <a href="editSession.php?sesi_id=<? echo $sesi_id ?>" class="btn btn-warning m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="editSession.php?sesi_id=<?php echo $sesi_id ?>" class="btn btn-warning m-btn btn-sm 	m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-edit"></i>
                           <span>Edit Session</span>
@@ -274,7 +274,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                     </td>
 
                   </tr>
-                  <?
+                  <?php
                   $z++;
                 }
                 ?>
@@ -323,7 +323,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       <!--end::Modal-->
 
 			<!-- end:: Body -->
-    <? include("footer.php"); ?>
+    <?php include("footer.php"); ?>
 		</div>
 		<!-- end:: Page -->
 	    <!-- begin::Scroll Top -->
