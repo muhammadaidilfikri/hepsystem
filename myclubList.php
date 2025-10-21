@@ -117,7 +117,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                           <div class="progress-bar m--bg-brand" role="progressbar" style="width: 100%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <span class="m-widget24__change">
-                          Registered Club
+                          Registered & Active Club
                         </span>
                         <span class="m-widget24__number">
                           100%

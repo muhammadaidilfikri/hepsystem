@@ -318,39 +318,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kod_sem']) && $_POST[
     <script src="assets/app/js/dashboard.js"></script>
     <script src="assets/vendors/custom/datatables/datatables.bundle.js"></script>
 
-    <script>
-        $(document).ready(function () {
-    // Initialize Select2 for your dropdown
+   <script>
+$(document).ready(function () {
     $('.js-example-basic-single').select2();
+
+    // Get currently active semester code from PHP
+    var activeSemesterCode = "<?php
+        $getActive = mysqli_query($connection, 'SELECT kod_sem FROM semesters WHERE is_active = 1 LIMIT 1');
+        $activeCode = ($getActive && mysqli_num_rows($getActive) > 0) ? mysqli_fetch_assoc($getActive)['kod_sem'] : '';
+        echo $activeCode;
+    ?>";
 
     function toggleButtons() {
         var selectedOption = $('select[name="kod_sem"] option:selected');
         var isActive = selectedOption.data('active');
+        var selectedCode = selectedOption.val();
 
-        if (selectedOption.val() == '') {
-            // No semester selected, disable both buttons
-            $('#activateBtn, #deactivateBtn').prop('disabled', true).css({ 'opacity': '0.6', 'cursor': 'not-allowed' });
-        } else if (isActive == 1) {
-            // Semester is active
-            $('#activateBtn').prop('disabled', true).css({ 'opacity': '0.6', 'cursor': 'not-allowed' });
-            $('#deactivateBtn').prop('disabled', false).css({ 'opacity': '1', 'cursor': 'pointer' });
-        } else {
-            // Semester is inactive
-            $('#activateBtn').prop('disabled', false).css({ 'opacity': '1', 'cursor': 'pointer' });
-            $('#deactivateBtn').prop('disabled', true).css({ 'opacity': '0.6', 'cursor': 'not-allowed' });
+        if (selectedCode == '') {
+            // No semester selected, disable both
+            $('#activateBtn, #deactivateBtn').prop('disabled', true)
+                .css({ 'opacity': '0.6', 'cursor': 'not-allowed' });
+        } 
+        else if (isActive == 1) {
+            // This semester is active
+            $('#activateBtn').prop('disabled', true)
+                .css({ 'opacity': '0.6', 'cursor': 'not-allowed' });
+            $('#deactivateBtn').prop('disabled', false)
+                .css({ 'opacity': '1', 'cursor': 'pointer' });
+        } 
+        else if (activeSemesterCode !== '' && selectedCode !== activeSemesterCode) {
+            // Another semester is already active
+            $('#activateBtn, #deactivateBtn').prop('disabled', true)
+                .css({ 'opacity': '0.6', 'cursor': 'not-allowed' });
+        } 
+        else {
+            // No active semester yet
+            $('#activateBtn').prop('disabled', false)
+                .css({ 'opacity': '1', 'cursor': 'pointer' });
+            $('#deactivateBtn').prop('disabled', true)
+                .css({ 'opacity': '0.6', 'cursor': 'not-allowed' });
         }
     }
 
     // Initial check when page loads
     toggleButtons();
 
-    // Check when the selection changes
-    $('select[name="kod_sem"]').on('change', function () {
-        toggleButtons();
-    });
+    // Re-check when selection changes
+    $('select[name="kod_sem"]').on('change', toggleButtons);
 });
+</script>
 
-    </script>
+
 
 </body>
 </html>
