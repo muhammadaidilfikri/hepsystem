@@ -1,6 +1,7 @@
 <?php
 session_start();
 include ("dbconnect.php");
+include("iqfunction.php");
 
 $dact_id = $_POST['dact_id'];
 $dact_name = $_POST['dact_name'];
@@ -12,6 +13,7 @@ $budget = $_POST['budget'];
 $kew_id = $_POST['kew_id'];
 $total_pax = $_POST['total_pax'];
 $dept_allow = $_POST['dept_allow'];
+$token = generateToken(32);
 $addedBy = $_SESSION["username"];
 $date_added = date("Y/m/d H:i:s");
 $dept_stat = $_POST['dept_stat'];
@@ -29,13 +31,28 @@ $dept_stat = $_POST['dept_stat'];
 //echo $date_added."<br>";
 //echo $dept_stat."<br>";
 
+$query = "select * from dept_activities where dact_id=? ";
+$stmt = $mysqli->prepare($query);
+$stmt->bind_param("i", $dact_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
-$sql = "update dept_activities set total_pax='$total_pax', kew_id='$kew_id',dact_name='$dact_name', date_start='$date_start',date_end='$date_end', location='$location', level_id='$level_id', budget='$budget',dept_allow='$dept_allow', dept_stat='$dept_stat', date_added='$date_added',addedBy='$addedBy' where dact_id='$dact_id' ";
-$mysqli->query($sql);
 
+if ($result->num_rows == 0) {
+    echo "<script>
+            alert('Error!! Activity not found');
+            document.location.href = 'deptActivities.php'
+         </script>";
+}
+else {
+    $sql = "update dept_activities set kew_id=?, total_pax=?, dact_name=?, date_start=?, date_end=?, location=?, level_id=?, budget=?, dept_allow=?, dept_stat=?, date_added=?, addedBy=?, token=? where dact_id=?";
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param("iissssidsssssi", $kew_id, $total_pax, $dact_name, $date_start, $date_end, $location, $level_id, $budget, $dept_allow, $dept_stat, $date_added, $addedBy, $token, $dact_id);
+    $stmt->execute();
 
-echo "<script>
-			alert('Activity Sucessfully Updated.');
-			document.location = 'deptActivities.php';
-		 </script>";
+    echo "<script>
+            alert('Activity Successfully Updated.');
+            document.location.href = 'deptActivities.php'
+         </script>";
+}
 ?>
