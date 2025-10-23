@@ -8,7 +8,8 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     exit;
 }
 
-$sid = $_GET["dept_id"];
+//$sid = $_GET["dept_id"];
+$sid = filter_input(INPUT_GET, 'dept_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 ?>
 
 <!DOCTYPE html>
@@ -97,7 +98,7 @@ $sid = $_GET["dept_id"];
 					<form action="addDStaff.php" method="post">
 
 						<?php
-						$sql_events2 = mysqli_query($connection, "select * from dept where dept_id='$sid' ") or die (mysqli_error());
+						$sql_events2 = mysqli_query($connection, "select * from dept where token='$sid' ") or die (mysqli_error());
 						while ($row = mysqli_fetch_array($sql_events2)) {
 
 							$dept_id = $row["dept_id"];

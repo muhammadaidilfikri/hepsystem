@@ -75,7 +75,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 		<!-- begin:: Page -->
 		<div class="m-grid m-grid--hor m-grid--root m-page">
 			<!-- BEGIN: Header -->
-			<? include ("menuheader.php")?>
+			<?php include ("menuheader.php")?>
 			<!-- END: Header -->
 		<!-- begin::Body -->
 			<div class="m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body">
@@ -85,7 +85,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 				</button>
 				<!-- Start : Left Aside -->
 
-				<? include ("mainmenu.php")?>
+				<?php include ("mainmenu.php")?>
 				<!-- END: Left Aside -->
 				<div class="m-grid__item m-grid__item--fluid m-wrapper">
 					<!-- BEGIN: Subheader -->
@@ -110,7 +110,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                           Total Club
                         </span>
                         <span class="m-widget24__stats m--font-brand">
-                          <? echo countClub() ?>
+                          <?php echo countClub() ?>
                         </span>
                         <div class="m--space-10"></div>
                         <div class="progress m-progress--sm">
@@ -137,7 +137,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                           Total Advisors
                         </span>
                         <span class="m-widget24__stats m--font-info">
-                          <? echo countAdvisor()?>
+                          <?php echo countAdvisor()?>
                         </span>
                         <div class="m--space-10"></div>
                         <div class="progress m-progress--sm">
@@ -163,7 +163,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                         <span class="m-widget24__desc">
                           Total Student Offered</span>
                         <span class="m-widget24__stats m--font-danger">
-                          <? echo countStudent() ?>
+                          <?php echo countStudent() ?>
                         </span>
                         <div class="m--space-10"></div>
                         <div class="progress m-progress--sm">
@@ -191,7 +191,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                           Total Student Registered
                         </span>
                         <span class="m-widget24__stats m--font-success">
-                          <? echo countStudentRegistered() ?>
+                          <?php echo countStudentRegistered() ?>
                         </span>
                         <div class="progress m-progress--sm">
                           <div class="progress-bar m--bg-success" role="progressbar" style="width: 2%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
@@ -200,7 +200,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                         Total Opening
                         </span>
                         <span class="m-widget24__number">
-                          <? $tot = countClub()*50;
+                          <?php $tot = countClub()*50;
                             echo $tot;
                            ?>
                         </span>
@@ -249,7 +249,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                   </tr>
                 </thead>
                 <tbody>
-                  <?
+                  <?php
                   $sql_events = mysqli_query($connection, "select * from acstaff,jawatanhakiki,club,club_advisor where club.club_id=club_advisor.club_id and acstaff.staffID=club_advisor.staffID and jawatanhakiki.jh_code=acstaff.jh_code order by acstaff.nama asc  ") or die (mysqli_error());
                   $z =1;
 
@@ -267,17 +267,17 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
                   ?>
                   <tr>
-                    <th scope="row"><? echo $z ?></th>
+                    <th scope="row"><?php echo $z ?></th>
 
-                    <td><? echo $staffID ?></td>
-                    <td><? echo $nama ?></td>
+                    <td><?php echo $staffID ?></td>
+                    <td><?php echo $nama ?></td>
 
-                    <td><? echo $jawatanhakiki ?></td>
-                    <td><? echo $telefonhp ?></td>
-                    <td><? echo $email ?></td>
-                    <td><? echo $club_name ?></td>
+                    <td><?php echo $jawatanhakiki ?></td>
+                    <td><?php echo $telefonhp ?></td>
+                    <td><?php echo $email ?></td>
+                    <td><?php echo $club_name ?></td>
                   </tr>
-                  <?
+                  <?php
                   $z++;
                 }
                 ?>
@@ -302,7 +302,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       <!--end::Modal-->
 
 			<!-- end:: Body -->
-    <? include("footer.php"); ?>
+    <?php include("footer.php"); ?>
 		</div>
 		<!-- end:: Page -->
 	    <!-- begin::Scroll Top -->
