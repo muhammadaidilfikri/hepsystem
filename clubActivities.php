@@ -42,7 +42,7 @@ if ($has_active_semester) {
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>CRS | My club Activities</title>
+    <title>CRS | Club Activities</title>
     <meta name="description" content="Latest updates and statistic charts">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -259,7 +259,7 @@ if ($has_active_semester) {
               <div class="m-portlet__head-caption">
                 <div class="m-portlet__head-title">
                   <h3 class="m-portlet__head-text">
-                    My Club Activities
+                    Club Activities
                     <?php if (!empty($c_id)): ?>
                       <small class="m--font-info">(Filtered by your club)</small>
                     <?php else: ?>
@@ -332,13 +332,13 @@ if ($has_active_semester) {
                         $date_e = date_create($row["date_end"]);
                         $total_pax = $row["total_pax"];
                         $club_stat = $row["club_stat"];
-                        $club_name = $row["club_name"] ?? ''; // Fixed: Added null coalescing
+                        $club_name = $row["club_name"] ?? ''; 
                         $location = $row["location"];
                         $level_id = $row["level_id"];
                         $budget = $row["budget"];
                         $act_allow = $row["act_allow"];
                         $kod_sem = $row["kod_sem"];
-                        $sem_english = $row["sem_english"] ?? ''; // Fixed: Added null coalescing
+                        $sem_english = $row["sem_english"] ?? ''; 
                         $token = $row["token"];
 
                         if ($act_allow=='y')
@@ -717,7 +717,7 @@ if ($has_active_semester) {
       <!--end::Modal-->
 
       <!-- end:: Body -->
-    <?php include("footer.php"); ?>
+       
     </div>
     <!-- end:: Page -->
     <!-- begin::Scroll Top -->
@@ -749,4 +749,5 @@ if ($has_active_semester) {
 
 </body>
 <!-- end::Body -->
+ <?php include("footer.php"); ?>
 </html>
