@@ -24,10 +24,17 @@ if ($result->num_rows == 0) {
 				 </script>";
 }
 else {
-	$query = "select * from club_registration where stdNo='$stdNo' ";
+	//$query = "select * from club_registration where stdNo='$stdNo' ";
+	$query = "select * from club_registration where stdNo=? ";
+	$stmt = $mysqli->prepare($query);
+	$stmt->bind_param("s", $stdNo);
+	$stmt->execute();
+	
 
-	$result1 = $mysqli->query($query);
-	if (mysqli_num_rows($result1)==0) {
+	//$result1 = $mysqli->query($query);
+	$result1 = $stmt->get_result();
+	//if (mysqli_num_rows($result1)==0) {
+	if ($result1->num_rows == 0) {
 
 
 	//$sql = "insert into club_registration (stdNo,club_id) values ('$stdNo','$club_id')";
