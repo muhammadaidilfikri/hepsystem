@@ -275,8 +275,9 @@ $c_id = checkMyDeptID($_SESSION["username"]);
                     $budget = $row["budget"];
                     $level_id = $row["level_id"];
                     $dept_name = $row["dept_name"];
-		    $dept_allow = $row["dept_allow"];
-		    $addedBy = $row["addedBy"];
+		                $dept_allow = $row["dept_allow"];
+		                $addedBy = $row["addedBy"];
+                    $token = $row["token"];
 
                     if ($dept_allow=='y')
                     {
@@ -402,7 +403,7 @@ $c_id = checkMyDeptID($_SESSION["username"]);
                     <td><?php echo $lvl ?></td>
                     <td><?php echo $c_stat ?></td>
                     <td>
-                      <a href="editActivityDept.php?dact_id=<?php echo $dact_id ?>" class="btn btn-warning m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="editActivityDept.php?dact_id=<?php echo $token ?>" class="btn btn-warning m-btn btn-sm 	m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-edit-1"></i>
                           <span>Edit</span>
@@ -597,7 +598,7 @@ $c_id = checkMyDeptID($_SESSION["username"]);
       <!--end::Modal-->
 
 			<!-- end:: Body -->
-    <?php include("footer.php"); ?>
+    
 		</div>
 		<!-- end:: Page -->
 	    <!-- begin::Scroll Top -->
@@ -622,4 +623,5 @@ $c_id = checkMyDeptID($_SESSION["username"]);
 
 	</body>
 	<!-- end::Body -->
+   <?php include("footer.php"); ?>
 </html>

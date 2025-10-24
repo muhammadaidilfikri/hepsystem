@@ -1,7 +1,7 @@
 <?php
 session_start();
 include ("dbconnect.php");
-include("iqfunction.php");
+include ("iqfunction.php");
 
 
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
