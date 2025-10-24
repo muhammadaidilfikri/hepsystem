@@ -51,7 +51,7 @@ $regError = $_GET["regError"];
 		<!-- begin:: Page -->
 		<div class="m-grid m-grid--hor m-grid--root m-page">
 			<!-- BEGIN: Header -->
-			<? include ("menuheader.php")?>
+			<?php include ("menuheader.php")?>
 			<!-- END: Header -->
 		<!-- begin::Body -->
 			<div class="m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body">
@@ -59,14 +59,14 @@ $regError = $_GET["regError"];
 				<button class="m-aside-left-close  m-aside-left-close--skin-dark " id="m_aside_left_close_btn">
 					<i class="la la-close"></i>
 				</button>
-				<? include ("mainmenu.php")?>
+				<?php include ("mainmenu.php")?>
 				<!-- END: Left Aside -->
 				<div class="m-grid__item m-grid__item--fluid m-wrapper">
 					<!-- BEGIN: Subheader -->
 
 					<!-- END: Subheader -->
 					<div class="m-content">
-            <? if ($regError==0)
+            <?php if ($regError==0)
             {
 
             }
@@ -77,13 +77,13 @@ $regError = $_GET["regError"];
                 <div class="m-portlet__head">
                   <div class="m-portlet__head-caption">
                     <div class="m-portlet__head-title">
-                      <h3 class="m-portlet__head-text"> <?echo $resultSearch; ?></h3>
+                      <h3 class="m-portlet__head-text"> <?phpecho $resultSearch; ?></h3>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <?
+              <?php
             }
             else if ($regError==2)
             {
@@ -92,13 +92,13 @@ $regError = $_GET["regError"];
                 <div class="m-portlet__head">
                   <div class="m-portlet__head-caption">
                     <div class="m-portlet__head-title">
-                      <h3 class="m-portlet__head-text"> <?echo $resultSearch; ?></h3>
+                      <h3 class="m-portlet__head-text"> <?phpecho $resultSearch; ?></h3>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <?
+              <?php
             }
             else {
 
@@ -135,15 +135,15 @@ $regError = $_GET["regError"];
               <label for="Name"><b>Select Post</b></label>
                 <select class="custom-select form-control" name="com_id">
                   <option value='0'>Please Select</option>
-                  <?
+                  <?php
                   $sql_events1 = mysqli_query($connection, "select * from com_marks kew order by com_id ") or die (mysqli_error());
                   while ($row = mysqli_fetch_array($sql_events1)) {
                     $com_id = $row['com_id'];
                     $com_name = $row['com_name'];
                     $com_marks = $row['com_marks'];
                   ?>
-                  <option value="<? echo $com_id ?> "> <? echo $com_name ?> (<? echo $com_marks ?>)</option>
-                  <?
+                  <option value="<?php echo $com_id ?> "> <?php echo $com_name ?> (<?php echo $com_marks ?>)</option>
+                  <?php
                     }
                   ?>
                 </select>
@@ -200,7 +200,7 @@ $regError = $_GET["regError"];
       </tr>
     </thead>
     <tbody>
-      <?
+      <?php
       $sql_events = mysqli_query($connection, "select * from student, regcom, com_marks where student.stdNo=regcom.stdNo and com_marks.com_id=regcom.com_id order by com_marks desc") or die (mysqli_error());
       $z =1;
 
@@ -215,14 +215,14 @@ $regError = $_GET["regError"];
 
       ?>
       <tr>
-        <th scope="row"><? echo $z ?></th>
+        <th scope="row"><?php echo $z ?></th>
 
-        <td><? echo $stdNo ?></td>
-        <td><? echo $stdName ?></td>
-        <td><? echo $com_name ?></td>
-        <td><? echo $com_marks ?></td>
+        <td><?php echo $stdNo ?></td>
+        <td><?php echo $stdName ?></td>
+        <td><?php echo $com_name ?></td>
+        <td><?php echo $com_marks ?></td>
         <td>
-          <a href="deleteRegCom.php?regcom_id=<? echo $regcom_id ?>" class="btn btn-danger m-btn btn-sm 	m-btn m-btn--icon">
+          <a href="deleteRegCom.php?regcom_id=<?php echo $regcom_id ?>" class="btn btn-danger m-btn btn-sm 	m-btn m-btn--icon">
             <span>
               <i class="fa flaticon-delete"></i>
               <span>Delete</span>
@@ -232,7 +232,7 @@ $regError = $_GET["regError"];
         </td>
 
       </tr>
-      <?
+      <?php
       $z++;
     }
     ?>
@@ -260,7 +260,7 @@ $regError = $_GET["regError"];
 	</div>
 			<!-- end:: Body -->
 <!-- begin::Footer -->
-		  <? include("footer.php"); ?>
+		  <?php include("footer.php"); ?>
 			<!-- end::Footer -->
 		</div>
 		<!-- end:: Page -->
