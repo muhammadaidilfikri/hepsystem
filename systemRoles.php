@@ -41,13 +41,22 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     <link href="assets/vendors/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
 
     <style>
-        .ct-series-a .ct-slice-donut { stroke: #8E44AD; }
-        .ct-series-b .ct-slice-donut { stroke: #26C281; }
-        .ct-series-c .ct-slice-donut { stroke: #E43A45; }
-        .ct-series-d .ct-slice-donut { stroke: #F3C200; }
+        .ct-series-a .ct-slice-donut {
+            stroke: #8E44AD;
+        }
 
-        .btn-activate:hover { background: #219150 !important; }
-        .btn-deactivate:hover { background: #BF0000 !important; }
+        .ct-series-b .ct-slice-donut {
+            stroke: #26C281;
+        }
+
+        .ct-series-c .ct-slice-donut {
+            stroke: #E43A45;
+        }
+
+        .ct-series-d .ct-slice-donut {
+            stroke: #F3C200;
+        }
+
     </style>
 
     <link rel="shortcut icon" href="assets/demo/default/media/img/logo/favicon.ico" />
@@ -159,7 +168,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                             <div class="m-portlet__head-tools">
                                 <ul class="m-portlet__nav">
                                     <li class="m-portlet__nav-item">
-                                        <a href="editSystemRoles.php" class="btn btn-accent m-btn m-btn--custom m-btn--pill m-btn--icon m-btn--air">
+                                        <a href="addSystemRoles.php" class="btn btn-accent m-btn m-btn--custom m-btn--pill m-btn--icon m-btn--air">
                                             <i class="la la-plus"></i> Add User
                                         </a>
                                     </li>
