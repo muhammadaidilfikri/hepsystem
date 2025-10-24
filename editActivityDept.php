@@ -3,7 +3,8 @@ session_start();
 include ("dbconnect.php");
 include ("iqfunction.php");
 
-$dact_ida = $_GET["dact_id"];
+//$dact_ida = $_GET["dact_id"];
+$dact_ida = filter_input(INPUT_GET, "dact_id", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 ?>
 
 <!DOCTYPE html>
@@ -92,7 +93,7 @@ $dact_ida = $_GET["dact_id"];
 					<form action="updateActivityDept.php" method="post">
 						<?php
 
-						$sql_events = mysqli_query($connection, "select * from dept,dept_advisor,dept_activities,kew where kew.kew_id=dept_activities.kew_id and dept.dept_id=dept_activities.dept_id and  dept.dept_id=dept_advisor.dept_id  and dept_activities.dact_id='$dact_ida'") or die (mysqli_error());
+						$sql_events = mysqli_query($connection, "select * from dept,dept_advisor,dept_activities,kew where kew.kew_id=dept_activities.kew_id and dept.dept_id=dept_activities.dept_id and  dept.dept_id=dept_advisor.dept_id  and dept_activities.dact_id='$token'") or die (mysqli_error());
 						while ($row = mysqli_fetch_array($sql_events)) {
 
 							$dact_id = $row["dact_id"];
@@ -107,6 +108,7 @@ $dact_ida = $_GET["dact_id"];
 							$dept_allow = $row["dept_allow"];
 							$level_id = $row["level_id"];
 							$kew_idd = $row["kew_id"];
+							$token = $row["token"];
 								
 						}
 
