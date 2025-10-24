@@ -178,6 +178,7 @@ $sid = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 					<div class="m-portlet__foot " align="center">
 						<div class="m-form__actions">
 							<button type="submit" class="btn btn-warning">Update Club</button> 
+							<a class="btn btn-metal" href="clubList.php" role="button">Cancel</a>
 						</div>
 					</div>
 				</form>

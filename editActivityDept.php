@@ -42,7 +42,7 @@ $dact_ida = $_GET["dact_id"];
 		<!-- begin:: Page -->
 		<div class="m-grid m-grid--hor m-grid--root m-page">
 			<!-- BEGIN: Header -->
-			<? include ("menuheader.php")?>
+			<?php include ("menuheader.php")?>
 			<!-- END: Header -->
 		<!-- begin::Body -->
 			<div class="m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body">
@@ -50,7 +50,7 @@ $dact_ida = $_GET["dact_id"];
 				<button class="m-aside-left-close  m-aside-left-close--skin-dark " id="m_aside_left_close_btn">
 					<i class="la la-close"></i>
 				</button>
-				<? include ("mainmenu.php")?>
+				<?php include ("mainmenu.php")?>
 				<!-- END: Left Aside -->
 				<div class="m-grid__item m-grid__item--fluid m-wrapper">
 					<!-- BEGIN: Subheader -->
@@ -90,7 +90,7 @@ $dact_ida = $_GET["dact_id"];
 								<div class="m-section">
 									<span class="m-section__sub">
 					<form action="updateActivityDept.php" method="post">
-						<?
+						<?php
 
 						$sql_events = mysqli_query($connection, "select * from dept,dept_advisor,dept_activities,kew where kew.kew_id=dept_activities.kew_id and dept.dept_id=dept_activities.dept_id and  dept.dept_id=dept_advisor.dept_id  and dept_activities.dact_id='$dact_ida'") or die (mysqli_error());
 						while ($row = mysqli_fetch_array($sql_events)) {
@@ -107,21 +107,22 @@ $dact_ida = $_GET["dact_id"];
 							$dept_allow = $row["dept_allow"];
 							$level_id = $row["level_id"];
 							$kew_idd = $row["kew_id"];
-								}
+								
+						}
 
 
 						?>
 
 						<div class="form-group m-form__group">
 							<label for="Name"><b>Activity Name</b></label>
-							<input type="text" class="form-control m-input m-input--solid" name="dact_name" id="dact_name" aria-describedby="dact_name" placeholder="Name of the event" value="<? echo $dact_name ?>" >
+							<input type="text" class="form-control m-input m-input--solid" name="dact_name" id="dact_name" aria-describedby="dact_name" placeholder="Name of the event" value="<?php echo $dact_name ?>" >
 							<span class="m-form__help"></span>
 						</div>
 
 						<div class="form-group m-form__group">
 						                <label for="Name"><b>Date Start</b></label>
 						                    <div class="input-group date" data-z-index="1100">
-						                      <input type="text"  name="date_start"  class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2_modal" data-date-format="yyyy-m-d H:i:s"  value="<? echo date_format($date_s, 'Y-m-d H:i'); ?>"/>
+						                      <input type="text"  name="date_start"  class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2_modal" data-date-format="yyyy-m-d H:i:s"  value="<?php echo date_format($date_s, 'Y-m-d H:i'); ?>"/>
 						                      <div class="input-group-append">
 						                        <span class="input-group-text">
 						                          <i class="la la-calendar-check-o glyphicon-th"></i>
@@ -133,7 +134,7 @@ $dact_ida = $_GET["dact_id"];
 																						<label for="Name"><b>Date End</b></label>
 
 																								<div class="input-group date" data-z-index="1100">
-																									<input type="text"  name="date_end"  class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2" data-date-format="yyyy-m-d H:i:s"  value="<? echo date_format($date_e, 'Y-m-d H:i'); ?>"/>
+																									<input type="text"  name="date_end"  class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2" data-date-format="yyyy-m-d H:i:s"  value="<?php echo date_format($date_e, 'Y-m-d H:i'); ?>"/>
 																									<div class="input-group-append">
 																										<span class="input-group-text">
 																											<i class="la la-calendar-check-o glyphicon-th"></i>
@@ -143,38 +144,35 @@ $dact_ida = $_GET["dact_id"];
 						 </div>
 						 <div class="form-group m-form__group">
 							 <label for="Name"><b>Location</b></label>
-							 <input type="text" class="form-control m-input m-input--solid" name="location" id="location" aria-describedby="location" placeholder="Location" value="<? echo $location ?>" >
+							 <input type="text" class="form-control m-input m-input--solid" name="location" id="location" aria-describedby="location" placeholder="Location" value="<?php echo $location ?>" >
 							 <span class="m-form__help"></span>
 						 </div>
 						 <div class="form-group m-form__group">
 							 <label for="Name"><b>Expected Audience</b></label>
-							 <input type="number" class="form-control m-input m-input--solid" name="total_pax" id="total_pax" aria-describedby="total_pax" placeholder="Total Audience" value="<? echo $total_pax ?>" >
+							 <input type="number" class="form-control m-input m-input--solid" name="total_pax" id="total_pax" aria-describedby="total_pax" placeholder="Total Audience" value="<?php echo $total_pax ?>" >
 							 <span class="m-form__help"></span>
 						 </div>
 						 <div class="form-group m-form__group">
 							 <label for="Name"><b>Budget (RM)</b></label>
-							 <input type="number" step="0.01" class="form-control m-input m-input--solid" name="budget" id="budget" aria-describedby="location" placeholder="Location" value="<? echo $budget ?>" >
+							 <input type="number" step="0.01" class="form-control m-input m-input--solid" name="budget" id="budget" aria-describedby="location" placeholder="Location" value="<?php echo $budget ?>" >
 							 <span class="m-form__help"></span>
 						 </div>
 						 <div class="form-group">
-							 <label for="Name"><b>Budget From</b></label>
-
-								 <select class="custom-select form-control" name="kew_id">
-									 <option selected>Select source of funding</option>
-									 <?
-									 $sql_events1 = mysqli_query($connection, "select * from kew order by kew_name ") or die (mysqli_error());
-									 while ($row = mysqli_fetch_array($sql_events1)) {
-
-
-										 $kew_id = $row['kew_id'];
-										 $kew_name = $row['kew_name'];
-									 ?>
-									 <option value="<? echo $kew_id ?>" <? if($kew_id==) echo selected ?> > <? echo $kew_name ?></option>
-									 <?
-										 }
-									 ?>
-								 </select>
-						 </div>
+							<label for="Name"><b>Budget From</b></label>
+							<select class="custom-select form-control" name="kew_id">
+								<option selected>Select source of funding</option>
+								<?php
+								$sql_events1 = mysqli_query($connection, "select * from kew order by kew_name ") or die (mysqli_error());
+								while ($row = mysqli_fetch_array($sql_events1)) {
+									$kew_id = $row['kew_id'];
+									$kew_name = $row['kew_name'];
+								?>
+								<option value="<?php echo $kew_id ?>" <?php if($kew_id==$kew_idd) echo "selected" ?> > <?php echo $kew_name ?></option>
+								<?php
+								}
+								?>
+							</select>
+						</div>
 						 <br>
 						 <div class="form-group">
 							 <label for="Name"><b>Activity / Event Level</b></label>
@@ -236,10 +234,10 @@ $dact_ida = $_GET["dact_id"];
 	 				</div>
 					</div>
 
-					<input type="hidden" id="dact_id" name="dact_id" value="<? echo $dact_ida ?>">
+					<input type="hidden" id="dact_id" name="dact_id" value="<?php echo $dact_ida ?>">
 
 					<div class="m-portlet__foot " align="center">
-						<input type="hidden" id="stdNo" name="stdNo" value="<? echo $vid ?>">
+						<input type="hidden" id="stdNo" name="stdNo" value="<?php echo $vid ?>">
 						<div class="m-form__actions">
 							<a href="mydeptActivities.php" class="btn btn-secondary">Reset </a>
 							<button type="submit" class="btn btn-warning">Update Activity</button>
@@ -262,50 +260,7 @@ $dact_ida = $_GET["dact_id"];
 	</div>
 			<!-- end:: Body -->
 <!-- begin::Footer -->
-			<footer class="m-grid__item		m-footer ">
-				<div class="m-container m-container--fluid m-container--full-height m-page__container">
-					<div class="m-stack m-stack--flex-tablet-and-mobile m-stack--ver m-stack--desktop">
-						<div class="m-stack__item m-stack__item--left m-stack__item--middle m-stack__item--last">
-							<span class="m-footer__copyright">
-								2019 &copy; AsidApps by <a href="https://asasi.uitm.edu.my" class="m-link">
-									Centre of Foundation Studies, UiTM
-								</a>
-							</span>
-						</div>
-						<div class="m-stack__item m-stack__item--right m-stack__item--middle m-stack__item--first">
-							<ul class="m-footer__nav m-nav m-nav--inline m--pull-right">
-								<li class="m-nav__item">
-									<a href="#" class="m-nav__link">
-										<span class="m-nav__link-text">
-											About
-										</span>
-									</a>
-								</li>
-								<li class="m-nav__item">
-									<a href="#"  class="m-nav__link">
-										<span class="m-nav__link-text">
-											Privacy
-										</span>
-									</a>
-								</li>
-								<li class="m-nav__item">
-									<a href="#" class="m-nav__link">
-										<span class="m-nav__link-text">
-											T&C
-										</span>
-									</a>
-								</li>
-
-								<li class="m-nav__item m-nav__item">
-									<a href="#" class="m-nav__link" data-toggle="m-tooltip" title="Support Center" data-placement="left">
-										<i class="m-nav__link-icon flaticon-info m--icon-font-size-lg3"></i>
-									</a>
-								</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</footer>
+			<?php include("footer.php"); ?>
 			<!-- end::Footer -->
 		</div>
 		<!-- end:: Page -->

@@ -7,8 +7,18 @@
 		header("location: index.php");
 		exit;
 	}
+	//$sid = $_GET["club_id"];
+	$sid = filter_input(INPUT_GET, 'club_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-	$sid = $_GET["club_id"];
+	//$club_id = $_GET["club_id"];
+	//$token = generateToken(32);
+	
+	//$query = "select * from club where club_id=? ";
+	//$stmt = $mysqli->prepare($query);
+	//$stmt->bind_param("i", $club_id);
+	//$stmt->execute();
+	//$result = $stmt->get_result();
+	
 	?>
 
 	<!DOCTYPE html>
@@ -47,7 +57,7 @@
 			<!-- begin:: Page -->
 			<div class="m-grid m-grid--hor m-grid--root m-page">
 				<!-- BEGIN: Header -->
-				<? include ("menuheader.php")?>
+				<?php include ("menuheader.php")?>
 				<!-- END: Header -->
 			<!-- begin::Body -->
 				<div class="m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body">
@@ -55,7 +65,7 @@
 					<button class="m-aside-left-close  m-aside-left-close--skin-dark " id="m_aside_left_close_btn">
 						<i class="la la-close"></i>
 					</button>
-					<? include ("mainmenu.php")?>
+					<?php include ("mainmenu.php")?>
 					<!-- END: Left Aside -->
 					<div class="m-grid__item m-grid__item--fluid m-wrapper">
 						<!-- BEGIN: Subheader -->
@@ -96,8 +106,8 @@
 										<span class="m-section__sub">
 						<form action="regStudent.php" method="post">
 
-							<?
-							$sql_events2 = mysqli_query($connection, "select * from club where club_id='$sid' ") or die (mysqli_error());
+							<?php
+							$sql_events2 = mysqli_query($connection, "select * from club where token='$sid' ") or die (mysqli_error());
 							while ($row = mysqli_fetch_array($sql_events2)) {
 
 								$club_id = $row["club_id"];
@@ -109,8 +119,8 @@
 									}
 								?>
 
-								<input type="hidden" id="club_id" name="club_id" value="<? echo $club_id ?>">
-								<h3><? echo $club_name ?></h3>
+								<input type="hidden" id="club_id" name="club_id" value="<?php echo $club_id ?>">
+								<h3><?php echo $club_name ?></h3>
 
 
 									<div class="form-group m-form__group">
@@ -171,7 +181,7 @@
 		</tr>
 		</thead>
 		<tbody>
-		<?
+		<?php
 		$sql_events = mysqli_query($connection, "select * from club,club_registration,student where  club.club_id=club_registration.club_id and student.stdNo=club_registration.stdNo and club_registration.club_id='$sid' ") or die (mysqli_error());
 		$z =1;
 
@@ -185,14 +195,14 @@
 
 		?>
 		<tr>
-			<th scope="row"><? echo $z ?></th>
+			<th scope="row"><?php echo $z ?></th>
 
-			<td><? echo $stdNo ?></td>
-			<td><? echo $stdName ?></td>
-			<td><? echo $progCode ?></td>
-			<td><? echo $club_name ?></td>
+			<td><?php echo $stdNo ?></td>
+			<td><?php echo $stdName ?></td>
+			<td><?php echo $progCode ?></td>
+			<td><?php echo $club_name ?></td>
 			<td>
-			<a href="deleteRegisterStudent.php?reg_id=<? echo $reg_id ?>&club_id=<? echo $club_id ?>" class="btn btn-danger m-btn btn-sm 	m-btn m-btn--icon">
+			<a href="deleteRegisterStudent.php?reg_id=<?php echo $reg_id ?>&club_id=<?php echo $club_id ?>" class="btn btn-danger m-btn btn-sm 	m-btn m-btn--icon">
 				<span>
 				<i class="fa flaticon-delete"></i>
 				<span>Drop Student</span>
@@ -202,7 +212,7 @@
 			</td>
 
 		</tr>
-		<?
+		<?php
 		$z++;
 		}
 		?>
@@ -230,7 +240,7 @@
 		</div>
 				<!-- end:: Body -->
 	<!-- begin::Footer -->
-			<? include("footer.php"); ?>
+			<?php include("footer.php"); ?>
 				<!-- end::Footer -->
 			</div>
 			<!-- end:: Page -->

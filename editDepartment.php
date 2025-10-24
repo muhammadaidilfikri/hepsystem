@@ -8,7 +8,8 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     exit;
 }
 
-$sid = $_GET["dept_id"];
+//$sid = $_GET["dept_id"];
+$sid = filter_input(INPUT_GET, 'dept_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 ?>
 
 <!DOCTYPE html>
@@ -47,7 +48,7 @@ $sid = $_GET["dept_id"];
 		<!-- begin:: Page -->
 		<div class="m-grid m-grid--hor m-grid--root m-page">
 			<!-- BEGIN: Header -->
-			<? include ("menuheader.php")?>
+			<?php include ("menuheader.php")?>
 			<!-- END: Header -->
 		<!-- begin::Body -->
 			<div class="m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body">
@@ -55,14 +56,14 @@ $sid = $_GET["dept_id"];
 				<button class="m-aside-left-close  m-aside-left-close--skin-dark " id="m_aside_left_close_btn">
 					<i class="la la-close"></i>
 				</button>
-				<? include ("mainmenu.php")?>
+				<?php include ("mainmenu.php")?>
 				<!-- END: Left Aside -->
 				<div class="m-grid__item m-grid__item--fluid m-wrapper">
 					<!-- BEGIN: Subheader -->
 					<div class="m-subheader ">
 						<div class="d-flex align-items-center">
 							<div class="mr-auto">
-								<h3 class="m-subheader__title ">Edit </h3>
+								<h3 class="m-subheader__title ">Edit Department</h3>
 							</div>
 							<div>
 
@@ -96,8 +97,8 @@ $sid = $_GET["dept_id"];
 									<span class="m-section__sub">
 					<form action="updateDept.php" method="post">
 
-						<?
-						$sql_events2 = mysqli_query($connection, "select * from dept where dept_id='$sid' ") or die (mysqli_error());
+						<?php
+						$sql_events2 = mysqli_query($connection, "select * from dept where token='$sid' ") or die (mysqli_error());
 						while ($row = mysqli_fetch_array($sql_events2)) {
 
 							$dept_id = $row["dept_id"];
@@ -107,24 +108,25 @@ $sid = $_GET["dept_id"];
 								}
 							?>
 
-							<input type="hidden" id="dept_id" name="dept_id" value="<? echo $dept_id ?>">
+							<input type="hidden" id="dept_id" name="dept_id" value="<?php echo $dept_id ?>">
 								<div class="form-group m-form__group">
 									<label for="Name"><b>Department Name</b></label>
 										<div class="col-lg-9 col-md-9 col-sm-12">
-									<input type="text" class="form-control m-input m-input--solid" name="dept_name" id="dept_name" aria-describedby="dept_name" placeholder="Enter Department Name" value="<? echo $dept_name ?>">
+									<input type="text" class="form-control m-input m-input--solid" name="dept_name" id="dept_name" aria-describedby="dept_name" placeholder="Enter Department Name" value="<?php	 echo $dept_name ?>">
 									<span class="m-form__help"></span>
 								</div>
 								</div>
                 <div class="form-group m-form__group">
 									<label for="Name"><b>Department Acronym</b></label>
 										<div class="col-lg-9 col-md-9 col-sm-12">
-									<input type="text" class="form-control m-input m-input--solid" name="dept_acro" id="dept_acro" aria-describedby="dept_acro" placeholder="Enter Department Acronym" value="<? echo $dept_acro ?>">
+									<input type="text" class="form-control m-input m-input--solid" name="dept_acro" id="dept_acro" aria-describedby="dept_acro" placeholder="Enter Department Acronym" value="<?php	 echo $dept_acro ?>">
 									<span class="m-form__help"></span>
 								</div>
 								</div>
 					<div class="m-portlet__foot " align="center">
 						<div class="m-form__actions">
-							<button type="submit" class="btn btn-warning">Update Club</button> <a class="btn btn-danger" href="deleteDep.php?dept_id=<? echo $dept_id ?>" role="button">Delete Parmenantly </a>
+							<button type="submit" class="btn btn-warning">Update Department</button> 
+							<a class="btn btn-metal" href="depList.php" role="button">Cancel</a>
 						</div>
 					</div>
 				</form>
@@ -144,7 +146,7 @@ $sid = $_GET["dept_id"];
 	</div>
 			<!-- end:: Body -->
 <!-- begin::Footer -->
-		  <? include("footer.php"); ?>
+		  <?php include("footer.php"); ?>
 			<!-- end::Footer -->
 		</div>
 		<!-- end:: Page -->
