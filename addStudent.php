@@ -121,6 +121,7 @@
 
 								<input type="hidden" id="club_id" name="club_id" value="<?php echo $club_id ?>">
 								<h3><?php echo $club_name ?></h3>
+								
 
 
 									<div class="form-group m-form__group">
