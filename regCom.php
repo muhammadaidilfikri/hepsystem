@@ -77,7 +77,7 @@ $regError = $_GET["regError"];
                 <div class="m-portlet__head">
                   <div class="m-portlet__head-caption">
                     <div class="m-portlet__head-title">
-                      <h3 class="m-portlet__head-text"> <?echo $resultSearch; ?></h3>
+                      <h3 class="m-portlet__head-text"> <?phpecho $resultSearch; ?></h3>
                     </div>
                   </div>
                 </div>
@@ -92,7 +92,7 @@ $regError = $_GET["regError"];
                 <div class="m-portlet__head">
                   <div class="m-portlet__head-caption">
                     <div class="m-portlet__head-title">
-                      <h3 class="m-portlet__head-text"> <?echo $resultSearch; ?></h3>
+                      <h3 class="m-portlet__head-text"> <?phpecho $resultSearch; ?></h3>
                     </div>
                   </div>
                 </div>
@@ -215,7 +215,7 @@ $regError = $_GET["regError"];
 
       ?>
       <tr>
-        <th scope="row"><? echo $z ?></th>
+        <th scope="row"><?php echo $z ?></th>
 
         <td><?php echo $stdNo ?></td>
         <td><?php echo $stdName ?></td>
@@ -260,7 +260,7 @@ $regError = $_GET["regError"];
 	</div>
 			<!-- end:: Body -->
 <!-- begin::Footer -->
-		  <? include("footer.php"); ?>
+		  <?php include("footer.php"); ?>
 			<!-- end::Footer -->
 		</div>
 		<!-- end:: Page -->
