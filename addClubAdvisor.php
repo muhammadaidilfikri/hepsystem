@@ -98,16 +98,16 @@ $sid = filter_input(INPUT_GET, 'club_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 					<form action="addAdvisor.php" method="post">
 
 						<?php
-						$sql_events2 = mysqli_query($connection, "select * from club where token='$sid' ") or die (mysqli_error());
-						while ($row = mysqli_fetch_array($sql_events2)) {
-
-							$club_id = $row["club_id"];
-							$club_name = $row["club_name"];
-							$club_max = $row["club_max"];
-							$club_stat = $row["club_stat"];
-							$club_obj = $row["club_obj"];
-
-								}
+							$sqlCheck = "SELECT * FROM club WHERE token = ?"; 
+							$stmtCheck = $mysqli->prepare($sqlCheck);
+							$stmtCheck->bind_param("s", $sid);
+							$stmtCheck->execute();
+							$resultCheck = $stmtCheck->get_result();
+							if($resultCheck->num_rows > 0) {
+								$row = $resultCheck->fetch_assoc();
+								$club_id = $row["club_id"];
+								$club_name = $row["club_name"];
+							}	
 							?>
 
 							<input type="hidden" id="club_id" name="club_id" value="<?php echo $club_id ?>">
@@ -167,60 +167,70 @@ $sid = filter_input(INPUT_GET, 'club_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         <th>staff ID</th>
         <th>Staff Name</th>
         <th>Position</th>
-        <th>Club Name</th>
+        <th>Advisor Status</th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
-      <?php
-      $sql_events = mysqli_query($connection, "select * from club,club_advisor,acstaff,jawatanhakiki where jawatanhakiki.jh_code=acstaff.jh_code and acstaff.staffID=club_advisor.staffID and club.club_id=club_advisor.club_id  and club_advisor.club_id='$sid'  ") or die (mysqli_error());
-      $z =1;
+			<?php
+			// Select the numeric is_active value explicitly to avoid alias/name collisions
+			$sql_events = mysqli_query($connection, "SELECT c.*, ca.*, a.*, j.*, ca.is_active AS is_active_numeric FROM club c, club_advisor ca, acstaff a, jawatanhakiki j WHERE j.jh_code = a.jh_code AND a.staffID = ca.staffID AND c.club_id = ca.club_id AND c.token = '$sid'");
+			$z = 1;
 
-      while ($row = mysqli_fetch_array($sql_events)) {
-        $ad_id = $row["ad_id"];
-        $club_id = $row["club_id"];
-        $club_name = $row["club_name"];
-        $name = $row["nama"];
-        $staffID = $row["staffID"];
-        $gred_code = $row["jawatanhakiki"];
+			while ($row = mysqli_fetch_array($sql_events)) {
+				$ad_id = $row["ad_id"];
+				$club_id = $row["club_id"];
+				$club_name = $row["club_name"];
+				$name = $row["nama"];
+				$staffID = $row["staffID"];
+				$gred_code = $row["jawatanhakiki"];
+				$club_stat = $row["club_stat"];
+				// Use the numeric value for logic, cast to int to be explicit
+				$is_active = isset($row["is_active_numeric"]) ? (int)$row["is_active_numeric"] : 0;
 
-        if($club_stat=='e')
-        {
-          $c_stat="Enable";
-        }
-        else if($club_stat=='d')
-        {
-          $c_stat="Disable";
-        }
-
-      ?>
+				if ($club_stat == 'e') {
+					$c_stat = "Enable";
+				} else if ($club_stat == 'd') {
+					$c_stat = "Disable";
+				}
+			?>
       <tr>
         <th scope="row"><?php echo $z ?></th>
-
         <td><?php echo $staffID ?></td>
         <td><?php echo $name ?></td>
         <td><?php echo $gred_code ?></td>
-        <td><?php echo $club_name ?></td>
-        <td>
-          <a href="deleteAdvisor.php?ad_id=<?php echo $ad_id ?>" class="btn btn-danger m-btn btn-sm 	m-btn m-btn--icon">
-            <span>
-              <i class="fa flaticon-delete"></i>
-              <span>Delete Advisor</span>
-            </span>
-          </a>
+				<td><?php echo ($is_active === 1) ? 'YES' : 'NO'; ?></td>
 
-        </td>
-
+				<td>
+					<?php if ($is_active === 0): ?>
+						<!-- Activate Button (shown when advisor is inactive) -->
+						<a href="activateAdvisor.php?ad_id=<?php echo $ad_id ?>&club_id=<?php echo $club_id ?>" 
+							 class="btn btn-success m-btn btn-sm m-btn--icon"
+							 onclick="return confirm('Are you sure you want to activate this advisor?')">
+							<span>
+								<i class="fa flaticon-interface-11"></i>
+								<span>Activate</span>
+							</span>
+						</a>
+					<?php else: ?>
+						<!-- Deactivate Button (shown when advisor is active) -->
+						<a href="deleteAdvisor.php?ad_id=<?php echo $ad_id ?>&club_id=<?php echo $club_id ?>" 
+							 class="btn btn-warning m-btn btn-sm m-btn--icon"
+							 onclick="return confirm('Are you sure you want to deactivate this advisor?')">
+							<span>
+								<i class="fa flaticon-close"></i>
+								<span>Deactivate</span>
+							</span>
+						</a>
+					<?php endif; ?>
+				</td>
       </tr>
       <?php
       $z++;
-    }
-    ?>
-
-
+      }
+      ?>
     </tbody>
   </table>
-
 </div>
 </div>
 <!--end::Portlet-->

@@ -1,4 +1,6 @@
 <?php
+//new line fikri 27/10/2025
+include("dbconnect.php");
 date_default_timezone_set("Asia/Kuala_Lumpur");
 $date_today = date("Y-m-d");
 $today = date("d M Y");
@@ -401,10 +403,10 @@ function checkMyClubID($username)
 		return $club_id;
 }
 
-function senaraiPenasihat($club_id)
+function senaraiPenasihat($club_id) //TAMBAH is_active
 {
 	global $connection;
-	$sql_events = mysqli_query($connection, "select nama from acstaff, club_advisor  where acstaff.staffID=club_advisor.staffID and club_id='$club_id'   ");
+	$sql_events = mysqli_query($connection, "select nama from acstaff, club_advisor  where acstaff.staffID=club_advisor.staffID and club_id='$club_id' AND is_active=1");
 
 	while ($row = mysqli_fetch_array($sql_events)) {
 
@@ -1233,7 +1235,7 @@ function sumMarks($vid)
 		$MarksA += $stdMark;
 	}
 
-	$sql_events1 = mysqli_query($connection, "select * from club_activities as A ,actreg as B where A.act_id=B.act_id and B.stdNo='$vid'") or die (mysqli_error());
+	$sql_events1 = mysqli_query($connection, "select * from club_activities as A ,actreg as B where A.act_id=B.act_id and B.stdNo=?");
 
 	$MarksB = 0;
 
@@ -1386,7 +1388,7 @@ function sumMarks($vid)
 		$MarksB += $stdMark;
 	}
 
-	$sql_events2 = mysqli_query($connection, "select sum(com_marks) as com_marks from student, regcom, com_marks where student.stdNo=regcom.stdNo and com_marks.com_id=regcom.com_id and regcom.stdNo='$vid'") or die (mysqli_error());
+	$sql_events2 = mysqli_query($connection, "select sum(com_marks) as com_marks from student, regcom, com_marks where student.stdNo=regcom.stdNo and com_marks.com_id=regcom.com_id and regcom.stdNo=?");
 
 	while ($row = mysqli_fetch_array($sql_events2)) {
 
@@ -1397,5 +1399,19 @@ function sumMarks($vid)
 		$tots = $MarksA+$MarksB+$com_marks;
 		return $tots;
 }
+function getClubToken($club_id)
+{
+	global $connection;
+	$sql = "select * from club where club_id=?";
+	$stmt = $connection->prepare($sql);
+	$stmt->bind_param("i", $club_id);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	if($result->num_rows > 0) {
+		$row = $result->fetch_assoc();
+		$club_token = $row["token"];
 
+		return $club_token;
+	}	
+}
 ?>

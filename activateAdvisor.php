@@ -17,8 +17,8 @@ if (!$ad_id) {
     exit;
 }
 
-// Update the advisor status to inactive
-$sql = "UPDATE club_advisor SET is_active = 0 WHERE ad_id = ?";
+// Update the advisor status to active
+$sql = "UPDATE club_advisor SET is_active = 1 WHERE ad_id = ?";
 $stmt = $mysqli->prepare($sql);
 
 if ($stmt) {
@@ -27,7 +27,7 @@ if ($stmt) {
     if ($stmt->execute()) {
         // Build redirect target (referer fallback) and append a message param for simple success handling
         $redirect = isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : ('addClubAdvisor.php?club_id=' . urlencode($club_id));
-        $msg = urlencode('Club Advisor Successfully Deactivated.');
+        $msg = urlencode('Club Advisor Successfully Activated.');
         if (strpos($redirect, '?') !== false) {
             $redirect .= '&msg=' . $msg;
         } else {
@@ -36,7 +36,7 @@ if ($stmt) {
         header('Location: ' . $redirect);
         exit;
     } else {
-        echo "<script>alert('Error deactivating advisor.'); history.back();</script>";
+        echo "<script>alert('Error activating advisor.'); history.back();</script>";
     }
 
     $stmt->close();
