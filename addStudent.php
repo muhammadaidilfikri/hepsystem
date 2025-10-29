@@ -9,15 +9,6 @@
 	}
 	//$sid = $_GET["club_id"];
 	$sid = filter_input(INPUT_GET, 'club_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-
-	//$club_id = $_GET["club_id"];
-	//$token = generateToken(32);
-	
-	//$query = "select * from club where club_id=? ";
-	//$stmt = $mysqli->prepare($query);
-	//$stmt->bind_param("i", $club_id);
-	//$stmt->execute();
-	//$result = $stmt->get_result();
 	
 	?>
 
