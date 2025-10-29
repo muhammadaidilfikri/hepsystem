@@ -214,7 +214,7 @@ $sid = filter_input(INPUT_GET, 'club_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 						</a>
 					<?php else: ?>
 						<!-- Deactivate Button (shown when advisor is active) -->
-						<a href="deactivateAdvisor.php?ad_id=<?php echo $ad_id ?>&club_id=<?php echo $club_id ?>" 
+						<a href="deleteAdvisor.php?ad_id=<?php echo $ad_id ?>&club_id=<?php echo $club_id ?>" 
 							 class="btn btn-warning m-btn btn-sm m-btn--icon"
 							 onclick="return confirm('Are you sure you want to deactivate this advisor?')">
 							<span>
