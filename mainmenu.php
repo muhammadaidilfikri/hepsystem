@@ -316,16 +316,7 @@ else {
 												</span>
 											</a>
 										</li>
-										<li class="m-menu__item " aria-haspopup="true" >
-											<a  href="systemRoles.php" class="m-menu__link ">
-												<i class="m-menu__link-bullet m-menu__link-bullet--dot">
-													<span></span>
-												</i>
-												<span class="m-menu__link-text">
-												 System Roles
-												</span>
-											</a>
-										</li>
+									
 										<li class="m-menu__item " aria-haspopup="true" >
 											<a  href="asasiUser.php" class="m-menu__link ">
 												<i class="m-menu__link-bullet m-menu__link-bullet--dot">
@@ -351,6 +342,40 @@ else {
 									</ul>
 								</div>
 							</li>
+
+							<li class="m-menu__section ">
+									<h4 class="m-menu__section-text">
+										 IT Administrator
+								  </h4>
+									<i class="m-menu__section-icon flaticon-more-v3"></i>
+								</li>
+								<li class="m-menu__item  m-menu__item--submenu" aria-haspopup="true"  m-menu-submenu-toggle="hover">
+								<a  href="javascript:;" class="m-menu__link m-menu__toggle">
+									<i class="m-menu__link-icon flaticon-users"></i>
+									<span class="m-menu__link-text">
+									Role Assignment
+									</span>
+									<i class="m-menu__ver-arrow la la-angle-right"></i>
+								</a>
+								<div class="m-menu__submenu ">
+									<span class="m-menu__arrow"></span>
+									<ul class="m-menu__subnav">
+
+								<li class="m-menu__item " aria-haspopup="true" >
+											<a  href="systemRoles.php" class="m-menu__link ">
+												<i class="m-menu__link-bullet m-menu__link-bullet--dot">
+													<span></span>
+												</i>
+												<span class="m-menu__link-text">
+													System Roles
+												</span>
+											</a>
+								</li>
+
+									</ul>
+								</div>
+							</li>
+
 							<li class="m-menu__section ">
 								<h4 class="m-menu__section-text">
 									 Reporting
