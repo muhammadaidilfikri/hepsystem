@@ -200,24 +200,35 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                                             sysrole_acstaff.start_date
                                         FROM sysrole_acstaff
                                         JOIN acstaff ON acstaff.staffID = sysrole_acstaff.staffID
-                                        JOIN sysroles ON sysroles.roleid = sysrole_acstaff.role_id
+                                        JOIN sysroles ON sysroles.roleid = sysrole_acstaff.roleid
                                         ORDER BY sysrole_acstaff.staffID ASC
                                     ") or die(mysqli_error($connection));
-
                                     $z = 1;
+
                                     while ($row = mysqli_fetch_array($sql_events)) {
+
                                         $staffID = $row['staffID'];
                                         $nama    = $row['nama'];
-                                        $role    = $row['roletitle'];
-                                        $access  = $row['aaccess'];
+                                        $roletitle    = $row['roletitle'];
+                                        $access  = $row['is_active'];
                                         $date_s  = date_create($row['start_date']);
                                     ?>
+
                                         <tr>
                                             <th scope="row"><?php echo $z; ?></th>
+                                            
                                             <td><?php echo $staffID; ?></td>
                                             <td><?php echo $nama; ?></td>
                                             <td><?php echo $roletitle; ?></td>
-                                            <td><?php echo ($access == 1) ? "Yes" : "No"; ?></td>
+                                            <td>
+                                                <?php 
+                                                if ($access == 1) {
+                                                    echo '<span style="color: green; font-weight: bold;">Yes</span>';
+                                                } else {
+                                                    echo '<span style="color: red; font-weight: bold;">No</span>';
+                                                }
+                                                ?>
+                                            </td>
                                             <td><?php echo date_format($date_s, 'd/m/Y g:i a'); ?></td>
                                             <td>
                                                 <a href="editSystemRoles.php?staffID=<?php echo $staffID; ?>" class="btn btn-warning m-btn btn-sm m-btn--icon">
