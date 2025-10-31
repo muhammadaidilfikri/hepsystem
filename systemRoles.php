@@ -11,6 +11,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <title>CRS | System Roles</title>
@@ -23,7 +24,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     <script>
         WebFont.load({
             google: {
-                "families": ["Poppins:300,400,500,600,700", "Roboto:300,400,500,600,700"]
+                families: ["Poppins:300,400,500,600,700", "Roboto:300,400,500,600,700"]
             },
             active: function () {
                 sessionStorage.fonts = true;
@@ -56,15 +57,16 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         .ct-series-d .ct-slice-donut {
             stroke: #F3C200;
         }
-
     </style>
 
     <link rel="shortcut icon" href="assets/demo/default/media/img/logo/favicon.ico" />
 </head>
 
-<body class="m-page--fluid m--skin- m-content--skin-light2 m-header--fixed 
-             m-header--fixed-mobile m-aside-left--enabled m-aside-left--skin-dark 
-             m-aside-left--offcanvas m-footer--push m-aside--offcanvas-default">
+<body class="m-page--fluid m--skin- m-content--skin-light2 
+             m-header--fixed m-header--fixed-mobile 
+             m-aside-left--enabled m-aside-left--skin-dark 
+             m-aside-left--offcanvas m-footer--push 
+             m-aside--offcanvas-default">
 
     <div class="m-grid m-grid--hor m-grid--root m-page">
 
@@ -81,7 +83,6 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             <div class="m-grid__item m-grid__item--fluid m-wrapper">
                 <div class="m-content">
 
-                    <!-- STATS SECTION -->
                     <div class="m-portlet">
                         <div class="m-portlet__body m-portlet__body--no-padding">
                             <div class="row m-row--no-padding m-row--col-separator-xl">
@@ -92,7 +93,9 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                                         <div class="m-widget24__item">
                                             <h4 class="m-widget24__title">Students</h4><br>
                                             <span class="m-widget24__desc">Total Students</span>
-                                            <span class="m-widget24__stats m--font-brand"><?php echo countStudent(); ?></span>
+                                            <span class="m-widget24__stats m--font-brand">
+                                                <?php echo countStudent(); ?>
+                                            </span>
                                             <div class="m--space-10"></div>
                                             <div class="progress m-progress--sm">
                                                 <div class="progress-bar m--bg-brand" role="progressbar" style="width: 78%;"></div>
@@ -109,7 +112,9 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                                         <div class="m-widget24__item">
                                             <h4 class="m-widget24__title">Administration</h4><br>
                                             <span class="m-widget24__desc">Total Staff</span>
-                                            <span class="m-widget24__stats m--font-info"><?php echo countAdministration(); ?></span>
+                                            <span class="m-widget24__stats m--font-info">
+                                                <?php echo countAdministration(); ?>
+                                            </span>
                                             <div class="m--space-10"></div>
                                             <div class="progress m-progress--sm">
                                                 <div class="progress-bar m--bg-info" role="progressbar" style="width: 84%;"></div>
@@ -126,7 +131,9 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                                         <div class="m-widget24__item">
                                             <h4 class="m-widget24__title">Academicians</h4><br>
                                             <span class="m-widget24__desc">Total Staff</span>
-                                            <span class="m-widget24__stats m--font-danger"><?php echo countAcademic(); ?></span>
+                                            <span class="m-widget24__stats m--font-danger">
+                                                <?php echo countAcademic(); ?>
+                                            </span>
                                             <div class="m--space-10"></div>
                                             <div class="progress m-progress--sm">
                                                 <div class="progress-bar m--bg-danger" role="progressbar" style="width: 69%;"></div>
@@ -157,7 +164,6 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                         </div>
                     </div>
 
-                    <!-- USERS SECTION -->
                     <div class="m-portlet m-portlet--mobile">
                         <div class="m-portlet__head">
                             <div class="m-portlet__head-caption">
@@ -177,7 +183,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                         </div>
 
                         <div class="m-portlet__body">
-                            <table class="table table-striped- table-bordered table-hover table-checkable" id="m_table_1">
+                            <table class="table table-striped table-bordered table-hover table-checkable" id="m_table_1">
                                 <thead>
                                     <tr>
                                         <th>No</th>
@@ -197,31 +203,28 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                                             acstaff.nama,
                                             sysroles.roletitle,
                                             sysrole_acstaff.is_active,
-                                            sysrole_acstaff.start_date
+                                            sysrole_acstaff.created_at
                                         FROM sysrole_acstaff
                                         JOIN acstaff ON acstaff.staffID = sysrole_acstaff.staffID
                                         JOIN sysroles ON sysroles.roleid = sysrole_acstaff.roleid
                                         ORDER BY sysrole_acstaff.staffID ASC
                                     ") or die(mysqli_error($connection));
+
                                     $z = 1;
-
                                     while ($row = mysqli_fetch_array($sql_events)) {
-
-                                        $staffID = $row['staffID'];
-                                        $nama    = $row['nama'];
-                                        $roletitle    = $row['roletitle'];
-                                        $access  = $row['is_active'];
-                                        $date_s  = date_create($row['start_date']);
+                                        $staffID   = $row['staffID'];
+                                        $nama      = $row['nama'];
+                                        $roletitle = $row['roletitle'];
+                                        $access    = $row['is_active'];
+                                        $date_s    = date_create($row['created_at']);
                                     ?>
-
                                         <tr>
                                             <th scope="row"><?php echo $z; ?></th>
-                                            
                                             <td><?php echo $staffID; ?></td>
                                             <td><?php echo $nama; ?></td>
                                             <td><?php echo $roletitle; ?></td>
                                             <td>
-                                                <?php 
+                                                <?php
                                                 if ($access == 1) {
                                                     echo '<span style="color: green; font-weight: bold;">Yes</span>';
                                                 } else {
@@ -247,8 +250,6 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                             </table>
                         </div>
                     </div>
-                    <!-- END USERS SECTION -->
-
                 </div>
             </div>
         </div>
