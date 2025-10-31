@@ -495,11 +495,6 @@ if ($has_active_semester) {
                                     </div>
                                     <div class="m-alert__text">
                                         <strong>No activities found for the current semester.</strong> 
-                                        <?php if (!empty($c_id)): ?>
-                                            Create a new activity to get started.
-                                        <?php else: ?>
-                                            No activities available for your accessible clubs.
-                                        <?php endif; ?>
                                     </div>
                                 </div>
                             <?php endif; ?>

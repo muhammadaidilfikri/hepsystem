@@ -265,7 +265,7 @@ if ($has_active_semester) {
               <div class="m-portlet__head-caption">
                 <div class="m-portlet__head-title">
                   <h3 class="m-portlet__head-text">
-                    My Department Activities
+                    Department Activities
                     <?php if (!empty($c_id)): ?>
                       <small class="m--font-info">(Filtered by your department)</small>
                     <?php else: ?>
@@ -297,6 +297,7 @@ if ($has_active_semester) {
                     <th>ID</th>
                     <th>Activities / Events</th>
                     <th>Organized By</th>
+                    <th>Created By</th>
                     <th>Semester</th>
                     <th>Date &amp Time</th>
                     <th>Registered</th>
@@ -325,8 +326,6 @@ if ($has_active_semester) {
                     }
 
                   $z =1;
-                  $resultSearch = "";
-                  $regError = 0;
                   
                   if (mysqli_num_rows($sql_events) > 0) {
                       while ($row = mysqli_fetch_array($sql_events)) {
@@ -339,6 +338,7 @@ if ($has_active_semester) {
                         $date_s = date_create($row["date_start"]);
                         $date_e = date_create($row["date_end"]);
                         $total_pax = $row["total_pax"];
+                        $addedBy = $row["addedBy"];
                         $dept_stat = $row["dept_stat"];
                         $budget = $row["budget"];
                         $location = $row["location"];
@@ -354,6 +354,9 @@ if ($has_active_semester) {
                         else {
                           $allow = "No";
                         }
+
+                        // Initialize c_stat with default value
+                        $c_stat = "<span class=\"m--font-warning\">Pending</span>";
 
                         if ($dept_stat=='p')
                         {
@@ -424,25 +427,25 @@ if ($has_active_semester) {
                       }
                       else {
                       ?>
-                      <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=c&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Committee" class="btn btn-primary m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=c" title="Add Committee" class="btn btn-primary m-btn btn-sm 	m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-user-add"></i>
                           <span>Committee</span>
                         </span>
                       </a>
-                      <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=p&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Participant" class="btn btn-primary m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=p" title="Add Participant" class="btn btn-primary m-btn btn-sm 	m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-user-add"></i>
                           <span>Contestant</span>
                         </span>
                       </a>
-                      <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=a&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Audience" class="btn btn-primary m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=a" title="Add Audience" class="btn btn-primary m-btn btn-sm 	m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-user-add"></i>
                           <span>Audience</span>
                         </span>
                       </a>
-                      <a href="RegisteredListD.php?dact_id=<?php echo $dact_id ?>&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Overall List" class="btn btn-info m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="RegisteredListD.php?dact_id=<?php echo $dact_id ?>" title="Overall List" class="btn btn-info m-btn btn-sm 	m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-list"></i>
                           <span>Overall List</span>
@@ -453,6 +456,7 @@ if ($has_active_semester) {
                       ?>
                     </td>
                     <td><?php echo $dept_name ?></td>
+                    <td><?php echo $addedBy ?></td>
                     <td><strong><?php echo $kod_sem; ?></strong><br><?php echo $sem_english; ?></td>
                     <td>
                       <?php
@@ -509,11 +513,7 @@ if ($has_active_semester) {
                                     </div>
                                     <div class="m-alert__text">
                                         <strong>No activities found for the current semester.</strong> 
-                                        <?php if (!empty($c_id)): ?>
-                                            Create a new activity to get started.
-                                        <?php else: ?>
-                                            No activities available for your accessible departments.
-                                        <?php endif; ?>
+                                      
                                     </div>
                                 </div>
                             <?php endif; ?>

@@ -5,10 +5,45 @@ include ("iqfunction.php");
 
 //$dact_ida = $_GET["dact_id"];
 $dact_ida = filter_input(INPUT_GET, "dact_id", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+
+// Validate token exists
+if (!$dact_ida) {
+    die("Invalid activity token");
+}
+
+$sql_events = mysqli_query($connection, "SELECT da.*, d.dept_name, k.kew_name 
+                                       FROM dept_activities da 
+                                       JOIN dept d ON da.dept_id = d.dept_id 
+                                       LEFT JOIN kew k ON da.kew_id = k.kew_id 
+                                       WHERE da.token = '$dact_ida'") or die(mysqli_error($connection));
+
+if (mysqli_num_rows($sql_events) > 0) {
+    $row = mysqli_fetch_array($sql_events);
+    
+    $dact_id = $row["dact_id"];
+    $dept_id = $row["dept_id"];
+    $dact_name = $row["dact_name"];
+    $date_s = date_create($row["date_start"]);
+    $date_e = date_create($row["date_end"]);
+    $total_pax = $row["total_pax"];
+    $dept_stat = $row["dept_stat"];
+    $budget = $row["budget"];
+    $location = $row["location"];
+    $dept_allow = $row["dept_allow"];
+    $level_id = $row["level_id"];
+    $kew_idd = $row["kew_id"];
+    $token = $row["token"];
+} else {
+    die("Activity not found!");
+}
+
 ?>
 
-<!DOCTYPE html>
 
+
+
+<!DOCTYPE html>
 <html lang="en" >
 	<!-- begin::Head -->
 	<head>
@@ -91,30 +126,7 @@ $dact_ida = filter_input(INPUT_GET, "dact_id", FILTER_SANITIZE_FULL_SPECIAL_CHAR
 								<div class="m-section">
 									<span class="m-section__sub">
 					<form action="updateActivityDept.php" method="post">
-						<?php
-
-						$sql_events = mysqli_query($connection, "select * from dept,dept_advisor,dept_activities,kew where kew.kew_id=dept_activities.kew_id and dept.dept_id=dept_activities.dept_id and  dept.dept_id=dept_advisor.dept_id  and dept_activities.dact_id='$token'") or die (mysqli_error());
-						while ($row = mysqli_fetch_array($sql_events)) {
-
-							$dact_id = $row["dact_id"];
-							$dept_id = $row["dept_id"];
-							$dact_name = $row["dact_name"];
-							$date_s = date_create($row["date_start"]);
-							$date_e = date_create($row["date_end"]);
-							$total_pax = $row["total_pax"];
-							$dept_stat = $row["dept_stat"];
-							$budget = $row["budget"];
-							$location = $row["location"];
-							$dept_allow = $row["dept_allow"];
-							$level_id = $row["level_id"];
-							$kew_idd = $row["kew_id"];
-							$token = $row["token"];
-								
-						}
-
-
-						?>
-
+						
 						<div class="form-group m-form__group">
 							<label for="Name"><b>Activity Name</b></label>
 							<input type="text" class="form-control m-input m-input--solid" name="dact_name" id="dact_name" aria-describedby="dact_name" placeholder="Name of the event" value="<?php echo $dact_name ?>" >
@@ -122,27 +134,27 @@ $dact_ida = filter_input(INPUT_GET, "dact_id", FILTER_SANITIZE_FULL_SPECIAL_CHAR
 						</div>
 
 						<div class="form-group m-form__group">
-						                <label for="Name"><b>Date Start</b></label>
-						                    <div class="input-group date" data-z-index="1100">
-						                      <input type="text"  name="date_start"  class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2_modal" data-date-format="yyyy-m-d H:i:s"  value="<?php echo date_format($date_s, 'Y-m-d H:i'); ?>"/>
-						                      <div class="input-group-append">
-						                        <span class="input-group-text">
-						                          <i class="la la-calendar-check-o glyphicon-th"></i>
-						                        </span>
-						                      </div>
-																</div>
+						    <label for="Name"><b>Date Start</b></label>
+						    <div class="input-group date" data-z-index="1100">
+						        <input type="text"  name="date_start"  class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2_modal" data-date-format="yyyy-m-d H:i:s"  value="<?php echo date_format($date_s, 'Y-m-d H:i'); ?>"/>
+						        <div class="input-group-append">
+						        	<span class="input-group-text">
+						            	<i class="la la-calendar-check-o glyphicon-th"></i>
+						        	</span>
+						    	</div>
+							</div>
 						</div>
-						<div class="form-group m-form__group">
-																						<label for="Name"><b>Date End</b></label>
 
-																								<div class="input-group date" data-z-index="1100">
-																									<input type="text"  name="date_end"  class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2" data-date-format="yyyy-m-d H:i:s"  value="<?php echo date_format($date_e, 'Y-m-d H:i'); ?>"/>
-																									<div class="input-group-append">
-																										<span class="input-group-text">
-																											<i class="la la-calendar-check-o glyphicon-th"></i>
-																										</span>
-																									</div>
-																								</div>
+						<div class="form-group m-form__group">
+							<label for="Name"><b>Date End</b></label>
+							<div class="input-group date" data-z-index="1100">
+								<input type="text"  name="date_end"  class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2" data-date-format="yyyy-m-d H:i:s"  value="<?php echo date_format($date_e, 'Y-m-d H:i'); ?>"/>
+								<div class="input-group-append">
+									<span class="input-group-text">
+										<i class="la la-calendar-check-o glyphicon-th"></i>
+									</span>
+								</div>
+							</div>
 						 </div>
 						 <div class="form-group m-form__group">
 							 <label for="Name"><b>Location</b></label>
@@ -164,12 +176,14 @@ $dact_ida = filter_input(INPUT_GET, "dact_id", FILTER_SANITIZE_FULL_SPECIAL_CHAR
 							<select class="custom-select form-control" name="kew_id">
 								<option selected>Select source of funding</option>
 								<?php
-								$sql_events1 = mysqli_query($connection, "select * from kew order by kew_name ") or die (mysqli_error());
-								while ($row = mysqli_fetch_array($sql_events1)) {
-									$kew_id = $row['kew_id'];
-									$kew_name = $row['kew_name'];
+								$sql_events1 = mysqli_query($connection, "SELECT * FROM kew ORDER BY kew_name") or die(mysqli_error($connection));
+                                while ($row = mysqli_fetch_array($sql_events1)) {
+                                    $kew_id = $row['kew_id'];
+                                    $kew_name = $row['kew_name'];
+                                    $selected = ($kew_id == $kew_idd) ? 'selected' : '';
 								?>
-								<option value="<?php echo $kew_id ?>" <?php if($kew_id==$kew_idd) echo "selected" ?> > <?php echo $kew_name ?></option>
+								<option value="<?php echo $kew_id; ?>" <?php echo $selected; ?>>
+                                    <?php echo htmlspecialchars($kew_name); ?>
 								<?php
 								}
 								?>
@@ -235,8 +249,10 @@ $dact_ida = filter_input(INPUT_GET, "dact_id", FILTER_SANITIZE_FULL_SPECIAL_CHAR
 	 						</label>
 	 				</div>
 					</div>
-
-					<input type="hidden" id="dact_id" name="dact_id" value="<?php echo $dact_ida ?>">
+					
+					
+					<input type="hidden" id="dact_id" name="dact_id" value="<?php echo htmlspecialchars($dact_id); ?>">
+                    <input type="hidden" id="token" name="token" value="<?php echo htmlspecialchars($token); ?>">
 
 					<div class="m-portlet__foot " align="center">
 						<input type="hidden" id="stdNo" name="stdNo" value="<?php echo $vid ?>">
