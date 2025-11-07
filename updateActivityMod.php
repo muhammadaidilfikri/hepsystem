@@ -29,8 +29,7 @@ if ($result->num_rows == 0) {
             alert('Error!! Activity not found');
             document.location.href = 'clubActivities.php'
          </script>";
-}
-else {
+} else {
     $sql = "update club_activities set kew_id=?, total_pax=?, act_name=?, date_start=?, date_end=?, location=?, level_id=?, budget=?, act_allow=?, club_stat=?, date_added=?, addedBy=?, token=? where act_id=?";
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param("iissssidsssssi", $kew_id, $total_pax, $act_name, $date_start, $date_end, $location, $level_id, $budget, $act_allow, $club_stat, $date_added, $addedBy, $token, $act_id);

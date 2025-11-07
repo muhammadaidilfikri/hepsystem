@@ -36,6 +36,11 @@ if ($has_active_semester) {
 } else {
     $active_semester = $active_semester_name = "";
 }
+
+// Initialize variables to prevent undefined warnings
+$c_start = '';
+$resultSearch = '';
+$regError = 0;
 ?>
 
 <!DOCTYPE html>
@@ -182,7 +187,7 @@ if ($has_active_semester) {
                         <h4 class="m-widget24__title">
                           Student</h4>
                         <br>
-                        <span class="m-widget24__desc">
+                        <span class="m_widget24__desc">
                           Total Student Offered</span>
                         <span class="m-widget24__stats m--font-danger">
                           <?php echo countStudent() ?>
@@ -319,8 +324,6 @@ if ($has_active_semester) {
                     }
 
                   $z =1;
-                  $resultSearch = "";
-                  $regError = 0;
                   
                   if (mysqli_num_rows($sql_events) > 0) {
                       while ($row = mysqli_fetch_array($sql_events)) {
@@ -349,23 +352,24 @@ if ($has_active_semester) {
                           $allow = "No";
                         }
 
-                        if ($club_stat=='p')
+                        
+                        $c_stat = "<span class=\"m-badge m-badge--warning m-badge--wide\">Pending</span>"; 
+                        if ($club_stat=='a')
                         {
-                          $c_stat = "<span class=\"m--font-warning\">Pending</span>";
-                        }
-                        else if ($club_stat=='a')
-                        {
-                          $c_stat = "<span class=\"m--font-success\">Approved</span>";
+                          $c_stat = "<span class=\"m-badge m-badge--success m-badge--wide\">Approved</span>";
                         }
                         else if ($club_stat=='x')
                         {
-                          $c_stat = "<span class=\"m--font-danger\">Postponed</span>";
+                          $c_stat = "<span class=\"m-badge m-badge--metal m-badge--wide\">Postponed</span>";
                         }
                         else if ($club_stat=='r')
                         {
-                          $c_stat = "<span class=\"m--font-danger\">Rejected</span>";
+                          $c_stat = "<span class=\"m-badge m-badge--danger m-badge--wide\">Rejected</span>";
                         }
 
+
+                        // FIX: Initialize level variable properly
+                        $lvl = "";
                         if ($level_id==1)
                         {
                           $lvl = "International";
@@ -397,6 +401,10 @@ if ($has_active_semester) {
                         else if ($level_id==8)
                         {
                           $lvl = "College";
+                        }
+                        else 
+                        {
+                          $lvl = "Unknown";
                         }
                   ?>
                   <tr>

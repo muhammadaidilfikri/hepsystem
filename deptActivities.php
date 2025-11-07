@@ -67,38 +67,28 @@ if ($has_active_semester) {
     <style>
     /* Donut charts get built from Pie charts but with a fundamentally difference in the drawing approach. The donut is drawn using arc strokes for maximum freedom in styling */
 .ct-series-a .ct-slice-donut {
-  /* give the donut slice a custom colour */
   stroke: #8E44AD;
-
 }
 .ct-series-b .ct-slice-donut {
-  /* give the donut slice a custom colour */
   stroke: #26C281;
-
 }
 .ct-series-c .ct-slice-donut {
-  /* give the donut slice a custom colour */
   stroke: #E43A45;
-
 }
 .ct-series-d .ct-slice-donut {
-  /* give the donut slice a custom colour */
   stroke: #F3C200;
-
 }
-
     </style>
-
     <!--end::Base Styles -->
     <link rel="shortcut icon" href="assets/demo/default/media/img/logo/favicon.ico" />
 </head>
-    <!-- end::Body -->
-<body  class="m-page--fluid m--skin- m-content--skin-light2 m-header--fixed m-header--fixed-mobile m-aside-left--enabled m-aside-left--skin-dark m-aside-left--offcanvas m-footer--push m-aside--offcanvas-default"  >
+<body class="m-page--fluid m--skin- m-content--skin-light2 m-header--fixed m-header--fixed-mobile m-aside-left--enabled m-aside-left--skin-dark m-aside-left--offcanvas m-footer--push m-aside--offcanvas-default">
     <!-- begin:: Page -->
     <div class="m-grid m-grid--hor m-grid--root m-page">
         <!-- BEGIN: Header -->
         <?php include ("menuheader.php")?>
         <!-- END: Header -->
+    
     <!-- begin::Body -->
         <div class="m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body">
             <!-- BEGIN: Left Aside -->
@@ -106,12 +96,10 @@ if ($has_active_semester) {
                 <i class="la la-close"></i>
             </button>
             <!-- Start : Left Aside -->
-
             <?php include ("mainmenu.php")?>
             <!-- END: Left Aside -->
             <div class="m-grid__item m-grid__item--fluid m-wrapper">
                 <!-- BEGIN: Subheader -->
-
                 <!-- END: Subheader -->
 
           <div class="m-content">
@@ -215,9 +203,10 @@ if ($has_active_semester) {
                         <span class="m-widget24__desc">
                           Total Student Registered
                         </span>
-                        <span class="m-widget24__stats m--font-success">
+                        <span class="m_widget24__stats m--font-success">
                           <?php echo countStudentRegistered() ?>
                         </span>
+                        <div class="m--space-10"></div>
                         <div class="progress m-progress--sm">
                           <div class="progress-bar m--bg-success" role="progressbar" style="width: 2%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
@@ -235,9 +224,6 @@ if ($has_active_semester) {
                       </div>
                     </div>
                     <!--end::New Users-->
-                  </div>
-                  <div class="progress m-progress--sm">
-                    <div class="progress-bar m--bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
                 </div>
               </div>
@@ -259,7 +245,7 @@ if ($has_active_semester) {
             </div>
 
             <!-- begin section -->
-
+            <br>
           <div class="m-portlet m-portlet--mobile">
             <div class="m-portlet__head">
               <div class="m-portlet__head-caption">
@@ -287,19 +273,16 @@ if ($has_active_semester) {
               </div>
             </div>
             <div class="m-portlet__body">
-
               <!--begin: Datatable -->
-
               <table class="table table-striped- table-bordered table-hover table-checkable" id="m_table_1">
                 <thead>
                   <tr>
                     <th>No</th>
-                    <th>ID</th>
+                    <th>Department Name</th>
                     <th>Activities / Events</th>
-                    <th>Organized By</th>
-                    <th>Created By</th>
+                    <th>Added By</th>
                     <th>Semester</th>
-                    <th>Date &amp Time</th>
+                    <th>Date</th>
                     <th>Registered</th>
                     <th>Level</th>
                     <th>Status</th>
@@ -308,7 +291,7 @@ if ($has_active_semester) {
                 </thead>
                 <tbody>
                   <?php
-                    // Get activities for current semester with proper JOINs
+                    // Get activities for current semester - FIXED SQL QUERY (added is_active condition)
                     if ($has_active_semester) {
                         $sql_events = "SELECT da.*, d.dept_name, s.sem_english 
                                        FROM dept_activities da 
@@ -316,16 +299,19 @@ if ($has_active_semester) {
                                        LEFT JOIN semesters s ON da.kod_sem = s.kod_sem 
                                        WHERE da.kod_sem = '$active_semester' 
                                        AND (da.is_active = 1 OR da.is_active IS NULL)";
+                        
+                        // Add department filter if user has specific department
                         if (!empty($c_id)) {
                             $sql_events .= " AND da.dept_id = '$c_id'";
                         }
+                        
                         $sql_events .= " ORDER BY da.date_start ASC";
-                        $sql_events = mysqli_query($connection, $sql_events);
+                        $sql_events = mysqli_query($connection, $sql_events) or die ("SQL Error: " . mysqli_error($connection));
                     } else {
                         $sql_events = mysqli_query($connection, "SELECT * FROM dept_activities WHERE 1=0");
                     }
 
-                  $z =1;
+                  $z = 1;
                   
                   if (mysqli_num_rows($sql_events) > 0) {
                       while ($row = mysqli_fetch_array($sql_events)) {
@@ -347,105 +333,80 @@ if ($has_active_semester) {
                         $sem_english = $row["sem_english"] ?? '';
                         $token = $row["token"];
 
-                        if ($dept_allow=='y')
-                        {
+                        if ($dept_allow=='y') {
                           $allow = "Yes";
-                        }
-                        else {
+                        } else {
                           $allow = "No";
                         }
 
-                        // Initialize c_stat with default value
-                        $c_stat = "<span class=\"m--font-warning\">Pending</span>";
-
-                        if ($dept_stat=='p')
+                        // Status display
+                        $c_stat = "<span class=\"m-badge m-badge--warning m-badge--wide\">Pending</span>"; 
+                        if ($dept_stat=='a')
                         {
-                          $c_stat = "<span class=\"m--font-warning\">Pending</span>";
-                        }
-                        else if ($dept_stat=='a')
-                        {
-                          $c_stat = "<span class=\"m--font-success\">Approved</span>";
+                          $c_stat = "<span class=\"m-badge m-badge--success m-badge--wide\">Approved</span>";
                         }
                         else if ($dept_stat=='x')
                         {
-                          $c_stat = "<span class=\"m--font-danger\">Postponed</span>";
+                          $c_stat = "<span class=\"m-badge m-badge--metal m-badge--wide\">Postponed</span>";
                         }
                         else if ($dept_stat=='r')
                         {
-                          $c_stat = "<span class=\"m--font-danger\">Rejected</span>";
+                          $c_stat = "<span class=\"m-badge m-badge--danger m-badge--wide\">Rejected</span>";
                         }
 
-                        if ($level_id==1)
-                        {
+                        // Level display
+                        if ($level_id==1) {
                           $lvl = "International";
-                        }
-                        else if ($level_id==2)
-                        {
+                        } else if ($level_id==2) {
                           $lvl = "National";
-                        }
-                        else if ($level_id==3)
-                        {
+                        } else if ($level_id==3) {
                           $lvl = "State";
-                        }
-                        else if ($level_id==4)
-                        {
+                        } else if ($level_id==4) {
                           $lvl = "District";
-                        }
-                        else if ($level_id==5)
-                        {
+                        } else if ($level_id==5) {
                           $lvl = "University";
-                        }
-                        else if ($level_id==6)
-                        {
+                        } else if ($level_id==6) {
                           $lvl = "Campus";
-                        }
-                        else if ($level_id==7)
-                        {
-                          $lvl = "Mentor/mentee";
-                        }
-                        else if ($level_id==8)
-                        {
+                        } else if ($level_id==7) {
+                          $lvl = "Mentor/Mentee";
+                        } else if ($level_id==8) {
                           $lvl = "College";
-                        }
-                        else if ($level_id==9)
-                        { 
+                        } else if ($level_id==9) { 
                             $lvl = "MDS";
-                        }
-                        else if ($level_id==10)
-                        {
+                        } else if ($level_id==10) {
                             $lvl = "Bicara Interaktif Siswa";
+                        } else {
+                            $lvl = "Unknown";
                         }
                   ?>
                   <tr>
-                    <th scope="row"><?php echo $z ?></th>
-                    <td><?php echo $dact_id ?></td>
-                    <td><?php echo $dact_name ?> <br><br>
+                    <td scope="row"><?php echo $z ?></td>
+                    <td><?php echo $dept_name ?></td>
+                    <td><?php echo $dact_name ?>(<?php echo $dact_id ?>)<br><br>
                       <?php
-                      if($dept_stat!='a')
-                      {
-
-                      }
-                      else {
+                      if($dept_stat!='a') {
+                        // No buttons for non-approved activities
+                      } else {
                       ?>
-                      <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=c" title="Add Committee" class="btn btn-primary m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=c" title="Add Committee" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-user-add"></i>
                           <span>Committee</span>
                         </span>
                       </a>
-                      <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=p" title="Add Participant" class="btn btn-primary m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=p" title="Add Participant" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-user-add"></i>
                           <span>Contestant</span>
                         </span>
                       </a>
-                      <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=a" title="Add Audience" class="btn btn-primary m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=a" title="Add Audience" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-user-add"></i>
                           <span>Audience</span>
                         </span>
                       </a>
-                      <a href="RegisteredListD.php?dact_id=<?php echo $dact_id ?>" title="Overall List" class="btn btn-info m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="RegisteredListD.php?dact_id=<?php echo $dact_id ?>" title="Overall List" class="btn btn-info m-btn btn-sm m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-list"></i>
                           <span>Overall List</span>
@@ -455,27 +416,26 @@ if ($has_active_semester) {
                       }
                       ?>
                     </td>
-                    <td><?php echo $dept_name ?></td>
                     <td><?php echo $addedBy ?></td>
-                    <td><strong><?php echo $kod_sem; ?></strong><br><?php echo $sem_english; ?></td>
+                    <td>
+                      <strong><?php echo $kod_sem; ?></strong><br>
+                      <?php echo $sem_english; ?>
+                    </td>
                     <td>
                       <?php
-                      if (date_format($date_s, 'd/m/y')==date_format($date_e, 'd/m/y'))
-                      {
+                      if (date_format($date_s, 'd/m/y')==date_format($date_e, 'd/m/y')) {
                         echo date_format($date_s, 'd/m/Y');
-                      }
-                      else {
+                      } else {
                         echo date_format($date_s, 'd/m'); ?> to <?php echo date_format($date_e, 'd/m/Y');
                       }
-                      ?>
-                      <br>
+                      ?><br>
                       <?php echo date_format($date_s, 'G:i a'); ?> to <?php echo date_format($date_e, 'G:i a'); ?>
-                      </td>
+                    </td>
                     <td><b><?php echo countDeptStdRegistered($dact_id) ?></b></td>
                     <td><?php echo $lvl ?></td>
                     <td><?php echo $c_stat ?></td>
                     <td>
-                      <a href="editActivityDeptMod.php?dact_id=<?php echo $token ?>" class="btn btn-warning m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="editActivityDeptMod.php?dact_id=<?php echo $token ?>" class="btn btn-warning m-btn btn-sm m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-edit-1"></i>
                           <span>Edit</span>
@@ -488,7 +448,6 @@ if ($has_active_semester) {
                         </span>
                       </button>
                     </td>
-
                   </tr>
                   <?php
                   $z++;
@@ -496,7 +455,7 @@ if ($has_active_semester) {
                   } else {
                     ?>
                     <tr>
-                        <td colspan="11" class="text-center">
+                        <td colspan="10" class="text-center">
                             <?php if (!$has_active_semester): ?>
                                 <div class="m-alert m-alert--icon m-alert--outline alert alert-warning" role="alert">
                                     <div class="m-alert__icon">
@@ -513,7 +472,6 @@ if ($has_active_semester) {
                                     </div>
                                     <div class="m-alert__text">
                                         <strong>No activities found for the current semester.</strong> 
-                                      
                                     </div>
                                 </div>
                             <?php endif; ?>
@@ -522,19 +480,14 @@ if ($has_active_semester) {
                     <?php
                   }
                   ?>
-
-
                 </tbody>
               </table>
             </div>
           </div>
             <!-- end section -->
           </div>
-
         </div>
       </div>
-
-
 
       <!--begin::Add Modal-->
       <div class="modal fade" id="m_modal_add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -542,13 +495,11 @@ if ($has_active_semester) {
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalLabel">Add New Activity / Event</h5>
-
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-
               <form action="createDeptActivityMod.php" method="post">
                 <!-- Current Semester Display (Read Only) -->
                 <div class="form-group">
@@ -562,13 +513,8 @@ if ($has_active_semester) {
                 </div>
 
                 <div class="form-group">
-                  <label for="dact_name" class="form-control-label">Activity / Event Name</label>
-                  <input type="text" class="form-control" name="dact_name" id="dact_name" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required>
-                </div>
-
-              <div class="form-group">
-                <label for="Name"><b>Organized By</b></label>
-                <select class="custom-select form-control" name="dept_id" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required>
+                  <label for="Name"><b>Please Choose your department</b></label>
+                  <select class="custom-select form-control" name="dept_id" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required>
                     <?php
                     if (!empty($c_id)) {
                         // If user has specific department, preselect it
@@ -590,38 +536,45 @@ if ($has_active_semester) {
                         }
                     }
                     ?>
-                </select>
-              </div>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="dact_name" class="form-control-label">Activity / Event Name</label>
+                  <input type="text" class="form-control" name="dact_name" id="dact_name" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required>
+                </div>
 
                 <div class="form-group">
                   <label for="location" class="form-control-label">Location</label>
                   <input type="text" class="form-control" name="location" id="location" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required>
                 </div>
 
-              <div class="form-group">
-                <label for="date_start" class="form-control-label">Date Start</label>
-                    <div class="input-group date" data-z-index="1100">
-                      <input type="text"  name="date_start"  class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2_modal" data-date-format="yyyy-m-d H:i:s" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required />
-                      <div class="input-group-append">
-                        <span class="input-group-text">
-                          <i class="la la-calendar-check-o glyphicon-th"></i>
-                        </span>
-                      </div>
+                <div class="form-group">
+                  <label for="date_start" class="form-control-label">Date Start</label>
+                  <div class="input-group date" data-z-index="1100">
+                    <input type="text" name="date_start" class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2_modal" data-date-format="yyyy-m-d H:i:s" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required />
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+                        <i class="la la-calendar-check-o glyphicon-th"></i>
+                      </span>
                     </div>
+                  </div>
                 </div>
+
                 <div class="form-group">
                   <label for="date_start" class="form-control-label">Date End</label>
-                      <div class="input-group date" data-z-index="1100">
-                        <input type="text"  name="date_end"  class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2" data-date-format="yyyy-m-d H:i:s" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required />
-                        <div class="input-group-append">
-                          <span class="input-group-text">
-                            <i class="la la-calendar-check-o glyphicon-th"></i>
-                          </span>
-                        </div>
-                      </div>
+                  <div class="input-group date" data-z-index="1100">
+                    <input type="text" name="date_end" class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2" data-date-format="yyyy-m-d H:i:s" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required />
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+                        <i class="la la-calendar-check-o glyphicon-th"></i>
+                      </span>
+                    </div>
                   </div>
+                </div>
+
                 <div class="form-group">
-                  <label for="message-text" class="form-control-label">Activity / Event Level </label>
+                  <label for="message-text" class="form-control-label">Activity / Event Level</label>
                   <div class="m-radio-inline">
                     <label class="m-radio">
                       <input type="radio" name="level_id" value="1" <?php echo !$has_active_semester ? 'disabled' : ''; ?>> International
@@ -648,7 +601,7 @@ if ($has_active_semester) {
                       <span></span>
                     </label>
                     <label class="m-radio">
-                      <input type="radio" name="level_id" value="7" <?php echo !$has_active_semester ? 'disabled' : ''; ?>> Mentor/mentee
+                      <input type="radio" name="level_id" value="7" <?php echo !$has_active_semester ? 'disabled' : ''; ?>> Mentor/Mentee
                       <span></span>
                     </label>
                     <label class="m-radio">
@@ -665,32 +618,34 @@ if ($has_active_semester) {
                     </label>
                   </div>
                 </div>
+
                 <div class="form-group">
-                  <label for="dept_name" class="form-control-label">Expected Budget (RM)</label>
+                  <label for="budget" class="form-control-label">Expected Budget (RM)</label>
                   <input type="number" step="0.01" class="form-control" name="budget" id="budget" placeholder="RM " value="0.00" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required>
                 </div>
+
                 <div class="form-group">
                   <label for="Name"><b>Budget From</b></label>
-                    <select class="custom-select form-control" name="kew_id" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required>
-                      <option value='0'>No Fund</option>
-                      <?php
-                      $sql_events1 = mysqli_query($connection, "select * from kew order by kew_name ") or die (mysqli_error());
-                      while ($row = mysqli_fetch_array($sql_events1)) {
-                        $kew_id = $row['kew_id'];
-                        $kew_name = $row['kew_name'];
-                      ?>
-                      <option value="<?php echo $kew_id ?> "> <?php echo $kew_name ?></option>
-                      <?php
-                        }
-                      ?>
-                    </select>
+                  <select class="custom-select form-control" name="kew_id" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required>
+                    <option value='0'>No Fund</option>
+                    <?php
+                    $sql_events1 = mysqli_query($connection, "SELECT * FROM kew ORDER BY kew_name") or die(mysqli_error($connection));
+                    while ($row = mysqli_fetch_array($sql_events1)) {
+                      $kew_id = $row['kew_id'];
+                      $kew_name = $row['kew_name'];
+                      echo "<option value=\"$kew_id\">$kew_name</option>";
+                    }
+                    ?>
+                  </select>
                 </div>
+
                 <div class="form-group">
-                  <label for="dept_name" class="form-control-label">Expected Audience (Total)</label>
+                  <label for="total_pax" class="form-control-label">Expected Audience (Total)</label>
                   <input type="number" class="form-control" name="total_pax" id="total_pax" value="0" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required>
                 </div>
+
                 <div class="form-group">
-                  <label for="message-text" class="form-control-label">Open to Public?</label>
+                  <label for="message-text" class="form-control-label">Allow others to Register?</label>
                   <div class="m-radio-inline">
                     <label class="m-radio">
                       <input type="radio" name="dept_allow" value="y" <?php echo !$has_active_semester ? 'disabled' : ''; ?>> Yes
@@ -700,34 +655,36 @@ if ($has_active_semester) {
                       <input type="radio" name="dept_allow" value="n" checked <?php echo !$has_active_semester ? 'disabled' : ''; ?>> No
                       <span></span>
                     </label>
+                  </div>
                 </div>
 
-            </div>
+                <div class="form-group">
+                  <label for="Name"><b>Activity Status</b></label>
+                  <div class="m-radio-inline">
+                    <label class="m-radio">
+                      <input type="radio" name="dept_stat" value="p" checked <?php echo !$has_active_semester ? 'disabled' : ''; ?> /> Pending Approval
+                      <span></span>
+                    </label>
+                    <label class="m-radio">
+                      <input type="radio" name="dept_stat" value="a" <?php echo !$has_active_semester ? 'disabled' : ''; ?> /> Approved
+                      <span></span>
+                    </label>
+                    <label class="m-radio">
+                      <input type="radio" name="dept_stat" value="r" <?php echo !$has_active_semester ? 'disabled' : ''; ?> /> Rejected
+                      <span></span>
+                    </label>
+                    <label class="m-radio">
+                      <input type="radio" name="dept_stat" value="x" <?php echo !$has_active_semester ? 'disabled' : ''; ?> /> Postponed
+                      <span></span>
+                    </label>
+                  </div>
+                </div>
 
-            <div class="form-group">
-            <label for="Name"><b>Activity Status</b></label>
-            <div class="m-radio-inline">
-                <label class="m-radio">
-                  <input type="radio" name="dept_stat" value="p" checked <?php echo !$has_active_semester ? 'disabled' : ''; ?> /> Pending Approval
-                  <span></span>
-                </label>
-                <label class="m-radio">
-                  <input type="radio" name="dept_stat" value="a" <?php echo !$has_active_semester ? 'disabled' : ''; ?> /> Approved
-                  <span></span>
-                </label>
-                <label class="m-radio">
-                  <input type="radio" name="dept_stat" value="r" <?php echo !$has_active_semester ? 'disabled' : ''; ?> /> Rejected
-                  <span></span>
-                </label>
-                <label class="m-radio">
-                  <input type="radio" name="dept_stat" value="x" <?php echo !$has_active_semester ? 'disabled' : ''; ?> /> Postponed
-                  <span></span>
-                </label>
-            </div>
-            </div>
+                <input type="hidden" id="sxid" name="sxid" value="<?php echo $sxid ?>">
+                <input type="hidden" name="kod_sem" value="<?php echo $active_semester; ?>">
 
+            </div>
             <div class="modal-footer">
-
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
               <button type="submit" class="btn btn-primary" <?php echo !$has_active_semester ? 'disabled' : ''; ?>>Save</button>
             </div>
@@ -735,31 +692,32 @@ if ($has_active_semester) {
           </div>
         </div>
       </div>
-
       <!--end::Modal-->
 
-      <!-- end:: Body -->
     </div>
     <!-- end:: Page -->
+
     <!-- begin::Scroll Top -->
     <div id="m_scroll_top" class="m-scroll-top">
-      <i class="la la-arrow-up"></i>
+        <i class="la la-arrow-up"></i>
     </div>
     <!-- end::Scroll Top -->
-      <script src="assets/vendors/base/vendors.bundle.js" type="text/javascript"></script>
-      <script src="assets/demo/default/base/scripts.bundle.js" type="text/javascript"></script>
-      <script src="assets/vendors/custom/fullcalendar/fullcalendar.bundle.js" type="text/javascript"></script>
-      <script src="assets/app/js/dashboard.js" type="text/javascript"></script>
-      <script src="assets/vendors/custom/datatables/datatables.bundle.js" type="text/javascript"></script>
-      <script src="assets/demo/default/custom/crud/forms/widgets/bootstrap-datetimepicker.js" type="text/javascript"></script>
-      <script src="assets/demo/default/custom/crud/forms/widgets/bootstrap-switch.js" type="text/javascript"></script>
 
+    <?php include("footer.php"); ?>
+
+    <script src="assets/vendors/base/vendors.bundle.js" type="text/javascript"></script>
+    <script src="assets/demo/default/base/scripts.bundle.js" type="text/javascript"></script>
+    <script src="assets/vendors/custom/fullcalendar/fullcalendar.bundle.js" type="text/javascript"></script>
+    <script src="assets/app/js/dashboard.js" type="text/javascript"></script>
+    <script src="assets/vendors/custom/datatables/datatables.bundle.js" type="text/javascript"></script>
+    <script src="assets/demo/default/custom/crud/forms/widgets/bootstrap-datetimepicker.js" type="text/javascript"></script>
+    <script src="assets/demo/default/custom/crud/forms/widgets/bootstrap-switch.js" type="text/javascript"></script>
 
     <script>
     $(document).ready( function () {
-    $('#m_table_1').DataTable();
-      } );
-      
+        $('#m_table_1').DataTable();
+    });
+    
     // delete confirmation function
     function confirmDelete(dactId, dactName) {
       if (confirm('Are you sure you want to remove the activity: "' + dactName + '"?\n\nThis action cannot be undone.')) {
@@ -768,7 +726,5 @@ if ($has_active_semester) {
     }
     </script>
 
-</body>
-<!-- end::Body -->
- <?php include("footer.php"); ?>
+</body> 
 </html>

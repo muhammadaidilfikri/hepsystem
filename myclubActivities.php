@@ -7,8 +7,25 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     header("location: index.php");
     exit;
 }
+
 $sxid = $_SESSION["username"];
-$c_id = checkMyClubID($_SESSION["username"]);
+$user_role = $_SESSION["role"] ?? 'staff';
+
+// Check if user is a club advisor or has access to clubs
+$is_club_advisor = false;
+$user_clubs = array();
+
+// Check if user is a club advisor
+$advisor_check = mysqli_query($connection, "SELECT club_id FROM club_advisor WHERE staffID = '$sxid'");
+if ($advisor_check && mysqli_num_rows($advisor_check) > 0) {
+    $is_club_advisor = true;
+    while ($row = mysqli_fetch_array($advisor_check)) {
+        $user_clubs[] = $row['club_id'];
+    }
+}
+
+// For staff users who aren't club advisors, show empty state
+$has_club_access = $is_club_advisor;
 
 // Get active semester
 $active_semester_result = mysqli_query($connection, "SELECT kod_sem, sem_english FROM semesters WHERE is_active = 1 LIMIT 1");
@@ -23,16 +40,13 @@ if ($has_active_semester) {
 }
 ?>
 
-
-
 <!DOCTYPE html>
-
 <html lang="en" >
 	<!-- begin::Head -->
 	<head>
 		<meta charset="utf-8" />
 		<title>
-			CRS | My club Activities
+			CRS | My Club Activities
 		</title>
 		<meta name="description" content="Latest updates and statistic charts">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -58,28 +72,18 @@ if ($has_active_semester) {
         <style>
         /* Donut charts get built from Pie charts but with a fundamentally difference in the drawing approach. The donut is drawn using arc strokes for maximum freedom in styling */
 .ct-series-a .ct-slice-donut {
-  /* give the donut slice a custom colour */
   stroke: #8E44AD;
-
 }
 .ct-series-b .ct-slice-donut {
-  /* give the donut slice a custom colour */
   stroke: #26C281;
-
 }
 .ct-series-c .ct-slice-donut {
-  /* give the donut slice a custom colour */
   stroke: #E43A45;
-
 }
 .ct-series-d .ct-slice-donut {
-  /* give the donut slice a custom colour */
   stroke: #F3C200;
-
 }
-
         </style>
-
 		<!--end::Base Styles -->
 		<link rel="shortcut icon" href="assets/demo/default/media/img/logo/favicon.ico" />
 	</head>
@@ -98,12 +102,10 @@ if ($has_active_semester) {
 					<i class="la la-close"></i>
 				</button>
 				<!-- Start : Left Aside -->
-
 				<?php include ("mainmenu.php")?>
 				<!-- END: Left Aside -->
 				<div class="m-grid__item m-grid__item--fluid m-wrapper">
 					<!-- BEGIN: Subheader -->
-
 					<!-- END: Subheader -->
 
           <div class="m-content">
@@ -222,9 +224,6 @@ if ($has_active_semester) {
                     </div>
                     <!--end::New Users-->
                   </div>
-                  <div class="progress m-progress--sm">
-                    <div class="progress-bar m--bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -245,7 +244,6 @@ if ($has_active_semester) {
             </div>
 
             <!-- begin section -->
-
             <br>
           <div class="m-portlet m-portlet--mobile">
             <div class="m-portlet__head">
@@ -256,25 +254,29 @@ if ($has_active_semester) {
                     <?php if ($has_active_semester): ?>
                       <small class="m--font-info">(Semester: <?php echo $active_semester; ?>)</small>
                     <?php endif; ?>
+                    <?php if (!$has_club_access): ?>
+                      <small class="m--font-warning">(No club access - View only)</small>
+                    <?php endif; ?>
                   </h3>
                 </div>
               </div>
               <div class="m-portlet__head-tools">
                 <ul class="m-portlet__nav">
                   <li class="m-portlet__nav-item">
-                    <?php if ($has_active_semester): ?>
+                    <?php if ($has_active_semester && $has_club_access): ?>
                       <button type="button" class="btn btn-accent m-btn m-btn--custom m-btn--pill m-btn--icon m-btn--air" data-toggle="modal" data-target="#m_modal_add"><i class="la la-plus"></i> New Activities</button>
                     <?php else: ?>
-                      <button type="button" class="btn btn-accent m-btn m-btn--custom m-btn--pill m-btn--icon m-btn--air" disabled title="No active semester"><i class="la la-plus"></i> New Activities</button>
+                      <button type="button" class="btn btn-accent m-btn m-btn--custom m-btn--pill m-btn--icon m-btn--air" disabled 
+                        title="<?php echo !$has_active_semester ? 'No active semester' : 'No club access'; ?>">
+                        <i class="la la-plus"></i> New Activities
+                      </button>
                     <?php endif; ?>
                   </li>
                 </ul>
               </div>
             </div>
             <div class="m-portlet__body">
-
               <!--begin: Datatable -->
-
               <table class="table table-striped- table-bordered table-hover table-checkable" id="m_table_1">
                 <thead>
                   <tr>
@@ -292,14 +294,15 @@ if ($has_active_semester) {
                 <tbody>
                   <?php
                   // Get activities for current semester 
-                  if ($has_active_semester) {
+                  if ($has_active_semester && $has_club_access) {
                       $sql_events = mysqli_query($connection, "SELECT ca.*, c.club_name, s.sem_english 
-                          FROM club_activities ca 
-                          JOIN club c ON ca.club_id = c.club_id 
-                          LEFT JOIN semesters s ON ca.kod_sem = s.kod_sem 
-                          WHERE (ca.addedBy = '$_SESSION[username]' OR ca.club_id IN (SELECT club_id FROM club_advisor WHERE staffID='$_SESSION[username]'))
-                          AND ca.kod_sem = '$active_semester'
-                          ORDER BY ca.date_start ASC") or die ("SQL Error: " . mysqli_error($connection));
+                        FROM club_activities ca 
+                        JOIN club c ON ca.club_id = c.club_id 
+                        LEFT JOIN semesters s ON ca.kod_sem = s.kod_sem 
+                        WHERE (ca.addedBy = '$_SESSION[username]' OR ca.club_id IN (SELECT club_id FROM club_advisor WHERE staffID='$_SESSION[username]'))
+                        AND ca.kod_sem = '$active_semester'
+                        AND (ca.is_active = 1 OR ca.is_active IS NULL)
+                        ORDER BY ca.date_start ASC") or die ("SQL Error: " . mysqli_error($connection));
                   } else {
                       $sql_events = mysqli_query($connection, "SELECT * FROM club_activities WHERE 1=0");
                   }
@@ -320,100 +323,76 @@ if ($has_active_semester) {
                       $total_pax = $row["total_pax"];
                       $club_stat = $row["club_stat"];
                       $budget = $row["budget"];
+                      $location = $row["location"];
                       $level_id = $row["level_id"];
                       $act_allow = $row["act_allow"];
                       $kod_sem = $row["kod_sem"];
                       $sem_english = $row["sem_english"];
+                      $token = $row["token"];
 
-                      if ($act_allow=='y')
-                      {
+                      if ($act_allow=='y') {
                         $allow = "Yes";
-                      }
-                      else {
+                      } else {
                         $allow = "No";
                       }
 
-                      if ($club_stat=='p')
-                      {
-                        $c_stat = "<span class=\"m--font-warning\">Pending</span>";
-                      }
-                      else if ($club_stat=='a')
-                      {
-                        $c_stat = "<span class=\"m--font-success\">Approved</span>";
-                      }
-                      else if ($club_stat=='x')
-                      {
-                        $c_stat = "<span class=\"m--font-danger\">Postponed</span>";
-                      }
-                      else if ($club_stat=='r')
-                      {
-                        $c_stat = "<span class=\"m--font-danger\">Rejected</span>";
+                      $c_stat = "<span class=\"m-badge m-badge--warning m-badge--wide\">Pending</span>"; 
+                      if ($club_stat=='a') {
+                        $c_stat = "<span class=\"m-badge m-badge--success m-badge--wide\">Approved</span>";
+                      } else if ($club_stat=='x') {
+                        $c_stat = "<span class=\"m-badge m-badge--metal m-badge--wide\">Postponed</span>";
+                      } else if ($club_stat=='r') {
+                        $c_stat = "<span class=\"m-badge m-badge--danger m-badge--wide\">Rejected</span>";
                       }
 
-                      if ($level_id==1)
-                      {
+                      if ($level_id==1) {
                         $lvl = "International";
-                      }
-                      else if ($level_id==2)
-                      {
+                      } else if ($level_id==2) {
                         $lvl = "National";
-                      }
-                      else if ($level_id==3)
-                      {
+                      } else if ($level_id==3) {
                         $lvl = "State";
-                      }
-                      else if ($level_id==4)
-                      {
+                      } else if ($level_id==4) {
                         $lvl = "District";
-                      }
-                      else if ($level_id==5)
-                      {
+                      } else if ($level_id==5) {
                         $lvl = "University";
-                      }
-                      else if ($level_id==6)
-                      {
+                      } else if ($level_id==6) {
                         $lvl = "Campus";
-                      }
-                      else if ($level_id==7)
-                      {
+                      } else if ($level_id==7) {
                         $lvl = "Club";
-                      }
-                      else if ($level_id==8)
-                      {
+                      } else if ($level_id==8) {
                         $lvl = "College";
+                      } else {
+                        $lvl = "Unknown";
                       }
-
                   ?>
                   <tr>
                     <td scope="row"><?php echo $z ?></td>
                     <td ><?php echo $club_name ?></td>
                     <td><?php echo $act_name ?>(<?php echo $act_id ?>) ( <a href="download/club_activity.xlsx">Download Template </a>)<br><br>
                       <?php
-                      if($club_stat!='a')
-                      {
-
-                      }
-                      else {
+                      if($club_stat!='a') {
+                        // No buttons for non-approved activities
+                      } else {
                       ?>
-                      <a href="registerStdActivity-a.php?act_id=<?php echo $act_id ?>&amp;regpoint=c&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Committee" class="btn btn-primary m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="registerStdActivity-a.php?act_id=<?php echo $act_id ?>&amp;regpoint=c&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Committee" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-user-add"></i>
                           <span>Committee</span>
                         </span>
                       </a>
-                      <a href="registerStdActivity-a.php?act_id=<?php echo $act_id ?>&amp;regpoint=p&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Participant" class="btn btn-primary m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="registerStdActivity-a.php?act_id=<?php echo $act_id ?>&amp;regpoint=p&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Participant" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-user-add"></i>
                           <span>Contestant</span>
                         </span>
                       </a>
-                      <a href="registerStdActivity-a.php?act_id=<?php echo $act_id ?>&amp;regpoint=a&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Audience" class="btn btn-primary m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="registerStdActivity-a.php?act_id=<?php echo $act_id ?>&amp;regpoint=a&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Audience" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-user-add"></i>
                           <span>Audience</span>
                         </span>
                       </a>
-                      <a href="RegisteredList.php?act_id=<?php echo $act_id ?>&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Overall List" class="btn btn-info m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="RegisteredList.php?act_id=<?php echo $act_id ?>&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Overall List" class="btn btn-info m-btn btn-sm m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-list"></i>
                           <span>Overall List</span>
@@ -429,30 +408,25 @@ if ($has_active_semester) {
                     </td>
                     <td>
                       <?php
-                      if (date_format($date_s, 'd/m/y')==date_format($date_e, 'd/m/y'))
-                      {
+                      if (date_format($date_s, 'd/m/y')==date_format($date_e, 'd/m/y')) {
                         echo date_format($date_s, 'd/m/Y');
-                      }
-                      else {
+                      } else {
                         echo date_format($date_s, 'd/m'); ?> to <?php echo date_format($date_e, 'd/m/Y');
                       }
                       ?><br>
                       <?php echo date_format($date_s, 'G:i a'); ?> to <?php echo date_format($date_e, 'G:i a'); ?>
-                      </td>
-
+                    </td>
                     <td><b><?php echo countClubStdRegistered($act_id) ?></b></td>
                     <td><?php echo $lvl ?></td>
                     <td><?php echo $c_stat ?></td>
                     <td>
-                      <a href="editActivity.php?act_id=<?php echo $act_id ?>" class="btn btn-warning m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="editActivity.php?act_id=<?php echo $token ?>" class="btn btn-warning m-btn btn-sm m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-edit-1"></i>
                           <span>Edit</span>
                         </span>
                       </a>
-
                     </td>
-
                   </tr>
                   <?php
                   $z++;
@@ -470,6 +444,15 @@ if ($has_active_semester) {
                                         <strong>No active semester found.</strong> Please activate a semester to view activities.
                                     </div>
                                 </div>
+                            <?php elseif (!$has_club_access): ?>
+                                <div class="m-alert m-alert--icon m-alert--outline alert alert-info" role="alert">
+                                    <div class="m-alert__icon">
+                                        <i class="la la-info-circle"></i>
+                                    </div>
+                                    <div class="m-alert__text">
+                                        <strong>No club access.</strong> You are not assigned as a club advisor. Please contact administrator if you need club access.
+                                    </div>
+                                </div>
                             <?php else: ?>
                                 <div class="m-alert m-alert--icon m-alert--outline alert alert-info" role="alert">
                                     <div class="m-alert__icon">
@@ -485,15 +468,12 @@ if ($has_active_semester) {
                     <?php
                   }
                   ?>
-
-
                 </tbody>
               </table>
             </div>
           </div>
             <!-- end section -->
           </div>
-
 				</div>
 			</div>
 
@@ -503,17 +483,14 @@ if ($has_active_semester) {
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalLabel">Add New Activity / Event</h5>
-
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-
               <form action="createActivity.php" method="post">
-              
-              <!-- Current Semester Display (Read Only) -->
-              <div class="form-group">
+                <!-- Current Semester Display (Read Only) -->
+                <div class="form-group">
                   <label class="form-control-label"><strong>Current Semester</strong></label>
                   <?php if ($has_active_semester): ?>
                     <input type="text" class="form-control" value="<?php echo $active_semester . ' - ' . $active_semester_name; ?>" readonly style="background-color: #f8f9fa; font-weight: bold;">
@@ -523,57 +500,73 @@ if ($has_active_semester) {
                   <?php endif; ?>
                 </div>
 
-              <div class="form-group">
+                <div class="form-group">
                   <label for="Name"><b>Please Choose your club</b></label>
-                    <select class="custom-select form-control" name="club_id" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required>
-                      <option selected>Select Club</option>
-                      <?php
-                      $sql_events1 = mysqli_query($connection, "select * from club,club_advisor where club.club_id=club_advisor.club_id and club_advisor.staffID='$_SESSION[username]' order by club_name ") or die (mysqli_error($connection));
-                      while ($row = mysqli_fetch_array($sql_events1)) {
-
-
-                        $club_id = $row['club_id'];
-                        $club_name = $row['club_name'];
-                      ?>
-                      <option value="<?php echo $club_id ?> "> <?php echo $club_name ?></option>
-                      <?php
+                  <select class="custom-select form-control" name="club_id" <?php echo (!$has_active_semester || !$has_club_access) ? 'disabled' : ''; ?> required>
+                    <option selected>Select Club</option>
+                    <?php
+                    if ($has_club_access) {
+                        $sql_events1 = mysqli_query($connection, "SELECT c.club_id, c.club_name 
+                            FROM club c 
+                            JOIN club_advisor ca ON c.club_id = ca.club_id 
+                            WHERE ca.staffID = '$sxid' 
+                            ORDER BY c.club_name") or die (mysqli_error($connection));
+                        
+                        if (mysqli_num_rows($sql_events1) > 0) {
+                            while ($row = mysqli_fetch_array($sql_events1)) {
+                                $club_id = $row['club_id'];
+                                $club_name = $row['club_name'];
+                                echo "<option value=\"$club_id\">$club_name</option>";
+                            }
+                        } else {
+                            echo "<option value=\"\" disabled>No clubs assigned to you</option>";
                         }
-                      ?>
-                    </select>
+                    } else {
+                        echo "<option value=\"\" disabled>You are not assigned as a club advisor</option>";
+                    }
+                    ?>
+                  </select>
+                  <?php if (!$has_club_access): ?>
+                    <small class="form-text text-muted">Only club advisors can create activities. Please contact administrator if you need club access.</small>
+                  <?php endif; ?>
                 </div>
+
                 <div class="form-group">
                   <label for="act_name" class="form-control-label">Activity / Event Name</label>
                   <input type="text" class="form-control" name="act_name" id="act_name" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required>
                 </div>
+
                 <div class="form-group">
                   <label for="location" class="form-control-label">Location</label>
                   <input type="text" class="form-control" name="location" id="location" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required>
                 </div>
 
-              <div class="form-group">
-                <label for="date_start" class="form-control-label">Date Start</label>
-                    <div class="input-group date" data-z-index="1100">
-                      <input type="text"  name="date_start"  class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2_modal" data-date-format="yyyy-m-d H:i:s" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required />
-                      <div class="input-group-append">
-                        <span class="input-group-text">
-                          <i class="la la-calendar-check-o glyphicon-th"></i>
-                        </span>
-                      </div>
+                <div class="form-group">
+                  <label for="date_start" class="form-control-label">Date Start</label>
+                  <div class="input-group date" data-z-index="1100">
+                    <input type="text" name="date_start" class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2_modal" data-date-format="yyyy-m-d H:i:s" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required />
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+                        <i class="la la-calendar-check-o glyphicon-th"></i>
+                      </span>
                     </div>
+                  </div>
                 </div>
+
                 <div class="form-group">
                   <label for="date_start" class="form-control-label">Date End</label>
-                      <div class="input-group date" data-z-index="1100">
-                        <input type="text"  name="date_end"  class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2" data-date-format="yyyy-m-d H:i:s" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required />
-                        <div class="input-group-append">
-                          <span class="input-group-text">
-                            <i class="la la-calendar-check-o glyphicon-th"></i>
-                          </span>
-                        </div>
-                      </div>
+                  <div class="input-group date" data-z-index="1100">
+                    <input type="text" name="date_end" class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2" data-date-format="yyyy-m-d H:i:s" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required />
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+                        <i class="la la-calendar-check-o glyphicon-th"></i>
+                      </span>
+                    </div>
                   </div>
+                </div>
+
                 <div class="form-group">
-                  <label for="message-text" class="form-control-label">Activity / Event Level </label>
+                  <label for="message-text" class="form-control-label">Activity / Event Level</label>
                   <div class="m-radio-inline">
                     <label class="m-radio">
                       <input type="radio" name="level_id" value="1" <?php echo !$has_active_semester ? 'disabled' : ''; ?>> International
@@ -609,33 +602,31 @@ if ($has_active_semester) {
                     </label>
                   </div>
                 </div>
+
                 <div class="form-group">
                   <label for="club_name" class="form-control-label">Expected Budget (RM)</label>
                   <input type="number" step="0.01" class="form-control" name="budget" id="budget" placeholder="RM " value="0.00" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required>
                 </div>
+
                 <div class="form-group">
-      						<label for="Name"><b>Budget From</b></label>
+                  <label for="Name"><b>Budget From</b></label>
+                  <select class="custom-select form-control" name="kew_id" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required>
+                    <?php
+                    $sql_events1 = mysqli_query($connection, "SELECT * FROM kew ORDER BY kew_name") or die (mysqli_error($connection));
+                    while ($row = mysqli_fetch_array($sql_events1)) {
+                        $kew_id = $row['kew_id'];
+                        $kew_name = $row['kew_name'];
+                        echo "<option value=\"$kew_id\">$kew_name</option>";
+                    }
+                    ?>
+                  </select>
+                </div>
 
-      							<select class="custom-select form-control" name="kew_id" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required>
-      								
-      								<?php
-      								$sql_events1 = mysqli_query($connection, "select * from kew order by kew_name ") or die (mysqli_error($connection));
-      								while ($row = mysqli_fetch_array($sql_events1)) {
-
-
-      									$kew_id = $row['kew_id'];
-      									$kew_name = $row['kew_name'];
-      								?>
-      								<option value="<?php echo $kew_id ?> "> <?php echo $kew_name ?></option>
-      								<?php
-      									}
-      								?>
-      							</select>
-      					</div>
                 <div class="form-group">
                   <label for="club_name" class="form-control-label">Expected Audience (Total)</label>
                   <input type="number" class="form-control" name="total_pax" id="total_pax" value="0" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required>
                 </div>
+
                 <div class="form-group">
                   <label for="message-text" class="form-control-label">Allow others (than your club members) to Register?</label>
                   <div class="m-radio-inline">
@@ -647,21 +638,22 @@ if ($has_active_semester) {
                       <input type="radio" name="act_allow" value="n" checked <?php echo !$has_active_semester ? 'disabled' : ''; ?>> No
                       <span></span>
                     </label>
+                  </div>
                 </div>
+
                 <input type="hidden" id="sxid" name="sxid" value="<?php echo $sxid ?>">
                 <input type="hidden" name="kod_sem" value="<?php echo $active_semester; ?>">
 
             </div>
             <div class="modal-footer">
-              <span class="m--font-danger">Note : Only Club activities will be approved automatically. Others will need approval from HEP</span>
+              <span class="m--font-danger">Note : Only Club activities (Level: Club) will be approved automatically. Others will need approval from HEP</span>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary" <?php echo !$has_active_semester ? 'disabled' : ''; ?>>Save</button>
+              <button type="submit" class="btn btn-primary" <?php echo (!$has_active_semester || !$has_club_access) ? 'disabled' : ''; ?>>Save</button>
             </div>
               </form>
           </div>
         </div>
       </div>
-</div>
       <!--end::Modal-->
 
 			<!-- end:: Body -->
@@ -681,13 +673,18 @@ if ($has_active_semester) {
       <script src="assets/demo/default/custom/crud/forms/widgets/bootstrap-datetimepicker.js" type="text/javascript"></script>
   		<script src="assets/demo/default/custom/crud/forms/widgets/bootstrap-switch.js" type="text/javascript"></script>
 
-
     <script>
     $(document).ready( function () {
-    $('#m_table_1').DataTable();
-      } );
+        $('#m_table_1').DataTable();
+    });
+    
+    // delete confirmation function
+    function confirmDelete(actId, actName) {
+      if (confirm('Are you sure you want to remove the activity: "' + actName + '"?\n\nThis action cannot be undone.')) {
+        window.location.href = 'deleteClubActivity.php?act_id=' + actId;
+      }
+    }
     </script>
 
 	</body>
-	<!-- end::Body -->
 </html>

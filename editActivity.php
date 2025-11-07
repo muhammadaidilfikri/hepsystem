@@ -3,7 +3,12 @@ session_start();
 include ("dbconnect.php");
 include ("iqfunction.php");
 
-$act_ida = $_GET["act_id"];
+$act_ida = filter_input(INPUT_GET, "act_id", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+// Validate token exists
+if (!$act_ida) {
+    die("Invalid activity token");
+}
 ?>
 
 <!DOCTYPE html>
@@ -42,7 +47,7 @@ $act_ida = $_GET["act_id"];
 		<!-- begin:: Page -->
 		<div class="m-grid m-grid--hor m-grid--root m-page">
 			<!-- BEGIN: Header -->
-			<? include ("menuheader.php")?>
+			<?php include ("menuheader.php")?>
 			<!-- END: Header -->
 		<!-- begin::Body -->
 			<div class="m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body">
@@ -50,7 +55,7 @@ $act_ida = $_GET["act_id"];
 				<button class="m-aside-left-close  m-aside-left-close--skin-dark " id="m_aside_left_close_btn">
 					<i class="la la-close"></i>
 				</button>
-				<? include ("mainmenu.php")?>
+				<?php include ("mainmenu.php")?>
 				<!-- END: Left Aside -->
 				<div class="m-grid__item m-grid__item--fluid m-wrapper">
 					<!-- BEGIN: Subheader -->
@@ -90,38 +95,51 @@ $act_ida = $_GET["act_id"];
 								<div class="m-section">
 									<span class="m-section__sub">
 					<form action="updateActivity.php" method="post">
-						<?
+						<?php
 
-						$sql_events = mysqli_query($connection, "select * from club,club_advisor,club_activities,kew where kew.kew_id=club_activities.kew_id and club.club_id=club_activities.club_id and  club.club_id=club_advisor.club_id  and club_activities.act_id='$act_ida'") or die (mysqli_error());
-						while ($row = mysqli_fetch_array($sql_events)) {
-
-							$act_id = $row["act_id"];
-							$club_id = $row["club_id"];
-							$act_name = $row["act_name"];
-							$date_s = date_create($row["date_start"]);
-							$date_e = date_create($row["date_end"]);
-							$total_pax = $row["total_pax"];
-							$club_stat = $row["club_stat"];
-							$budget = $row["budget"];
-							$location = $row["location"];
-							$act_allow = $row["act_allow"];
-							$level_id = $row["level_id"];
-							$kew_idd = $row["kew_id"];
-								}
+						$sql_events = mysqli_query($connection, 
+                                                    "SELECT ca.act_id, ca.club_id, ca.act_name, ca.date_start, ca.date_end, 
+                                                            ca.total_pax, ca.club_stat, ca.budget, ca.location, 
+                                                            ca.act_allow, ca.level_id, ca.kew_id, ca.token 
+                                                     FROM club_activities ca 
+                                                     LEFT JOIN club c ON ca.club_id = c.club_id 
+                                                     LEFT JOIN club_advisor caa ON c.club_id = caa.club_id 
+                                                     LEFT JOIN kew k ON ca.kew_id = k.kew_id 
+                                                     WHERE ca.token = '$act_ida'") or die(mysqli_error($connection));
+                                                
+                                                if (mysqli_num_rows($sql_events) > 0) {
+                                                    $row = mysqli_fetch_array($sql_events);
+                                                    
+                                                    $act_id = $row["act_id"];
+                                                    $club_id = $row["club_id"];
+                                                    $act_name = $row["act_name"];
+                                                    $date_s = date_create($row["date_start"]);
+                                                    $date_e = date_create($row["date_end"]);
+                                                    $total_pax = $row["total_pax"];
+                                                    $club_stat = $row["club_stat"];
+                                                    $budget = $row["budget"];
+                                                    $location = $row["location"];
+                                                    $act_allow = $row["act_allow"];
+                                                    $level_id = $row["level_id"];
+                                                    $kew_idd = $row["kew_id"];
+                                                    $token = $row["token"];
+                                                } else {
+                                                    die("Activity not found");
+                                                }
 
 
 						?>
 
 						<div class="form-group m-form__group">
 							<label for="Name"><b>Activity Name</b></label>
-							<input type="text" class="form-control m-input m-input--solid" name="act_name" id="act_name" aria-describedby="act_name" placeholder="Name of the event" value="<? echo $act_name ?>" >
+							<input type="text" class="form-control m-input m-input--solid" name="act_name" id="act_name" aria-describedby="act_name" placeholder="Name of the event" value="<?php echo $act_name ?>" >
 							<span class="m-form__help"></span>
 						</div>
 
 						<div class="form-group m-form__group">
 						                <label for="Name"><b>Date Start</b></label>
 						                    <div class="input-group date" data-z-index="1100">
-						                      <input type="text"  name="date_start"  class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2_modal" data-date-format="yyyy-m-d H:i:s"  value="<? echo date_format($date_s, 'Y-m-d H:i'); ?>"/>
+						                      <input type="text"  name="date_start"  class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2_modal" data-date-format="yyyy-m-d H:i:s"  value="<?php echo date_format($date_s, 'Y-m-d H:i'); ?>"/>
 						                      <div class="input-group-append">
 						                        <span class="input-group-text">
 						                          <i class="la la-calendar-check-o glyphicon-th"></i>
@@ -133,7 +151,7 @@ $act_ida = $_GET["act_id"];
 																						<label for="Name"><b>Date End</b></label>
 
 																								<div class="input-group date" data-z-index="1100">
-																									<input type="text"  name="date_end"  class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2" data-date-format="yyyy-m-d H:i:s"  value="<? echo date_format($date_e, 'Y-m-d H:i'); ?>"/>
+																									<input type="text"  name="date_end"  class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2" data-date-format="yyyy-m-d H:i:s"  value="<?php echo date_format($date_e, 'Y-m-d H:i'); ?>"/>
 																									<div class="input-group-append">
 																										<span class="input-group-text">
 																											<i class="la la-calendar-check-o glyphicon-th"></i>
@@ -143,17 +161,17 @@ $act_ida = $_GET["act_id"];
 						 </div>
 						 <div class="form-group m-form__group">
 							 <label for="Name"><b>Location</b></label>
-							 <input type="text" class="form-control m-input m-input--solid" name="location" id="location" aria-describedby="location" placeholder="Location" value="<? echo $location ?>" >
+							 <input type="text" class="form-control m-input m-input--solid" name="location" id="location" aria-describedby="location" placeholder="Location" value="<?php echo $location ?>" >
 							 <span class="m-form__help"></span>
 						 </div>
 						 <div class="form-group m-form__group">
 							 <label for="Name"><b>Expected Audience</b></label>
-							 <input type="number" class="form-control m-input m-input--solid" name="total_pax" id="total_pax" aria-describedby="total_pax" placeholder="Total Audience" value="<? echo $total_pax ?>" >
+							 <input type="number" class="form-control m-input m-input--solid" name="total_pax" id="total_pax" aria-describedby="total_pax" placeholder="Total Audience" value="<?php echo $total_pax ?>" >
 							 <span class="m-form__help"></span>
 						 </div>
 						 <div class="form-group m-form__group">
 							 <label for="Name"><b>Budget (RM)</b></label>
-							 <input type="number" step="0.01" class="form-control m-input m-input--solid" name="budget" id="budget" aria-describedby="location" placeholder="Location" value="<? echo $budget ?>" >
+							 <input type="number" step="0.01" class="form-control m-input m-input--solid" name="budget" id="budget" aria-describedby="location" placeholder="Location" value="<?php echo $budget ?>" >
 							 <span class="m-form__help"></span>
 						 </div>
 						 <div class="form-group">
@@ -161,15 +179,15 @@ $act_ida = $_GET["act_id"];
 
 								 <select class="custom-select form-control" name="kew_id">
 									 <option selected>Select source of funding</option>
-									 <?
+									 <?php
 									 $sql_events1 = mysqli_query($connection, "select * from kew order by kew_name ") or die (mysqli_error());
 									 while ($row = mysqli_fetch_array($sql_events1)) {
 
 										 $kew_id = $row['kew_id'];
 										 $kew_name = $row['kew_name'];
 									 ?>
-									 <option value="<? echo $kew_id ?>" <? if($kew_id==$kew_idd) echo "selected" ?> > <? echo $kew_name ?></option>
-									 <?
+									 <option value="<?php echo $kew_id ?>" <?php if($kew_id==$kew_idd) echo "selected" ?> > <?php echo $kew_name ?></option>
+									 <?php
 										 }
 									 ?>
 								 </select>
@@ -227,10 +245,11 @@ $act_ida = $_GET["act_id"];
 	 				</div>
 					</div>
 
-					<input type="hidden" id="act_id" name="act_id" value="<? echo $act_ida ?>">
+					<input type="hidden" id="act_id" name="act_id" value="<?php echo $act_id ?>">
+					<input type="hidden" id="token" name="token" value="<?php echo htmlspecialchars($token); ?>">
 
 					<div class="m-portlet__foot " align="center">
-						<input type="hidden" id="stdNo" name="stdNo" value="<? echo $vid ?>">
+						<input type="hidden" id="stdNo" name="stdNo" value="<?php echo $vid ?>">
 						<div class="m-form__actions">
 							<a href="myclubActivities.php" class="btn btn-secondary">Reset </a>
 							<button type="submit" class="btn btn-warning">Update Activity</button>
