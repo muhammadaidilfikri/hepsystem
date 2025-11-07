@@ -3,18 +3,20 @@ session_start();
 include("dbconnect.php");
 include("iqfunction.php");
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-// Get staffID from URL parameter (like editSystemRoles.php?staffID=S1234)
-$staffID = filter_input(INPUT_GET, "staffID", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-
-if (!$staffID) {
-    die("Invalid staff ID");
+// Validate session
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+    header("location: index.php");
+    exit;
 }
 
-// Fetch staff info with current role/access
-$query = mysqli_query($connection, "
+// Get staffID (actually token) from URL
+$token = filter_input(INPUT_GET, "staffID", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+if (!$token) {
+    die("Invalid or missing staff token.");
+}
+
+// Fetch staff details
+$sql = "
     SELECT 
         a.staffID,
         a.nama,
@@ -22,58 +24,51 @@ $query = mysqli_query($connection, "
         r.roletitle,
         s.roleid,
         s.is_active,
-        s.role_staff_id
+        s.token
     FROM acstaff a
     LEFT JOIN sysrole_acstaff s ON a.staffID = s.staffID
     LEFT JOIN sysroles r ON s.roleid = r.roleid
-    WHERE a.staffID = '$staffID'
-");
-
-if (!$query || mysqli_num_rows($query) == 0) {
-    die("Staff not found or not assigned any role");
+    WHERE s.token = '$token'
+";
+$result = mysqli_query($connection, $sql);
+if (!$result || mysqli_num_rows($result) == 0) {
+    die("Staff record not found or invalid token.");
 }
 
-$staff = mysqli_fetch_assoc($query);
+$staff = mysqli_fetch_assoc($result);
+$staffToken = $staff['token']; // clearer name
 
-// Fetch available roles
+// Fetch all roles
 $roles = [];
 $roleQuery = mysqli_query($connection, "SELECT * FROM sysroles ORDER BY roleid ASC");
-while ($r = mysqli_fetch_assoc($roleQuery)) {
-    $roles[] = $r;
+while ($row = mysqli_fetch_assoc($roleQuery)) {
+    $roles[] = $row;
 }
 
-// Handle update form
+// Handle update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
-    $roleid = mysqli_real_escape_string($connection, $_POST['role']);
-    $allow_access = $_POST['allow_access'] ?? '';
-    $is_active = ($allow_access === 'YES') ? 1 : 0;
+    $roleid = $_POST['role'];
+    $access = $_POST['allow_access'] ?? '';
+    $active = ($access === 'YES') ? 1 : 0;
+    $token = $_POST['token']; // hidden input
 
-    // Check if staff already has access
-    $check = mysqli_query($connection, "SELECT * FROM sysrole_acstaff WHERE staffID='$staffID'");
-    if (mysqli_num_rows($check) > 0) {
-        $update = mysqli_query($connection, "
-            UPDATE sysrole_acstaff
-            SET roleid='$roleid', is_active='$is_active'
-            WHERE staffID='$staffID'
-        ");
-    } else {
-        $update = mysqli_query($connection, "
-            INSERT INTO sysrole_acstaff (staffID, roleid, is_active)
-            VALUES ('$staffID', '$roleid', '$is_active')
-        ");
-    }
+    $stmt = $connection->prepare("UPDATE sysrole_acstaff SET roleid=?, is_active=? WHERE token=?");
+    $stmt->bind_param("sis", $roleid, $active, $token);
 
-    if ($update) {
+    if ($stmt->execute()) {
         echo "<script>
             alert('Staff role and access updated successfully!');
             window.location.href='systemRoles.php';
         </script>";
         exit;
     } else {
-        echo "<script>alert('Error: " . mysqli_error($connection) . "');</script>";
+        echo "<script>alert('Error updating record: " . mysqli_error($connection) . "');</script>";
     }
+
+    $stmt->close();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -84,83 +79,74 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <!-- Web font -->
     <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
     <script>
         WebFont.load({
-            google: {
-                "families": ["Poppins:300,400,500,600,700", "Roboto:300,400,500,600,700"]
-            },
-            active: function() {
-                sessionStorage.fonts = true;
-            }
+            google: {"families": ["Poppins:300,400,500,600,700", "Roboto:300,400,500,600,700"]},
+            active: function() { sessionStorage.fonts = true; }
         });
     </script>
 
-    <link href="assets/vendors/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" type="text/css" />
-    <link href="assets/vendors/base/vendors.bundle.css" rel="stylesheet" type="text/css" />
-    <link href="assets/demo/default/base/style.bundle.css" rel="stylesheet" type="text/css" />
-    <link href="assets/vendors/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
-
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="assets/vendors/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" />
+    <link href="assets/vendors/base/vendors.bundle.css" rel="stylesheet" />
+    <link href="assets/demo/default/base/style.bundle.css" rel="stylesheet" />
+    <link href="assets/vendors/custom/datatables/datatables.bundle.css" rel="stylesheet" />
     <link rel="shortcut icon" href="assets/demo/default/media/img/logo/favicon.ico" />
 </head>
 
-<body class="m-page--fluid m--skin- m-content--skin-light2 
-             m-header--fixed m-header--fixed-mobile 
-             m-aside-left--enabled m-aside-left--skin-dark 
-             m-aside-left--offcanvas m-footer--push 
-             m-aside--offcanvas-default">
+<body class="m-page--fluid m--skin- m-content--skin-light2 m-header--fixed 
+             m-header--fixed-mobile m-aside-left--enabled m-aside-left--skin-dark 
+             m-aside-left--offcanvas m-footer--push m-aside--offcanvas-default">
 
-    <div class="m-grid m-grid--hor m-grid--root m-page">
+<div class="m-grid m-grid--hor m-grid--root m-page">
 
-<body class="m-page--fluid m--skin- m-content--skin-light2 m-header--fixed m-aside-left--enabled m-aside-left--skin-dark">
+    <?php include("menuheader.php"); ?>
 
-    <div class="m-grid m-grid--hor m-grid--root m-page">
-        <?php include("menuheader.php"); ?>
+    <div class="m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body">
+        <?php include("mainmenu.php"); ?>
 
-        <div class="m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body">
-            <?php include("mainmenu.php"); ?>
+        <div class="m-grid__item m-grid__item--fluid m-wrapper">
+            <div class="m-content">
 
-            <div class="m-grid__item m-grid__item--fluid m-wrapper">
-                <div class="m-subheader">
-                    <h3 class="m-subheader__title">Edit Staff Role</h3>
-                </div>
+                <div class="m-portlet m-portlet--mobile">
+                    <div class="m-portlet__head">
+                        <div class="m-portlet__head-caption">
+                            <div class="m-portlet__head-title">
+                                <h3 class="m-portlet__head-text">Edit Staff Role</h3>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="m-content">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="m-portlet m-portlet--tab">
-                                <div class="m-portlet__head">
-                                    <div class="m-portlet__head-caption">
-                                        <div class="m-portlet__head-title">
-                                            <h3 class="m-portlet__head-text">Staff Role & Access</h3>
+                    <div class="m-portlet__body">
+                        <div class="card">
+                            <div class="card-header" style="background:#F7FBFF; color:black;">Staff Details</div>
+                            <div class="card-body">
+                                <form method="post">
+                                    <div class="row mb-3">
+                                        <div class="col-md-3">
+                                            <label>Staff No</label>
+                                            <input type="text" name="staffID" value="<?php echo htmlspecialchars($staff['staffID']); ?>" class="form-control" readonly>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>Email</label>
+                                            <input type="email" name="email" value="<?php echo htmlspecialchars($staff['email']); ?>" class="form-control" readonly>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label>Name</label>
+                                            <input type="text" name="nama" value="<?php echo htmlspecialchars($staff['nama']); ?>" class="form-control" readonly>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="m-portlet__body">
-                                    <form method="post">
-                                        <div class="form-group m-form__group">
-                                            <label><b>Staff ID</b></label>
-                                            <input type="text" class="form-control m-input m-input--solid" value="<?php echo htmlspecialchars($staff['staffID']); ?>" readonly>
-                                        </div>
+                                    <input type="hidden" id="token" name="token" value="<?php echo htmlspecialchars($staffToken); ?>">
 
-                                        <div class="form-group m-form__group">
-                                            <label><b>Name</b></label>
-                                            <input type="text" class="form-control m-input m-input--solid" value="<?php echo htmlspecialchars($staff['nama']); ?>" readonly>
-                                        </div>
-
-                                        <div class="form-group m-form__group">
-                                            <label><b>Email</b></label>
-                                            <input type="email" class="form-control m-input m-input--solid" value="<?php echo htmlspecialchars($staff['email']); ?>" readonly>
-                                        </div>
-
-                                        <div class="form-group m-form__group">
-                                            <label><b>Role</b></label>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label>Role</label>
                                             <select name="role" class="form-control" required>
                                                 <option value="">Select Role</option>
                                                 <?php foreach ($roles as $r): ?>
-                                                    <option value="<?php echo $r['roleid']; ?>" 
+                                                    <option value="<?php echo htmlspecialchars($r['roleid']); ?>" 
                                                         <?php if ($staff['roleid'] == $r['roleid']) echo 'selected'; ?>>
                                                         <?php echo htmlspecialchars($r['roletitle']); ?>
                                                     </option>
@@ -168,36 +154,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
                                             </select>
                                         </div>
 
-                                        <div class="form-group m-form__group">
-                                            <label><b>Allow Access</b></label>
-                                            <select name="allow_access" class="form-control">
-                                                <option value="Yes" <?php echo ($staff['is_active'] == 1) ? 'selected' : ''; ?>>Yes</option>
-                                                <option value="No" <?php echo ($staff['is_active'] == 0) ? 'selected' : ''; ?>>No</option>
+                                        <div class="col-md-6">
+                                            <label>Allow Access</label>
+                                            <select name="allow_access" class="form-control" required>
+                                                <option value="">Select Access</option>
+                                                <option value="YES" <?php echo ($staff['is_active'] == 1) ? 'selected' : ''; ?>>Yes</option>
+                                                <option value="NO" <?php echo ($staff['is_active'] == 0) ? 'selected' : ''; ?>>No</option>
                                             </select>
                                         </div>
+                                    </div>
 
-                                        <div class="text-center">
-                                            <a href="systemRoles.php" class="btn btn-secondary">Cancel</a>
-                                            <button type="submit" name="update" class="btn btn-warning">Update</button>
-                                        </div>
-                                    </form>
-                                </div>
-
+                                    <div class="text-start">
+                                        <button type="submit" name="update" class="btn btn-primary">Save</button>
+                                        <a href="systemRoles.php" class="btn btn-secondary">Cancel</a>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
-
-        <?php include("footer.php"); ?>
     </div>
 
-    <div id="m_scroll_top" class="m-scroll-top">
-        <i class="la la-arrow-up"></i>
-    </div>
+    <?php include("footer.php"); ?>
+</div>
 
-    <script src="assets/vendors/base/vendors.bundle.js"></script>
-    <script src="assets/demo/default/base/scripts.bundle.js"></script>
+<div id="m_scroll_top" class="m-scroll-top">
+    <i class="la la-arrow-up"></i>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="assets/vendors/base/vendors.bundle.js"></script>
+<script src="assets/demo/default/base/scripts.bundle.js"></script>
+<script src="assets/vendors/custom/fullcalendar/fullcalendar.bundle.js"></script>
+<script src="assets/app/js/dashboard.js"></script>
+<script src="assets/vendors/custom/datatables/datatables.bundle.js"></script>
 </body>
 </html>

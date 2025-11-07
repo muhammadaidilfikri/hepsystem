@@ -7,6 +7,33 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: index.php");
     exit;
 }
+
+// Get current user's staff ID
+$uid = $_SESSION['username'];
+
+// Check the user's role
+$sql = "SELECT sr.roletitle, sa.is_active
+        FROM sysrole_acstaff sa
+        JOIN sysroles sr ON sr.roleid = sa.roleid
+        WHERE sa.staffID = '$uid'
+        LIMIT 1";
+
+$result = mysqli_query($connection, $sql);
+$row = mysqli_fetch_assoc($result);
+
+// Get role name and status
+$role = strtolower($row['roletitle']);
+$active = $row['is_active'];
+
+// Allow only IT Administrator with active status
+if ($role != 'it administrator' || $active != 1) {
+    echo "<script>
+            alert('Access denied. Only IT Administrators can access this page.');
+            window.location.href='main.php';
+          </script>";
+    exit;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -197,13 +224,15 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                                 </thead>
                                 <tbody>
                                     <?php
+                                    
                                     $sql_events = mysqli_query($connection, "
-                                        SELECT 
-                                            sysrole_acstaff.staffID,
-                                            acstaff.nama,
-                                            sysroles.roletitle,
-                                            sysrole_acstaff.is_active,
-                                            sysrole_acstaff.created_at
+                                    SELECT 
+                                        sysrole_acstaff.staffID,
+                                        sysrole_acstaff.token,
+                                        acstaff.nama,
+                                        sysroles.roletitle,
+                                        sysrole_acstaff.is_active,
+                                        sysrole_acstaff.created_at
                                         FROM sysrole_acstaff
                                         JOIN acstaff ON acstaff.staffID = sysrole_acstaff.staffID
                                         JOIN sysroles ON sysroles.roleid = sysrole_acstaff.roleid
@@ -234,13 +263,21 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                                             </td>
                                             <td><?php echo date_format($date_s, 'd/m/Y g:i a'); ?></td>
                                             <td>
-                                                <a href="editSystemRoles.php?staffID=<?php echo $staffID; ?>" class="btn btn-warning m-btn btn-sm m-btn--icon">
-                                                    <span>
-                                                        <i class="fa flaticon-edit-1"></i>
-                                                        <span>Edit</span>
-                                                    </span>
-                                                </a>
-                                            </td>
+                                                <a href="editSystemRoles.php?staffID=<?php echo urlencode($row['token']); ?>" class="btn btn-warning m-btn btn-sm m-btn--icon">
+    <span>
+        <i class="fa flaticon-edit-1 "></i>
+        <span>Edit</span>
+    </span>
+</a>
+<button type="button" class="btn btn-danger m-btn btn-sm m-btn--icon" 
+onclick="confirmDelete('<?php echo $row['token']; ?>', '<?php echo addslashes($row['staffID']); ?>')">
+<span>
+    <i class="fa flaticon-delete"></i>
+    <span>Remove</span>
+</span>
+</button>
+
+                                            </td>   
                                         </tr>
                                     <?php
                                         $z++;
@@ -274,6 +311,14 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $(document).ready(function () {
             $('#m_table_1').DataTable();
         });
+
+// delete confirmation function
+    function confirmDelete(token, staffID) {
+      if (confirm('Are you sure you want to remove the user: "' + staffID + '"?\n\nThis action cannot be undone.')) {
+        window.location.href = 'deleteSystemRoles.php?staffID=' + token;
+
+      }
+    }
     </script>
 
 </body>
