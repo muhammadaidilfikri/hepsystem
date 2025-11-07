@@ -8,30 +8,40 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     exit;
 }
 
+// Get token from URL instead of staffID
+$token = filter_input(INPUT_GET, "token", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+
 $staffData = null;
 
-//Search staff details
+// Search staff details
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
     $staffID = mysqli_real_escape_string($connection, $_POST['staffID']);
 
-    // Join acstaff with sysrole_acstaff to get is_active
-    $result = mysqli_query($connection, "
-        SELECT a.*, s.is_active 
-        FROM acstaff a 
+    $sql = "
+        SELECT a.*, s.is_active, s.roleid
+        FROM acstaff a
         LEFT JOIN sysrole_acstaff s ON a.staffID = s.staffID
-        WHERE a.staffID = '$staffID'
-    ");
+        WHERE a.staffID = ?
+    ";
 
-    if ($result && mysqli_num_rows($result) > 0) {
-        $staffData = mysqli_fetch_assoc($result);
+    $stmt = $connection->prepare($sql);
+    $stmt->bind_param("s", $staffID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result && $result->num_rows > 0) {
+        $staffData = $result->fetch_assoc();
     } else {
         $_SESSION['msg'] = "No staff found with Staff No: $staffID";
         header("Location: " . $_SERVER['PHP_SELF']);
         exit;
     }
+
+    $stmt->close();
 }
 
-//Fetch roles for dropdown
+// Fetch roles for dropdown
 $roles = [];
 $roleQuery = mysqli_query($connection, "SELECT * FROM sysroles ORDER BY roleid ASC");
 if (!$roleQuery) {
@@ -42,50 +52,51 @@ while ($row = mysqli_fetch_assoc($roleQuery)) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
-    $staffID = mysqli_real_escape_string($connection, $_POST['staffID']);
-    $role = mysqli_real_escape_string($connection, $_POST['role']);
+    $staffID = $_POST['staffID'];
+    $role = $_POST['role'];
     $allow_access = $_POST['allow_access'] ?? '';
     $is_active = ($allow_access === 'YES') ? 1 : 0;
 
-    $checkExist = mysqli_query($connection, "SELECT * FROM sysrole_acstaff WHERE staffID='$staffID'");
+    // Check if staff record already exists
+    $checkStmt = $connection->prepare("SELECT staffID FROM sysrole_acstaff WHERE staffID = ?");
+    $checkStmt->bind_param("s", $staffID);
+    $checkStmt->execute();
+    $checkStmt->store_result();
 
-    if (mysqli_num_rows($checkExist) > 0) {
-        $updateAccess = mysqli_query($connection, "
-            UPDATE sysrole_acstaff
-            SET roleid='$role', is_active='$is_active'
-            WHERE staffID='$staffID'
+    if ($checkStmt->num_rows > 0) {
+        // --- Record exists: just update ---
+        $updateStmt = $connection->prepare("
+            UPDATE sysrole_acstaff 
+            SET roleid = ?, is_active = ? 
+            WHERE staffID = ?
         ");
+        $updateStmt->bind_param("iis", $role, $is_active, $staffID);
     } else {
-        $updateAccess = mysqli_query($connection, "
-            INSERT INTO sysrole_acstaff (staffID, roleid, is_active)
-            VALUES ('$staffID', '$role', '$is_active')
+        // --- New record: insert and generate token ---
+        $token = generateToken(32);
+        $updateStmt = $connection->prepare("
+            INSERT INTO sysrole_acstaff (staffID, roleid, is_active, token, created_at)
+            VALUES (?, ?, ?, ?, NOW())
         ");
+        $updateStmt->bind_param("siis", $staffID, $role, $is_active, $token);
     }
 
-    // ✅ Only continue if insert or update succeeded
-    if ($updateAccess) {
-        $query = mysqli_query($connection, "
-            SELECT 
-                a.staffID,
-                a.nama,
-                a.email,
-                r.roletitle,
-                s.is_active,
-                s.created_at,
-                s.roleid
-            FROM acstaff a
-            LEFT JOIN sysrole_acstaff s ON a.staffID = s.staffID
-            LEFT JOIN sysroles r ON s.roleid = r.roleid
-            WHERE a.staffID = '$staffID'
-        ");
-
-        // ✅ Now show popup *only after success*
+    // Execute
+    if ($updateStmt->execute()) {
         echo "<script>
             alert('Staff role and access updated successfully!');
             window.location.href = 'systemRoles.php';
         </script>";
         exit;
+    } else {
+        echo "<script>
+            alert('Error updating record: " . addslashes($updateStmt->error) . "');
+            history.back();
+        </script>";
     }
+
+    $updateStmt->close();
+    $checkStmt->close();
 }
 ?>
 
