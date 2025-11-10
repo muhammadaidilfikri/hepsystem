@@ -32,7 +32,7 @@ $stmt->bind_param("isssssidiisssss", $club_id, $act_name, $date_start, $date_end
 
 if ($stmt->execute()) {
     echo "<script>
-            alert('Activity Successfully Created.");
+            alert('Activity Successfully Created.";
     if ($level_id == 7) {
         echo " Club activity has been auto-approved.";
     } else {
