@@ -1,7 +1,7 @@
 <?php
 $uid = $_SESSION['username'];
 $xx = 0;
-$sql_events = mysqli_query($connection, "select * from dept,dept_advisor where dept.dept_id=dept_advisor.dept_id and dept_advisor.staffID='$uid'") or die (mysqli_error());
+$sql_events = mysqli_query($connection, "select * from dept,dept_advisor where dept.dept_id=dept_advisor.dept_id and dept_advisor.staffID='$uid'")or die(mysqli_error($connection));
 $num_rows = mysqli_num_rows($sql_events);
 if(empty($num_rows))
 {
@@ -15,14 +15,14 @@ else {
 $userRole = '';
 $allowAccess = 0;
 
-$getRole = mysqli_query($connection, " select sr.roletitle, sa.is_active from sysrole_acstaff sa join sysroles sr on sr.roleid = sa.roleid where sa.staffID = '$uid' limit 1") or die(mysqli_error());
+$getRole = mysqli_query($connection, " select sr.roletitle, sa.is_active from sysrole_acstaff sa join sysroles sr on sr.roleid = sa.roleid where sa.staffID = '$uid' limit 1")or die(mysqli_error($connection));
 if ($row = mysqli_fetch_assoc($getRole)) {
-	$userRole = strtolower(trim($row['roletitle']));
+	$userRole = $row['roletitle'];
 	$allowAccess = $row['is_active'];
 }
 
-$isModerator = ($userRole === 'moderator' && $allowAccess == 1);
-$isITAdmin   = ($userRole === 'it administrator' && $allowAccess == 1);
+$isModerator = ($userRole === 'Moderator' && $allowAccess == 1);
+$isITAdmin   = ($userRole === 'IT Administrator' && $allowAccess == 1);
 ?>
 
 <div id="m_aside_left" class="m-grid__item	m-aside-left  m-aside-left--skin-dark ">

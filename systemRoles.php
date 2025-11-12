@@ -17,23 +17,20 @@ $sql = "SELECT sr.roletitle, sa.is_active
         JOIN sysroles sr ON sr.roleid = sa.roleid
         WHERE sa.staffID = '$uid'
         LIMIT 1";
-
 $result = mysqli_query($connection, $sql);
 $row = mysqli_fetch_assoc($result);
 
-// Get role name and status
-$role = strtolower($row['roletitle']);
+$role = ($row['roletitle']);
 $active = $row['is_active'];
 
-// Allow only IT Administrator with active status
-if ($role != 'it administrator' || $active != 1) {
+// Allow only active IT Administrators
+if ($role != 'IT Administrator' || $active != 1) {
     echo "<script>
             alert('Access denied. Only IT Administrators can access this page.');
             window.location.href='main.php';
           </script>";
     exit;
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -50,39 +47,33 @@ if ($role != 'it administrator' || $active != 1) {
     <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
     <script>
         WebFont.load({
-            google: {
-                families: ["Poppins:300,400,500,600,700", "Roboto:300,400,500,600,700"]
-            },
-            active: function () {
-                sessionStorage.fonts = true;
-            }
+            google: { families: ["Poppins:300,400,500,600,700", "Roboto:300,400,500,600,700"] },
+            active: function () { sessionStorage.fonts = true; }
         });
     </script>
 
-    <!-- Select2 CSS -->
+    <!-- CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-    <!-- Base Styles -->
-    <link href="assets/vendors/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" type="text/css" />
-    <link href="assets/vendors/base/vendors.bundle.css" rel="stylesheet" type="text/css" />
-    <link href="assets/demo/default/base/style.bundle.css" rel="stylesheet" type="text/css" />
-    <link href="assets/vendors/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="assets/vendors/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" />
+    <link href="assets/vendors/base/vendors.bundle.css" rel="stylesheet" />
+    <link href="assets/demo/default/base/style.bundle.css" rel="stylesheet" />
+    <link href="assets/vendors/custom/datatables/datatables.bundle.css" rel="stylesheet" />
 
     <style>
-        .ct-series-a .ct-slice-donut {
-            stroke: #8E44AD;
+        .ct-series-a .ct-slice-donut { 
+        stroke: #8E44AD; 
         }
 
-        .ct-series-b .ct-slice-donut {
-            stroke: #26C281;
+        .ct-series-b .ct-slice-donut { 
+        stroke: #26C281; 
         }
 
-        .ct-series-c .ct-slice-donut {
-            stroke: #E43A45;
+        .ct-series-c .ct-slice-donut { 
+        stroke: #E43A45; 
         }
 
-        .ct-series-d .ct-slice-donut {
-            stroke: #F3C200;
+        .ct-series-d .ct-slice-donut { 
+        stroke: #F3C200; 
         }
     </style>
 
@@ -120,9 +111,7 @@ if ($role != 'it administrator' || $active != 1) {
                                         <div class="m-widget24__item">
                                             <h4 class="m-widget24__title">Students</h4><br>
                                             <span class="m-widget24__desc">Total Students</span>
-                                            <span class="m-widget24__stats m--font-brand">
-                                                <?php echo countStudent(); ?>
-                                            </span>
+                                            <span class="m-widget24__stats m--font-brand"><?php echo countStudent(); ?></span>
                                             <div class="m--space-10"></div>
                                             <div class="progress m-progress--sm">
                                                 <div class="progress-bar m--bg-brand" role="progressbar" style="width: 78%;"></div>
@@ -139,9 +128,7 @@ if ($role != 'it administrator' || $active != 1) {
                                         <div class="m-widget24__item">
                                             <h4 class="m-widget24__title">Administration</h4><br>
                                             <span class="m-widget24__desc">Total Staff</span>
-                                            <span class="m-widget24__stats m--font-info">
-                                                <?php echo countAdministration(); ?>
-                                            </span>
+                                            <span class="m-widget24__stats m--font-info"><?php echo countAdministration(); ?></span>
                                             <div class="m--space-10"></div>
                                             <div class="progress m-progress--sm">
                                                 <div class="progress-bar m--bg-info" role="progressbar" style="width: 84%;"></div>
@@ -158,9 +145,7 @@ if ($role != 'it administrator' || $active != 1) {
                                         <div class="m-widget24__item">
                                             <h4 class="m-widget24__title">Academicians</h4><br>
                                             <span class="m-widget24__desc">Total Staff</span>
-                                            <span class="m-widget24__stats m--font-danger">
-                                                <?php echo countAcademic(); ?>
-                                            </span>
+                                            <span class="m-widget24__stats m--font-danger"><?php echo countAcademic(); ?></span>
                                             <div class="m--space-10"></div>
                                             <div class="progress m-progress--sm">
                                                 <div class="progress-bar m--bg-danger" role="progressbar" style="width: 69%;"></div>
@@ -178,6 +163,7 @@ if ($role != 'it administrator' || $active != 1) {
                                             <h4 class="m-widget24__title">Concessioner</h4><br>
                                             <span class="m-widget24__desc">Total Staff</span>
                                             <span class="m-widget24__stats m--font-success">0</span>
+                                            <div class="m--space-10"></div>
                                             <div class="progress m-progress--sm">
                                                 <div class="progress-bar m--bg-success" role="progressbar" style="width: 69%;"></div>
                                             </div>
@@ -191,6 +177,7 @@ if ($role != 'it administrator' || $active != 1) {
                         </div>
                     </div>
 
+                    <!-- Users Table -->
                     <div class="m-portlet m-portlet--mobile">
                         <div class="m-portlet__head">
                             <div class="m-portlet__head-caption">
@@ -224,18 +211,18 @@ if ($role != 'it administrator' || $active != 1) {
                                 </thead>
                                 <tbody>
                                     <?php
-                                    
                                     $sql_events = mysqli_query($connection, "
-                                    SELECT 
-                                        sysrole_acstaff.staffID,
-                                        sysrole_acstaff.token,
-                                        acstaff.nama,
-                                        sysroles.roletitle,
-                                        sysrole_acstaff.is_active,
-                                        sysrole_acstaff.created_at
+                                        SELECT 
+                                            sysrole_acstaff.staffID,
+                                            sysrole_acstaff.token,
+                                            acstaff.nama,
+                                            sysroles.roletitle,
+                                            sysrole_acstaff.is_active,
+                                            sysrole_acstaff.created_at
                                         FROM sysrole_acstaff
                                         JOIN acstaff ON acstaff.staffID = sysrole_acstaff.staffID
                                         JOIN sysroles ON sysroles.roleid = sysrole_acstaff.roleid
+                                        
                                         ORDER BY sysrole_acstaff.staffID ASC
                                     ") or die(mysqli_error($connection));
 
@@ -253,30 +240,26 @@ if ($role != 'it administrator' || $active != 1) {
                                             <td><?php echo $nama; ?></td>
                                             <td><?php echo $roletitle; ?></td>
                                             <td>
-                                                <?php
-                                                if ($access == 1) {
-                                                    echo '<span style="color: green; font-weight: bold;">Yes</span>';
-                                                } else {
-                                                    echo '<span style="color: red; font-weight: bold;">No</span>';
-                                                }
+                                                <?php echo ($access == 1) ? 
+                                                    '<span style="color: green; font-weight: bold;">Yes</span>' :
+                                                    '<span style="color: red; font-weight: bold;">No</span>'; 
                                                 ?>
                                             </td>
                                             <td><?php echo date_format($date_s, 'd/m/Y g:i a'); ?></td>
                                             <td>
                                                 <a href="editSystemRoles.php?staffID=<?php echo urlencode($row['token']); ?>" class="btn btn-warning m-btn btn-sm m-btn--icon">
-    <span>
-        <i class="fa flaticon-edit-1 "></i>
-        <span>Edit</span>
-    </span>
-</a>
-<button type="button" class="btn btn-danger m-btn btn-sm m-btn--icon" 
-onclick="confirmDelete('<?php echo $row['token']; ?>', '<?php echo addslashes($row['staffID']); ?>')">
-<span>
-    <i class="fa flaticon-delete"></i>
-    <span>Remove</span>
-</span>
-</button>
-
+                                                    <span>
+                                                        <i class="fa flaticon-edit-1"></i>
+                                                        <span>Edit</span>
+                                                    </span>
+                                                </a>
+                                                <!-- <button type="button" class="btn btn-danger m-btn btn-sm m-btn--icon" 
+                                                    onclick="confirmDelete('<?php echo $row['token']; ?>', '<?php echo addslashes($row['staffID']); ?>')">
+                                                    <span>
+                                                        <i class="fa flaticon-delete"></i>
+                                                        <span>Remove</span>
+                                                    </span>
+                                                </button> -->
                                             </td>   
                                         </tr>
                                     <?php
@@ -292,7 +275,6 @@ onclick="confirmDelete('<?php echo $row['token']; ?>', '<?php echo addslashes($r
         </div>
 
         <?php include("footer.php"); ?>
-
     </div>
 
     <!-- Scroll Top -->
@@ -301,24 +283,22 @@ onclick="confirmDelete('<?php echo $row['token']; ?>', '<?php echo addslashes($r
     </div>
 
     <!-- Scripts -->
-    <script src="assets/vendors/base/vendors.bundle.js" type="text/javascript"></script>
-    <script src="assets/demo/default/base/scripts.bundle.js" type="text/javascript"></script>
-    <script src="assets/vendors/custom/fullcalendar/fullcalendar.bundle.js" type="text/javascript"></script>
-    <script src="assets/app/js/dashboard.js" type="text/javascript"></script>
-    <script src="assets/vendors/custom/datatables/datatables.bundle.js" type="text/javascript"></script>
+    <script src="assets/vendors/base/vendors.bundle.js"></script>
+    <script src="assets/demo/default/base/scripts.bundle.js"></script>
+    <script src="assets/vendors/custom/fullcalendar/fullcalendar.bundle.js"></script>
+    <script src="assets/app/js/dashboard.js"></script>
+    <script src="assets/vendors/custom/datatables/datatables.bundle.js"></script>
 
     <script>
         $(document).ready(function () {
             $('#m_table_1').DataTable();
         });
 
-// delete confirmation function
-    function confirmDelete(token, staffID) {
-      if (confirm('Are you sure you want to remove the user: "' + staffID + '"?\n\nThis action cannot be undone.')) {
-        window.location.href = 'deleteSystemRoles.php?staffID=' + token;
-
-      }
-    }
+        // function confirmDelete(token, staffID) {
+        //     if (confirm('Are you sure you want to remove the user: "' + staffID + '"?\n\nThis action cannot be undone.')) {
+        //         window.location.href = 'deleteSystemRoles.php?staffID=' + token;
+        //     }
+        // }
     </script>
 
 </body>

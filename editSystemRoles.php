@@ -16,31 +16,18 @@ if (!$token) {
 }
 
 // Fetch staff details
-$sql = "
-    SELECT 
-        a.staffID,
-        a.nama,
-        a.email,
-        r.roletitle,
-        s.roleid,
-        s.is_active,
-        s.token
-    FROM acstaff a
-    LEFT JOIN sysrole_acstaff s ON a.staffID = s.staffID
-    LEFT JOIN sysroles r ON s.roleid = r.roleid
-    WHERE s.token = '$token'
-";
+$sql = " select a.staffID, a.nama, a.email, r.roletitle, s.roleid, s.is_active, s.token, s.updated_at from acstaff a left join sysrole_acstaff s on a.staffID = s.staffID left join sysroles r on s.roleid = r.roleid where s.token = '$token'";
 $result = mysqli_query($connection, $sql);
 if (!$result || mysqli_num_rows($result) == 0) {
     die("Staff record not found or invalid token.");
 }
 
 $staff = mysqli_fetch_assoc($result);
-$staffToken = $staff['token']; // clearer name
+$staffToken = $staff['token'];
 
 // Fetch all roles
 $roles = [];
-$roleQuery = mysqli_query($connection, "SELECT * FROM sysroles ORDER BY roleid ASC");
+$roleQuery = mysqli_query($connection, "select * from sysroles order by roleid asc");
 while ($row = mysqli_fetch_assoc($roleQuery)) {
     $roles[] = $row;
 }
@@ -50,10 +37,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
     $roleid = $_POST['role'];
     $access = $_POST['allow_access'] ?? '';
     $active = ($access === 'YES') ? 1 : 0;
-    $token = $_POST['token']; // hidden input
+    $token = $_POST['token']; 
+    $updated_at = date("Y-m-d H:i:s");
 
-    $stmt = $connection->prepare("UPDATE sysrole_acstaff SET roleid=?, is_active=? WHERE token=?");
-    $stmt->bind_param("sis", $roleid, $active, $token);
+    $stmt = $connection->prepare("UPDATE sysrole_acstaff SET roleid=?, updated_at=?, is_active=? WHERE token=?");
+    $stmt->bind_param("ssis", $roleid, $updated_at, $active, $token);
 
     if ($stmt->execute()) {
         echo "<script>
