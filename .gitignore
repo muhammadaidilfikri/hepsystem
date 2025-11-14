@@ -1,0 +1,4 @@
+# ignore files
+dbconnect.php
+ass.html
+.DS_Store

@@ -1414,4 +1414,52 @@ function getClubToken($club_id)
 		return $club_token;
 	}	
 }
+
+function getDeptToken($dept_id)
+{
+	global $connection;
+	$sql = "select * from department where dept_id=?";
+	$stmt = $connection->prepare($sql);
+	$stmt->bind_param("i", $dept_id);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	if($result->num_rows > 0) {
+		$row = $result->fetch_assoc();
+		$dept_token = $row["token"];
+
+		return $dept_token;
+	}	
+}
+
+function getStaffName($staffID)
+{
+	global $connection;
+	$sql = "select * from acstaff where staffID=?";
+	$stmt = $connection->prepare($sql);
+	$stmt->bind_param("s", $staffID);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	if($result->num_rows > 0) {
+		$row = $result->fetch_assoc();
+		$nama = $row["nama"];
+
+		return $nama;
+	}	
+}
+
+function getStaffEmail($staffID)
+{
+	global $connection;
+	$sql = "select * from acstaff where staffID=?";
+	$stmt = $connection->prepare($sql);
+	$stmt->bind_param("s", $staffID);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	if($result->num_rows > 0) {
+		$row = $result->fetch_assoc();
+		$email = $row["email"];
+
+		return $email;
+	}	
+}
 ?>
