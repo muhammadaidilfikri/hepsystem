@@ -187,20 +187,20 @@ $regError = 0;
                         <h4 class="m-widget24__title">
                           Student</h4>
                         <br>
-                        <span class="m_widget24__desc">
+                        <span class="m-widget24__desc">
                           Total Student Offered</span>
                         <span class="m-widget24__stats m--font-danger">
                           <?php echo countStudent() ?>
                         </span>
                         <div class="m--space-10"></div>
                         <div class="progress m-progress--sm">
-                          <div class="progress-bar m--bg-danger" role="progressbar" style="width: 78%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                          <div class="progress-bar m--bg-danger" role="progressbar" style="width: 89%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <span class="m-widget24__change">
                           Total Registered Students
                         </span>
                         <span class="m-widget24__number">
-                          78%
+                          89%
                         </span>
                       </div>
                     </div>

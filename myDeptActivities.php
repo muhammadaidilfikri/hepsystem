@@ -295,191 +295,191 @@ if ($has_active_semester) {
                   </tr>
                 </thead>
                 <tbody>
-                  <?php
-                  // Get activities for current semester
-                  if ($has_active_semester && $has_dept_access) {
-                      $sql_events = mysqli_query($connection, "SELECT da.*, d.dept_name, s.sem_english 
-                          FROM dept_activities da 
-                          JOIN dept d ON da.dept_id = d.dept_id 
-                          LEFT JOIN semesters s ON da.kod_sem = s.kod_sem 
-                          WHERE (da.addedBy = '$_SESSION[username]' OR da.dept_id IN (SELECT dept_id FROM dept_advisor WHERE staffID='$_SESSION[username]'))
-                          AND da.kod_sem = '$active_semester'
-                          AND (da.is_active = 1 OR da.is_active IS NULL)
-                          ORDER BY da.date_start ASC") or die ("SQL Error: " . mysqli_error($connection));
-                  } else {
-                      $sql_events = mysqli_query($connection, "SELECT * FROM dept_activities WHERE 1=0");
+                <?php
+                // Get activities for current semester 
+                if ($has_active_semester && $has_dept_access) {
+                    $sql_events = mysqli_query($connection, "SELECT da.*, d.dept_name, s.sem_english 
+                        FROM dept_activities da 
+                        JOIN dept d ON da.dept_id = d.dept_id 
+                        LEFT JOIN semesters s ON da.kod_sem = s.kod_sem 
+                        WHERE da.dept_id IN (SELECT dept_id FROM dept_advisor WHERE staffID='$sxid')
+                        AND da.kod_sem = '$active_semester'
+                        AND (da.is_active = 1 OR da.is_active IS NULL)
+                        ORDER BY da.date_start ASC") or die ("SQL Error: " . mysqli_error($connection));
+                } else {
+                    $sql_events = mysqli_query($connection, "SELECT * FROM dept_activities WHERE 1=0");
+                }
+                
+                $z = 1;
+                $resultSearch = "";
+                $regError = 0;
+                
+                if (mysqli_num_rows($sql_events) > 0) {
+                    while ($row = mysqli_fetch_array($sql_events)) {
+
+                      $dact_id = $row["dact_id"];
+                      $dept_id = $row["dept_id"];
+                      $dact_name = $row["dact_name"];
+                      $dept_name = $row["dept_name"] ?? '';
+                      $level_id = $row["level_id"];
+                      $date_s = date_create($row["date_start"]);
+                      $date_e = date_create($row["date_end"]);
+                      $total_pax = $row["total_pax"];
+                      $addedBy = $row["addedBy"];
+                      $dept_stat = $row["dept_stat"];
+                      $budget = $row["budget"];
+                      $location = $row["location"];
+                      $dept_allow = $row["dept_allow"];
+                      $kod_sem = $row["kod_sem"];
+                      $sem_english = $row["sem_english"] ?? '';
+                      $token = $row["token"];
+
+                      if ($dept_allow=='y') {
+                        $allow = "Yes";
+                      } else {
+                        $allow = "No";
+                      }
+
+                      // Status display
+                      $c_stat = "<span class=\"m-badge m-badge--warning m-badge--wide\">Pending</span>"; 
+                      if ($dept_stat=='a') {
+                        $c_stat = "<span class=\"m-badge m-badge--success m-badge--wide\">Approved</span>";
+                      } else if ($dept_stat=='x') {
+                        $c_stat = "<span class=\"m-badge m-badge--metal m-badge--wide\">Postponed</span>";
+                      } else if ($dept_stat=='r') {
+                        $c_stat = "<span class=\"m-badge m-badge--danger m-badge--wide\">Rejected</span>";
+                      }
+
+                      // Level display
+                      if ($level_id==1) {
+                        $lvl = "International";
+                      } else if ($level_id==2) {
+                        $lvl = "National";
+                      } else if ($level_id==3) {
+                        $lvl = "State";
+                      } else if ($level_id==4) {
+                        $lvl = "District";
+                      } else if ($level_id==5) {
+                        $lvl = "University";
+                      } else if ($level_id==6) {
+                        $lvl = "Campus";
+                      } else if ($level_id==7) {
+                        $lvl = "Mentor/Mentee";
+                      } else if ($level_id==8) {
+                        $lvl = "College";
+                      } else if ($level_id==9) { 
+                          $lvl = "MDS";
+                      } else if ($level_id==10) {
+                          $lvl = "Bicara Interaktif Siswa";
+                      } else {
+                          $lvl = "Unknown";
+                      }
+                ?>
+                <tr>
+                  <td scope="row"><?php echo $z ?></td>
+                  <td><?php echo $dept_name ?></td>
+                  <td><?php echo $dact_name ?>(<?php echo $dact_id ?>)<br><br>
+                    <?php
+                    if($dept_stat!='a') {
+                      // No buttons for non-approved activities
+                    } else {
+                    ?>
+                    <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=c&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Committee" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
+                      <span>
+                        <i class="fa flaticon-user-add"></i>
+                        <span>Committee</span>
+                      </span>
+                    </a>
+                    <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=p&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Participant" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
+                      <span>
+                        <i class="fa flaticon-user-add"></i>
+                        <span>Contestant</span>
+                      </span>
+                    </a>
+                    <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=a&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Audience" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
+                      <span>
+                        <i class="fa flaticon-user-add"></i>
+                        <span>Audience</span>
+                      </span>
+                    </a>
+                    <a href="RegisteredListD.php?dact_id=<?php echo $dact_id ?>&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Overall List" class="btn btn-info m-btn btn-sm m-btn m-btn--icon">
+                      <span>
+                        <i class="fa flaticon-list"></i>
+                        <span>Overall List</span>
+                      </span>
+                    </a>
+                    <?php
+                    }
+                    ?>
+                  </td>
+                  <td><?php echo $addedBy ?></td>
+                  <td>
+                    <strong><?php echo $kod_sem; ?></strong><br>
+                    <?php echo $sem_english; ?>
+                  </td>
+                  <td>
+                    <?php
+                    if (date_format($date_s, 'd/m/y')==date_format($date_e, 'd/m/y')) {
+                      echo date_format($date_s, 'd/m/Y');
+                    } else {
+                      echo date_format($date_s, 'd/m'); ?> to <?php echo date_format($date_e, 'd/m/Y');
+                    }
+                    ?><br>
+                    <?php echo date_format($date_s, 'G:i a'); ?> to <?php echo date_format($date_e, 'G:i a'); ?>
+                  </td>
+                  <td><b><?php echo countDeptStdRegistered($dact_id) ?></b></td>
+                  <td><?php echo $lvl ?></td>
+                  <td><?php echo $c_stat ?></td>
+                  <td>
+                    <a href="editActivityDept.php?dact_id=<?php echo $token ?>" class="btn btn-warning m-btn btn-sm m-btn m-btn--icon">
+                      <span>
+                        <i class="fa flaticon-edit-1"></i>
+                        <span>Edit</span>
+                      </span>
+                    </a>
+                  </td>
+                </tr>
+                <?php
+                $z++;
                   }
-
-                  $z = 1;
-                  $resultSearch = "";
-                  $regError = 0;
-                  
-                  if (mysqli_num_rows($sql_events) > 0) {
-                      while ($row = mysqli_fetch_array($sql_events)) {
-
-                        $dact_id = $row["dact_id"];
-                        $dept_id = $row["dept_id"];
-                        $dact_name = $row["dact_name"];
-                        $dept_name = $row["dept_name"] ?? '';
-                        $level_id = $row["level_id"];
-                        $date_s = date_create($row["date_start"]);
-                        $date_e = date_create($row["date_end"]);
-                        $total_pax = $row["total_pax"];
-                        $addedBy = $row["addedBy"];
-                        $dept_stat = $row["dept_stat"];
-                        $budget = $row["budget"];
-                        $location = $row["location"];
-                        $dept_allow = $row["dept_allow"];
-                        $kod_sem = $row["kod_sem"];
-                        $sem_english = $row["sem_english"] ?? '';
-                        $token = $row["token"];
-
-                        if ($dept_allow=='y') {
-                          $allow = "Yes";
-                        } else {
-                          $allow = "No";
-                        }
-
-                        // Status display
-                        $c_stat = "<span class=\"m-badge m-badge--warning m-badge--wide\">Pending</span>"; 
-                        if ($dept_stat=='a') {
-                          $c_stat = "<span class=\"m-badge m-badge--success m-badge--wide\">Approved</span>";
-                        } else if ($dept_stat=='x') {
-                          $c_stat = "<span class=\"m-badge m-badge--metal m-badge--wide\">Postponed</span>";
-                        } else if ($dept_stat=='r') {
-                          $c_stat = "<span class=\"m-badge m-badge--danger m-badge--wide\">Rejected</span>";
-                        }
-
-                        // Level display
-                        if ($level_id==1) {
-                          $lvl = "International";
-                        } else if ($level_id==2) {
-                          $lvl = "National";
-                        } else if ($level_id==3) {
-                          $lvl = "State";
-                        } else if ($level_id==4) {
-                          $lvl = "District";
-                        } else if ($level_id==5) {
-                          $lvl = "University";
-                        } else if ($level_id==6) {
-                          $lvl = "Campus";
-                        } else if ($level_id==7) {
-                          $lvl = "Mentor/Mentee";
-                        } else if ($level_id==8) {
-                          $lvl = "College";
-                        } else if ($level_id==9) { 
-                            $lvl = "MDS";
-                        } else if ($level_id==10) {
-                            $lvl = "Bicara Interaktif Siswa";
-                        } else {
-                            $lvl = "Unknown";
-                        }
+                } else {
                   ?>
                   <tr>
-                    <td scope="row"><?php echo $z ?></td>
-                    <td><?php echo $dept_name ?></td>
-                    <td><?php echo $dact_name ?>(<?php echo $dact_id ?>)<br><br>
-                      <?php
-                      if($dept_stat!='a') {
-                        // No buttons for non-approved activities
-                      } else {
-                      ?>
-                      <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=c&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Committee" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
-                        <span>
-                          <i class="fa flaticon-user-add"></i>
-                          <span>Committee</span>
-                        </span>
-                      </a>
-                      <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=p&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Participant" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
-                        <span>
-                          <i class="fa flaticon-user-add"></i>
-                          <span>Contestant</span>
-                        </span>
-                      </a>
-                      <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=a&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Audience" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
-                        <span>
-                          <i class="fa flaticon-user-add"></i>
-                          <span>Audience</span>
-                        </span>
-                      </a>
-                      <a href="RegisteredListD.php?dact_id=<?php echo $dact_id ?>&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Overall List" class="btn btn-info m-btn btn-sm m-btn m-btn--icon">
-                        <span>
-                          <i class="fa flaticon-list"></i>
-                          <span>Overall List</span>
-                        </span>
-                      </a>
-                      <?php
-                      }
-                      ?>
-                    </td>
-                    <td><?php echo $addedBy ?></td>
-                    <td>
-                      <strong><?php echo $kod_sem; ?></strong><br>
-                      <?php echo $sem_english; ?>
-                    </td>
-                    <td>
-                      <?php
-                      if (date_format($date_s, 'd/m/y')==date_format($date_e, 'd/m/y')) {
-                        echo date_format($date_s, 'd/m/Y');
-                      } else {
-                        echo date_format($date_s, 'd/m'); ?> to <?php echo date_format($date_e, 'd/m/Y');
-                      }
-                      ?><br>
-                      <?php echo date_format($date_s, 'G:i a'); ?> to <?php echo date_format($date_e, 'G:i a'); ?>
-                    </td>
-                    <td><b><?php echo countDeptStdRegistered($dact_id) ?></b></td>
-                    <td><?php echo $lvl ?></td>
-                    <td><?php echo $c_stat ?></td>
-                    <td>
-                      <a href="editActivityDept.php?dact_id=<?php echo $token ?>" class="btn btn-warning m-btn btn-sm m-btn m-btn--icon">
-                        <span>
-                          <i class="fa flaticon-edit-1"></i>
-                          <span>Edit</span>
-                        </span>
-                      </a>
-                    </td>
+                      <td colspan="10" class="text-center">
+                          <?php if (!$has_active_semester): ?>
+                              <div class="m-alert m-alert--icon m-alert--outline alert alert-warning" role="alert">
+                                  <div class="m-alert__icon">
+                                      <i class="la la-warning"></i>
+                                  </div>
+                                  <div class="m-alert__text">
+                                      <strong>No active semester found.</strong> Please activate a semester to view activities.
+                                  </div>
+                              </div>
+                          <?php elseif (!$has_dept_access): ?>
+                              <div class="m-alert m-alert--icon m-alert--outline alert alert-info" role="alert">
+                                  <div class="m-alert__icon">
+                                      <i class="la la-info-circle"></i>
+                                  </div>
+                                  <div class="m-alert__text">
+                                      <strong>No department access.</strong> You are not assigned as a department advisor. Please contact administrator if you need department access.
+                                  </div>
+                              </div>
+                          <?php else: ?>
+                              <div class="m-alert m-alert--icon m-alert--outline alert alert-info" role="alert">
+                                  <div class="m-alert__icon">
+                                      <i class="la la-info-circle"></i>
+                                  </div>
+                                  <div class="m-alert__text">
+                                      <strong>No activities found for the current semester.</strong> 
+                                  </div>
+                              </div>
+                          <?php endif; ?>
+                      </td>
                   </tr>
                   <?php
-                  $z++;
-                    }
-                  } else {
-                    ?>
-                    <tr>
-                        <td colspan="10" class="text-center">
-                            <?php if (!$has_active_semester): ?>
-                                <div class="m-alert m-alert--icon m-alert--outline alert alert-warning" role="alert">
-                                    <div class="m-alert__icon">
-                                        <i class="la la-warning"></i>
-                                    </div>
-                                    <div class="m-alert__text">
-                                        <strong>No active semester found.</strong> Please activate a semester to view activities.
-                                    </div>
-                                </div>
-                            <?php elseif (!$has_dept_access): ?>
-                                <div class="m-alert m-alert--icon m-alert--outline alert alert-info" role="alert">
-                                    <div class="m-alert__icon">
-                                        <i class="la la-info-circle"></i>
-                                    </div>
-                                    <div class="m-alert__text">
-                                        <strong>No department access.</strong> You are not assigned as a department advisor. Please contact administrator if you need department access.
-                                    </div>
-                                </div>
-                            <?php else: ?>
-                                <div class="m-alert m-alert--icon m-alert--outline alert alert-info" role="alert">
-                                    <div class="m-alert__icon">
-                                        <i class="la la-info-circle"></i>
-                                    </div>
-                                    <div class="m-alert__text">
-                                        <strong>No activities found for the current semester.</strong> 
-                                    </div>
-                                </div>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                    <?php
-                  }
-                  ?>
-                </tbody>
+                }
+                ?>
+              </tbody>
               </table>
             </div>
           </div>
