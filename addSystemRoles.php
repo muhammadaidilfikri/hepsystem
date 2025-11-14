@@ -9,8 +9,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 }
 
 // Get token from URL instead of staffID
-$token = filter_input(INPUT_GET, "token", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-
+$token = filter_input(INPUT_GET, "staffID", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 $staffData = null;
 
@@ -18,12 +17,7 @@ $staffData = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
     $staffID = mysqli_real_escape_string($connection, $_POST['staffID']);
 
-    $sql = "
-        SELECT a.*, s.is_active, s.roleid
-        FROM acstaff a
-        LEFT JOIN sysrole_acstaff s ON a.staffID = s.staffID
-        WHERE a.staffID = ?
-    ";
+    $sql = "select a.*, s.is_active, s.roleid from acstaff a left join sysrole_acstaff s on a.staffID = s.staffID where a.staffID = ?";
 
     $stmt = $connection->prepare($sql);
     $stmt->bind_param("s", $staffID);
@@ -43,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
 
 // Fetch roles for dropdown
 $roles = [];
-$roleQuery = mysqli_query($connection, "SELECT * FROM sysroles ORDER BY roleid ASC");
+$roleQuery = mysqli_query($connection, "select * from sysroles order by roleid ASC");
 if (!$roleQuery) {
     die("Error fetching roles: " . mysqli_error($connection));
 }
@@ -51,37 +45,44 @@ while ($row = mysqli_fetch_assoc($roleQuery)) {
     $roles[] = $row;
 }
 
+function getDeptID($connection, $staffID) {
+    $stmt = $connection->prepare("select dept_id from dept_advisor where staffID = ?");
+    $stmt->bind_param("s", $staffID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        return $row['dept_id'];
+    }
+    return null;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
     $staffID = $_POST['staffID'];
     $role = $_POST['role'];
     $allow_access = $_POST['allow_access'] ?? '';
     $is_active = ($allow_access === 'YES') ? 1 : 0;
+    $created_at = date('Y-m-d H:i:s');
 
-    // Check if staff record already exists
-    $checkStmt = $connection->prepare("SELECT staffID FROM sysrole_acstaff WHERE staffID = ?");
+    // Ambik dept_id
+    $dept_id = getDeptID($connection, $staffID);
+
+    // Check if record exists
+    $checkStmt = $connection->prepare("select staffID from sysrole_acstaff where staffID = ?");
     $checkStmt->bind_param("s", $staffID);
     $checkStmt->execute();
     $checkStmt->store_result();
 
     if ($checkStmt->num_rows > 0) {
-        // --- Record exists: just update ---
-        $updateStmt = $connection->prepare("
-            UPDATE sysrole_acstaff 
-            SET roleid = ?, is_active = ? 
-            WHERE staffID = ?
-        ");
-        $updateStmt->bind_param("iis", $role, $is_active, $staffID);
+        // UPDATE existing
+        $updateStmt = $connection->prepare("update sysrole_acstaff set roleid = ?, is_active = ?, dept_id = ? where staffID = ?");
+        $updateStmt->bind_param("iiis", $role, $is_active, $dept_id, $staffID);
     } else {
-        // --- New record: insert and generate token ---
+        // INSERT new
         $token = generateToken(32);
-        $updateStmt = $connection->prepare("
-            INSERT INTO sysrole_acstaff (staffID, roleid, is_active, token, created_at)
-            VALUES (?, ?, ?, ?, NOW())
-        ");
-        $updateStmt->bind_param("siis", $staffID, $role, $is_active, $token);
+        $updateStmt = $connection->prepare("insert into sysrole_acstaff (staffID, roleid, is_active, token, dept_id, created_at) VALUES (?, ?, ?, ?, ?, ?)");
+        $updateStmt->bind_param("siisis", $staffID, $role, $is_active, $token, $dept_id, $created_at);
     }
 
-    // Execute
     if ($updateStmt->execute()) {
         echo "<script>
             alert('Staff role and access updated successfully!');
@@ -122,9 +123,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
             }
         });
     </script>
-
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <!-- Base Styles -->
     <link href="assets/vendors/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" type="text/css" />
@@ -214,7 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
                                                         <option value="">Select Role</option>
                                                         <?php foreach ($roles as $r) { ?>
                                                             <option value="<?php echo htmlspecialchars($r['roleid']); ?>"
-                                                                <?php if (isset($staffData['role']) && $staffData['role'] == $r['roleid']) echo 'selected'; ?>>
+                                                                <?php if (isset($staffData['roleid']) && $staffData['roleid'] == $r['roleid']) echo 'selected'; ?>>
                                                                 <?php echo htmlspecialchars($r['roletitle']); ?>
                                                             </option>
                                                         <?php } ?>
@@ -223,7 +221,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
 
                                                 <div class="col-md-6">
                                                     <label>Allow Access</label>
-                                                    <select name="allow_access" class="form-control">
+                                                    <select name="allow_access" class="form-control" required>
                                                         <option value="" selected>Select Access</option>
                                                         <option value="YES">Yes</option>
                                                         <option value="NO">No</option>
@@ -254,7 +252,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
     </div>
 
     <!-- JS Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="assets/vendors/base/vendors.bundle.js"></script>
     <script src="assets/demo/default/base/scripts.bundle.js"></script>
     <script src="assets/vendors/custom/fullcalendar/fullcalendar.bundle.js"></script>

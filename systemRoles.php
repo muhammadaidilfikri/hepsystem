@@ -12,11 +12,10 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 $uid = $_SESSION['username'];
 
 // Check the user's role
-$sql = "SELECT sr.roletitle, sa.is_active
-        FROM sysrole_acstaff sa
-        JOIN sysroles sr ON sr.roleid = sa.roleid
-        WHERE sa.staffID = '$uid'
-        LIMIT 1";
+$sql = "select sr.roletitle, sa.is_active from sysrole_acstaff sa
+        join sysroles sr ON sr.roleid = sa.roleid
+        where sa.staffID = '$uid'
+        limit 1";
 $result = mysqli_query($connection, $sql);
 $row = mysqli_fetch_assoc($result);
 
@@ -211,17 +210,9 @@ if ($role != 'IT Administrator' || $active != 1) {
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $sql_events = mysqli_query($connection, "
-                                        SELECT 
-                                            sysrole_acstaff.staffID,
-                                            sysrole_acstaff.token,
-                                            acstaff.nama,
-                                            sysroles.roletitle,
-                                            sysrole_acstaff.is_active,
-                                            sysrole_acstaff.created_at
-                                        FROM sysrole_acstaff
-                                        JOIN acstaff ON acstaff.staffID = sysrole_acstaff.staffID
-                                        JOIN sysroles ON sysroles.roleid = sysrole_acstaff.roleid
+                                    $sql_events = mysqli_query($connection, " select sysrole_acstaff.staffID, sysrole_acstaff.token, acstaff.nama, sysroles.roletitle, sysrole_acstaff.is_active, sysrole_acstaff.created_at from sysrole_acstaff
+                                        join acstaff ON acstaff.staffID = sysrole_acstaff.staffID
+                                        join sysroles ON sysroles.roleid = sysrole_acstaff.roleid
                                         
                                         ORDER BY sysrole_acstaff.staffID ASC
                                     ") or die(mysqli_error($connection));
