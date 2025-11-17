@@ -22,10 +22,12 @@ $row = mysqli_fetch_assoc($result);
 $role = ($row['roletitle']);
 $active = $row['is_active'];
 
-// Allow only active IT Administrators
-if ($role != 'IT Administrator' || $active != 1) {
+if (
+    ($role != 'IT Administrator' && $role != 'Super Administrator')
+    || $active != 1
+) {
     echo "<script>
-            alert('Access denied. Only IT Administrators can access this page.');
+            alert('Access denied. Only IT Administrators or Super Administrators can access this page.');
             window.location.href='main.php';
           </script>";
     exit;
