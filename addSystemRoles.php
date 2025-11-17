@@ -18,7 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
     $stmt->bind_param("s", $staffID);
     $stmt->execute();
     $result = $stmt->get_result();
-
     if ($result && $result->num_rows > 0) {
         $staffData = $result->fetch_assoc();
     } else {
@@ -33,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
 $roles = [];
 $roleQuery = mysqli_query($connection, "select * from sysroles order by roleid asc");
 if (!$roleQuery) {
-    die("Error fetching roles: " . mysqli_error($connection));
+    die("Error fetching roles: ");
 }
 while ($row = mysqli_fetch_assoc($roleQuery)) {
     $roles[] = $row;

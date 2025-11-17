@@ -12,14 +12,14 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 $uid = $_SESSION['username'];
 
 // Check the user's role
-$sql = "select sr.roletitle, sa.is_active from sysrole_acstaff sa
-        join sysroles sr ON sr.roleid = sa.roleid
-        where sa.staffID = '$uid'
-        limit 1";
-$result = mysqli_query($connection, $sql);
+$sql = "select sr.roletitle, sa.is_active from sysrole_acstaff sa join sysroles sr ON sr.roleid = sa.roleid where sa.staffID = ?";
+$stmt = $connection->prepare($sql);
+$stmt->bind_param("s", $uid);
+$stmt->execute();
+$result = $stmt->get_result();
 $row = mysqli_fetch_assoc($result);
 
-$role = ($row['roletitle']);
+$role = $row['roletitle'];
 $active = $row['is_active'];
 
 if (
