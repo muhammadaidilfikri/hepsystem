@@ -8,28 +8,16 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     exit;
 }
 
-// Get token from URL instead of staffID
-$token = filter_input(INPUT_GET, "token", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-
-
+$token = filter_input(INPUT_GET, "staffID", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $staffData = null;
 
-// Search staff details
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
     $staffID = mysqli_real_escape_string($connection, $_POST['staffID']);
-
-    $sql = "
-        SELECT a.*, s.is_active, s.roleid
-        FROM acstaff a
-        LEFT JOIN sysrole_acstaff s ON a.staffID = s.staffID
-        WHERE a.staffID = ?
-    ";
-
+    $sql = "select a.*, s.is_active, s.roleid from acstaff a left join sysrole_acstaff s on a.staffID = s.staffID where a.staffID = ?";
     $stmt = $connection->prepare($sql);
     $stmt->bind_param("s", $staffID);
     $stmt->execute();
     $result = $stmt->get_result();
-
     if ($result && $result->num_rows > 0) {
         $staffData = $result->fetch_assoc();
     } else {
@@ -41,14 +29,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
     $stmt->close();
 }
 
-// Fetch roles for dropdown
 $roles = [];
-$roleQuery = mysqli_query($connection, "SELECT * FROM sysroles ORDER BY roleid ASC");
+$roleQuery = mysqli_query($connection, "select * from sysroles order by roleid asc");
 if (!$roleQuery) {
-    die("Error fetching roles: " . mysqli_error($connection));
+    die("Error fetching roles: ");
 }
 while ($row = mysqli_fetch_assoc($roleQuery)) {
     $roles[] = $row;
+}
+
+function getDeptID($connection, $staffID) {
+    $stmt = $connection->prepare("select dept_id from dept_advisor where staffID = ?");
+    $stmt->bind_param("s", $staffID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        return $row['dept_id'];
+    }
+    return null;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
@@ -56,32 +54,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
     $role = $_POST['role'];
     $allow_access = $_POST['allow_access'] ?? '';
     $is_active = ($allow_access === 'YES') ? 1 : 0;
+    $created_at = date('Y-m-d H:i:s');
+    $dept_id = getDeptID($connection, $staffID);
 
-    // Check if staff record already exists
-    $checkStmt = $connection->prepare("SELECT staffID FROM sysrole_acstaff WHERE staffID = ?");
+    $checkStmt = $connection->prepare("select staffID from sysrole_acstaff where staffID = ?");
     $checkStmt->bind_param("s", $staffID);
     $checkStmt->execute();
     $checkStmt->store_result();
 
     if ($checkStmt->num_rows > 0) {
-        // --- Record exists: just update ---
-        $updateStmt = $connection->prepare("
-            UPDATE sysrole_acstaff 
-            SET roleid = ?, is_active = ? 
-            WHERE staffID = ?
-        ");
-        $updateStmt->bind_param("iis", $role, $is_active, $staffID);
+        $updateStmt = $connection->prepare("update sysrole_acstaff set roleid = ?, is_active = ?, dept_id = ? WHERE staffID = ?");
+        $updateStmt->bind_param("iiis", $role, $is_active, $dept_id, $staffID);
     } else {
-        // --- New record: insert and generate token ---
         $token = generateToken(32);
-        $updateStmt = $connection->prepare("
-            INSERT INTO sysrole_acstaff (staffID, roleid, is_active, token, created_at)
-            VALUES (?, ?, ?, ?, NOW())
-        ");
-        $updateStmt->bind_param("siis", $staffID, $role, $is_active, $token);
+        $updateStmt = $connection->prepare("insert into sysrole_acstaff (staffID, roleid, is_active, token, dept_id, created_at) values (?, ?, ?, ?, ?, ?)");
+        $updateStmt->bind_param("siisis", $staffID, $role, $is_active, $token, $dept_id, $created_at);
     }
 
-    // Execute
     if ($updateStmt->execute()) {
         echo "<script>
             alert('Staff role and access updated successfully!');
@@ -110,7 +99,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Web font -->
     <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
     <script>
         WebFont.load({
@@ -123,39 +111,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
         });
     </script>
 
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-    <!-- Base Styles -->
     <link href="assets/vendors/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" type="text/css" />
     <link href="assets/vendors/base/vendors.bundle.css" rel="stylesheet" type="text/css" />
     <link href="assets/demo/default/base/style.bundle.css" rel="stylesheet" type="text/css" />
     <link href="assets/vendors/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
-
     <link rel="shortcut icon" href="assets/demo/default/media/img/logo/favicon.ico" />
 </head>
 
-<body class="m-page--fluid m--skin- m-content--skin-light2 
-             m-header--fixed m-header--fixed-mobile 
-             m-aside-left--enabled m-aside-left--skin-dark 
-             m-aside-left--offcanvas m-footer--push 
-             m-aside--offcanvas-default">
-
+<body class="m-page--fluid m--skin- m-content--skin-light2 m-header--fixed m-header--fixed-mobile m-aside-left--enabled m-aside-left--skin-dark m-aside-left--offcanvas m-footer--push m-aside--offcanvas-default">
     <div class="m-grid m-grid--hor m-grid--root m-page">
-
         <?php include("menuheader.php"); ?>
-
         <div class="m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body">
-
             <button class="m-aside-left-close m-aside-left-close--skin-dark" id="m_aside_left_close_btn">
                 <i class="la la-close"></i>
             </button>
-
             <?php include("mainmenu.php"); ?>
-
             <div class="m-grid__item m-grid__item--fluid m-wrapper">
                 <div class="m-content">
-
                     <?php if (isset($_SESSION['msg'])): ?>
                         <div class="alert alert-info">
                             <?php echo $_SESSION['msg']; unset($_SESSION['msg']); ?>
@@ -172,8 +144,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
                         </div>
 
                         <div class="m-portlet__body">
-
-                            <!-- Search Section -->
                             <div class="card mb-4">
                                 <div class="card-header" style="background:#F7FBFF; color:black;">Search Staff</div>
                                 <div class="card-body">
@@ -184,7 +154,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
                                 </div>
                             </div>
 
-                            <!-- Staff Details Section -->
                             <?php if (!empty($staffData)) {
                                 $isActive = $staffData['is_active'] ?? 0;
                             ?>
@@ -213,8 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
                                                     <select name="role" class="form-control" required>
                                                         <option value="">Select Role</option>
                                                         <?php foreach ($roles as $r) { ?>
-                                                            <option value="<?php echo htmlspecialchars($r['roleid']); ?>"
-                                                                <?php if (isset($staffData['role']) && $staffData['role'] == $r['roleid']) echo 'selected'; ?>>
+                                                            <option value="<?php echo htmlspecialchars($r['roleid']); ?>" <?php if (isset($staffData['roleid']) && $staffData['roleid'] == $r['roleid']) echo 'selected'; ?>>
                                                                 <?php echo htmlspecialchars($r['roletitle']); ?>
                                                             </option>
                                                         <?php } ?>
@@ -223,9 +191,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
 
                                                 <div class="col-md-6">
                                                     <label>Allow Access</label>
-                                                    <select name="allow_access" class="form-control">
-                                                        <option value="" selected>Select Access</option>
-                                                        <option value="YES">Yes</option>
+                                                    <select name="allow_access" class="form-control" required>
+                                                        <option value="" selected>Select Access</option> 
+                                                        <option value="YES">Yes</option> 
                                                         <option value="NO">No</option>
                                                     </select>
                                                 </div>
@@ -241,7 +209,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
                             <?php } ?>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -253,13 +220,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
         <i class="la la-arrow-up"></i>
     </div>
 
-    <!-- JS Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="assets/vendors/base/vendors.bundle.js"></script>
     <script src="assets/demo/default/base/scripts.bundle.js"></script>
     <script src="assets/vendors/custom/fullcalendar/fullcalendar.bundle.js"></script>
     <script src="assets/app/js/dashboard.js"></script>
     <script src="assets/vendors/custom/datatables/datatables.bundle.js"></script>
-
 </body>
 </html>

@@ -14,29 +14,14 @@ $kew_id = $_POST['kew_id'];
 $total_pax = $_POST['total_pax'];
 $dept_allow = $_POST['dept_allow'];
 $token = generateToken(32);
-$addedBy = $_SESSION["username"];
-$date_added = date("Y/m/d H:i:s");
 $dept_stat = $_POST['dept_stat'];
-
-//echo $dact_id."<br>";
-//echo $dact_name."<br>";
-//echo $date_start."<br>";
-//echo $date_end."<br>";
-//echo $location."<br>";
-//echo $level_id."<br>";
-//echo $budget."<br>";
-//echo $total_pax."<br>";
-//echo $dept_allow."<br>";
-//echo $addedBy."<br>";
-//echo $date_added."<br>";
-//echo $dept_stat."<br>";
+$date_added = date("Y/m/d H:i:s"); 
 
 $query = "select * from dept_activities where dact_id=? ";
 $stmt = $mysqli->prepare($query);
 $stmt->bind_param("i", $dact_id);
 $stmt->execute();
 $result = $stmt->get_result();
-
 
 if ($result->num_rows == 0) {
     echo "<script>
@@ -45,9 +30,10 @@ if ($result->num_rows == 0) {
          </script>";
 }
 else {
-    $sql = "update dept_activities set kew_id=?, total_pax=?, dact_name=?, date_start=?, date_end=?, location=?, level_id=?, budget=?, dept_allow=?, dept_stat=?, date_added=?, addedBy=?, token=? where dact_id=?";
+    
+    $sql = "update dept_activities set kew_id=?, total_pax=?, dact_name=?, date_start=?, date_end=?, location=?, level_id=?, budget=?, dept_allow=?, dept_stat=?, token=? where dact_id=?";
     $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param("iissssidsssssi", $kew_id, $total_pax, $dact_name, $date_start, $date_end, $location, $level_id, $budget, $dept_allow, $dept_stat, $date_added, $addedBy, $token, $dact_id);
+    $stmt->bind_param("iissssidsssi", $kew_id, $total_pax, $dact_name, $date_start, $date_end, $location, $level_id, $budget, $dept_allow, $dept_stat, $token, $dact_id);
     $stmt->execute();
 
     echo "<script>

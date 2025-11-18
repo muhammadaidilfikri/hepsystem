@@ -12,21 +12,22 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 $uid = $_SESSION['username'];
 
 // Check the user's role
-$sql = "SELECT sr.roletitle, sa.is_active
-        FROM sysrole_acstaff sa
-        JOIN sysroles sr ON sr.roleid = sa.roleid
-        WHERE sa.staffID = '$uid'
-        LIMIT 1";
-$result = mysqli_query($connection, $sql);
+$sql = "select sr.roletitle, sa.is_active from sysrole_acstaff sa join sysroles sr ON sr.roleid = sa.roleid where sa.staffID = ?";
+$stmt = $connection->prepare($sql);
+$stmt->bind_param("s", $uid);
+$stmt->execute();
+$result = $stmt->get_result();
 $row = mysqli_fetch_assoc($result);
 
-$role = ($row['roletitle']);
+$role = $row['roletitle'];
 $active = $row['is_active'];
 
-// Allow only active IT Administrators
-if ($role != 'IT Administrator' || $active != 1) {
+if (
+    ($role != 'IT Administrator' && $role != 'Super Administrator')
+    || $active != 1
+) {
     echo "<script>
-            alert('Access denied. Only IT Administrators can access this page.');
+            alert('Access denied. Only IT Administrators or Super Administrators can access this page.');
             window.location.href='main.php';
           </script>";
     exit;
@@ -211,17 +212,9 @@ if ($role != 'IT Administrator' || $active != 1) {
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $sql_events = mysqli_query($connection, "
-                                        SELECT 
-                                            sysrole_acstaff.staffID,
-                                            sysrole_acstaff.token,
-                                            acstaff.nama,
-                                            sysroles.roletitle,
-                                            sysrole_acstaff.is_active,
-                                            sysrole_acstaff.created_at
-                                        FROM sysrole_acstaff
-                                        JOIN acstaff ON acstaff.staffID = sysrole_acstaff.staffID
-                                        JOIN sysroles ON sysroles.roleid = sysrole_acstaff.roleid
+                                    $sql_events = mysqli_query($connection, " select sysrole_acstaff.staffID, sysrole_acstaff.token, acstaff.nama, sysroles.roletitle, sysrole_acstaff.is_active, sysrole_acstaff.created_at from sysrole_acstaff
+                                        join acstaff ON acstaff.staffID = sysrole_acstaff.staffID
+                                        join sysroles ON sysroles.roleid = sysrole_acstaff.roleid
                                         
                                         ORDER BY sysrole_acstaff.staffID ASC
                                     ") or die(mysqli_error($connection));

@@ -550,28 +550,27 @@ if ($has_active_semester) {
                 </div>
 
                 <div class="form-group">
-                  <label for="date_start" class="form-control-label">Date Start</label>
-                  <div class="input-group date" data-z-index="1100">
-                    <input type="text" name="date_start" class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2_modal" data-date-format="yyyy-m-d H:i:s" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required />
-                    <div class="input-group-append">
-                      <span class="input-group-text">
-                        <i class="la la-calendar-check-o glyphicon-th"></i>
-                      </span>
+                <label for="date_start" class="form-control-label">Date Start</label>
+                    <div class="input-group date" data-z-index="1100">
+                      <input type="text"  name="date_start"  class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2_modal" data-date-format="yyyy-m-d H:i:s" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required />
+                      <div class="input-group-append">
+                        <span class="input-group-text">
+                          <i class="la la-calendar-check-o glyphicon-th"></i>
+                        </span>
+                      </div>
                     </div>
-                  </div>
                 </div>
-
                 <div class="form-group">
                   <label for="date_start" class="form-control-label">Date End</label>
-                  <div class="input-group date" data-z-index="1100">
-                    <input type="text" name="date_end" class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2" data-date-format="yyyy-m-d H:i:s" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required />
-                    <div class="input-group-append">
-                      <span class="input-group-text">
-                        <i class="la la-calendar-check-o glyphicon-th"></i>
-                      </span>
-                    </div>
+                      <div class="input-group date" data-z-index="1100">
+                        <input type="text"  name="date_end"  class="form-control m-input" readonly placeholder="Select date & time" id="m_datetimepicker_2" data-date-format="yyyy-m-d H:i:s" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required />
+                        <div class="input-group-append">
+                          <span class="input-group-text">
+                            <i class="la la-calendar-check-o glyphicon-th"></i>
+                          </span>
+                        </div>
+                      </div>
                   </div>
-                </div>
 
                 <div class="form-group">
                   <label for="message-text" class="form-control-label">Activity / Event Level</label>

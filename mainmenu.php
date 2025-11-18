@@ -22,7 +22,8 @@ if ($row = mysqli_fetch_assoc($getRole)) {
 }
 
 $isModerator = ($userRole === 'Moderator' && $allowAccess == 1);
-$isITAdmin   = ($userRole === 'IT Administrator' && $allowAccess == 1);
+$isITAdministrator   = ($userRole === 'IT Administrator' && $allowAccess == 1);
+$isSuperAdministrator   = ($userRole === 'Super Administrator' && $allowAccess == 1);
 ?>
 
 <div id="m_aside_left" class="m-grid__item	m-aside-left  m-aside-left--skin-dark ">
@@ -139,7 +140,7 @@ $isITAdmin   = ($userRole === 'IT Administrator' && $allowAccess == 1);
 			?>
 
 			<?php
-			if ($isModerator || $isITAdmin)
+			if ($isModerator || $isITAdministrator || $isSuperAdministrator)
 			{
 			?>
 			<li class="m-menu__section ">
@@ -395,7 +396,7 @@ $isITAdmin   = ($userRole === 'IT Administrator' && $allowAccess == 1);
 			?>
 
 			<?php
-			if ($isITAdmin)
+			if ($isITAdministrator || $isSuperAdministrator)
 			{
 			?>
 			<li class="m-menu__section ">

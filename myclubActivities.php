@@ -299,7 +299,7 @@ if ($has_active_semester) {
                         FROM club_activities ca 
                         JOIN club c ON ca.club_id = c.club_id 
                         LEFT JOIN semesters s ON ca.kod_sem = s.kod_sem 
-                        WHERE (ca.addedBy = '$_SESSION[username]' OR ca.club_id IN (SELECT club_id FROM club_advisor WHERE staffID='$_SESSION[username]'))
+                        WHERE ca.club_id IN (SELECT club_id FROM club_advisor WHERE staffID='$sxid')
                         AND ca.kod_sem = '$active_semester'
                         AND (ca.is_active = 1 OR ca.is_active IS NULL)
                         ORDER BY ca.date_start ASC") or die ("SQL Error: " . mysqli_error($connection));

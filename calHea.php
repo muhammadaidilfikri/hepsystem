@@ -1,8 +1,7 @@
 <?php
 include ("dbconnect.php");
 
-$sql_events = mysqli_query($connection, "select * from club_activities where club_stat='a' ") or die (mysql_error());
-
+$sql_events = mysqli_query($connection, "SELECT * FROM club_activities WHERE club_stat='a' AND (is_active = 1 OR is_active IS NULL)") or die (mysqli_error($connection));
 $events = array();
 while($row = mysqli_fetch_array($sql_events))
 {
