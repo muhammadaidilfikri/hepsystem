@@ -11,19 +11,20 @@ else {
 	$xx=1;
 }
 
-// Get user role from sysrole_acstaff & sysroles
-$userRole = '';
-$allowAccess = 0;
+// // Get user role from sysrole_acstaff & sysroles
+// $userRole = 0;
+// $allowAccess = 0;
 
-$getRole = mysqli_query($connection, " select sr.roletitle, sa.is_active from sysrole_acstaff sa join sysroles sr on sr.roleid = sa.roleid where sa.staffID = '$uid' limit 1")or die(mysqli_error($connection));
-if ($row = mysqli_fetch_assoc($getRole)) {
-	$userRole = $row['roletitle'];
-	$allowAccess = $row['is_active'];
-}
+// $getRole = mysqli_query($connection, " select sr.roleid, sa.is_active from sysrole_acstaff sa join sysroles sr on sr.roleid = sa.roleid where sa.staffID = '$uid' limit 1")or die(mysqli_error($connection));
+// if ($row = mysqli_fetch_assoc($getRole)) {
+// 	$userRole = (int)$row['roleid']; 
+// 	$allowAccess = $row['is_active'];
+// }
 
-$isModerator = ($userRole === 'Moderator' && $allowAccess == 1);
-$isITAdministrator   = ($userRole === 'IT Administrator' && $allowAccess == 1);
-$isSuperAdministrator   = ($userRole === 'Super Administrator' && $allowAccess == 1);
+// // $isModerator = ($userRole == 1 && $allowAccess == 1);
+// // $isITAdministrator   = ($userRole == 2 && $allowAccess == 1);
+// // $isSuperAdministrator   = ($userRole == 3 && $allowAccess == 1);
+// // 
 ?>
 
 <div id="m_aside_left" class="m-grid__item	m-aside-left  m-aside-left--skin-dark ">
@@ -139,10 +140,11 @@ $isSuperAdministrator   = ($userRole === 'Super Administrator' && $allowAccess =
 			}
 			?>
 
-			<?php
-			if ($isModerator || $isITAdministrator || $isSuperAdministrator)
+			<!-- <?php
+			// if ($isModerator || $isITAdministrator || $isSuperAdministrator)
+			if($_SESSION['roleid'] == 1 || $_SESSION['roleid'] == 2 || $_SESSION['roleid'] == 3)
 			{
-			?>
+			?> -->
 			<li class="m-menu__section ">
 				<h4 class="m-menu__section-text">
 					 CRS Moderators
@@ -391,14 +393,14 @@ $isSuperAdministrator   = ($userRole === 'Super Administrator' && $allowAccess =
 					</ul>
 				</div>
 			</li>
-			<?php
+			<!-- <?php
 			}
-			?>
+			?> -->
 
-			<?php
-			if ($isITAdministrator || $isSuperAdministrator)
+			<!-- <?php
+			if (isset($_SESSION['roleid']) && $_SESSION['roleid'] == 2 || $_SESSION['roleid'] == 3)
 			{
-			?>
+			?> -->
 			<li class="m-menu__section ">
 				<h4 class="m-menu__section-text">IT Administrator</h4>
 				<i class="m-menu__section-icon flaticon-more-v3"></i>
@@ -427,11 +429,10 @@ $isSuperAdministrator   = ($userRole === 'Super Administrator' && $allowAccess =
 					</ul>
 				</div>
 			</li>
-			<?php
+			<!-- <?php
 			}
-			?>
+			?> -->
 
 		</ul>
 	</div>
-	<!-- END: Aside Menu -->
 </div>

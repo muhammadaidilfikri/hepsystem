@@ -1,11 +1,16 @@
 <?php
-$uid = $_SESSION['username'];
+$uid = $_SESSION['username']; //staffID
 
 $sql_events = mysqli_query($connection, "select * from acstaff where staffID='$uid' ") or die (mysql_error());
 
 while ($row = mysqli_fetch_array($sql_events)) {
 
-	$fullname = $row["nama"];
+	if(isset($_SESSION['nama'])){
+		$fullname = $_SESSION['nama'];
+	}
+	else{
+		$fullname = $row["nama"];	
+	}
 	$gelaran = $row["gelaran"];
 
 	
