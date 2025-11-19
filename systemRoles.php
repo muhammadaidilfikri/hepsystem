@@ -7,31 +7,19 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: index.php");
     exit;
 }
+//legends
+//roleid 1 = Moderator
+//roleid 2 = IT Administrator
+//roleid 3 = Super Administrator
+$allowedroles = array(2,3); //roles allowed to access this page
+if (!in_array($_SESSION['roleid'], $allowedroles)) {
+    header("Location: logout.php");
+}
 
 // Get current user's staff ID
 $uid = $_SESSION['username'];
 
-// Check the user's role
-$sql = "select sr.roletitle, sa.is_active from sysrole_acstaff sa join sysroles sr ON sr.roleid = sa.roleid where sa.staffID = ?";
-$stmt = $connection->prepare($sql);
-$stmt->bind_param("s", $uid);
-$stmt->execute();
-$result = $stmt->get_result();
-$row = mysqli_fetch_assoc($result);
 
-$role = $row['roletitle'];
-$active = $row['is_active'];
-
-if (
-    ($role != 'IT Administrator' && $role != 'Super Administrator')
-    || $active != 1
-) {
-    echo "<script>
-            alert('Access denied. Only IT Administrators or Super Administrators can access this page.');
-            window.location.href='main.php';
-          </script>";
-    exit;
-}
 ?>
 
 <!DOCTYPE html>
@@ -211,13 +199,13 @@ if (
                                     </tr>
                                 </thead>
                                 <tbody>
+
                                     <?php
                                     $sql_events = mysqli_query($connection, " select sysrole_acstaff.staffID, sysrole_acstaff.token, acstaff.nama, sysroles.roletitle, sysrole_acstaff.is_active, sysrole_acstaff.created_at from sysrole_acstaff
                                         join acstaff ON acstaff.staffID = sysrole_acstaff.staffID
                                         join sysroles ON sysroles.roleid = sysrole_acstaff.roleid
-                                        
                                         ORDER BY sysrole_acstaff.staffID ASC
-                                    ") or die(mysqli_error($connection));
+                                    ");
 
                                     $z = 1;
                                     while ($row = mysqli_fetch_array($sql_events)) {

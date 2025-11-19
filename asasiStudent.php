@@ -7,9 +7,16 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     header("location: index.php");
     exit;
 }
+
+//legends
+//roleid 1 = Moderator
+//roleid 2 = IT Administrator
+//roleid 3 = Super Administrator
+$allowedroles = array(1,2,3); //roles allowed to access this page
+if (!in_array($_SESSION['roleid'], $allowedroles)) {
+    header("Location: logout.php");
+}
 ?>
-
-
 
 <!DOCTYPE html>
 
@@ -74,8 +81,8 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 	<body  class="m-page--fluid m--skin- m-content--skin-light2 m-header--fixed m-header--fixed-mobile m-aside-left--enabled m-aside-left--skin-dark m-aside-left--offcanvas m-footer--push m-aside--offcanvas-default"  >
 		<!-- begin:: Page -->
 		<div class="m-grid m-grid--hor m-grid--root m-page">
-			<!-- BEGIN: Header -->
-			<? include ("menuheader.php")?>
+						<!-- BEGIN: Header -->
+			<?php include ("menuheader.php")?>
 			<!-- END: Header -->
 		<!-- begin::Body -->
 			<div class="m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body">
@@ -85,7 +92,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 				</button>
 				<!-- Start : Left Aside -->
 
-				<? include ("mainmenu.php")?>
+				<?php include ("mainmenu.php")?>
 				<!-- END: Left Aside -->
 				<div class="m-grid__item m-grid__item--fluid m-wrapper">
 					<!-- BEGIN: Subheader -->
