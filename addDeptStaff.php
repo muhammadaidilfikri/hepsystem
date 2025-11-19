@@ -8,6 +8,15 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     exit;
 }
 
+//legends
+//roleid 1 = SUPER ADMINISTRATOR
+//roleid 2 = IT ADMINISTRATOR
+//roleid 3 = HEP
+$allowedroles = array(3); //roles allowed to access this page
+if (!in_array($_SESSION['roleid'], $allowedroles)) {
+    header("Location: logout.php");
+}
+
 //$sid = $_GET["dept_id"];
 $sid = filter_input(INPUT_GET, 'dept_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 ?>

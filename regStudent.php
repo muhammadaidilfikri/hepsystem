@@ -3,6 +3,20 @@ session_start();
 include("dbconnect.php");
 include("iqfunction.php");
 
+if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+    header("location: index.php");
+    exit;
+}
+
+//legends
+//roleid 1 = SUPER ADMINISTRATOR
+//roleid 2 = IT ADMINISTRATOR
+//roleid 3 = HEP
+$allowedroles = array(3); //roles allowed to access this page
+if (!in_array($_SESSION['roleid'], $allowedroles)) {
+    header("Location: logout.php");
+}
+
 $stdNo = $_POST['stdNo'];
 $club_id = $_POST['club_id'];
 $club_token = getClubToken($club_id);

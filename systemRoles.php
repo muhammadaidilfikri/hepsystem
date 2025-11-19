@@ -7,10 +7,19 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: index.php");
     exit;
 }
+//legends
+//roleid 1 = SUPER ADMINISTRATOR
+//roleid 2 = IT ADMINISTRATOR
+//roleid 3 = HEP
+$allowedroles = array(1,2); //roles allowed to access this page
+if (!in_array($_SESSION['roleid'], $allowedroles)) {
+    header("Location: logout.php");
+}
 
 // Get current user's staff ID
 $uid = $_SESSION['username'];
 
+<<<<<<< HEAD
 // Check the user's role
 $sql = "select sr.roletitle, sa.is_active from sysrole_acstaff sa join sysroles sr ON sr.roleid = sa.roleid where sa.staffID = ?";
 $stmt = $connection->prepare($sql);
@@ -33,6 +42,8 @@ $active = $row['is_active'];
 //           </script>";
 //     exit;
 // }
+=======
+>>>>>>> 94204b890ac13541a21cc996c09a60ee7fe6ca7a
 ?>
 
 <!DOCTYPE html>
@@ -212,13 +223,13 @@ $active = $row['is_active'];
                                     </tr>
                                 </thead>
                                 <tbody>
+
                                     <?php
                                     $sql_events = mysqli_query($connection, " select sysrole_acstaff.staffID, sysrole_acstaff.token, acstaff.nama, sysroles.roletitle, sysrole_acstaff.is_active, sysrole_acstaff.created_at from sysrole_acstaff
                                         join acstaff ON acstaff.staffID = sysrole_acstaff.staffID
                                         join sysroles ON sysroles.roleid = sysrole_acstaff.roleid
-                                        
                                         ORDER BY sysrole_acstaff.staffID ASC
-                                    ") or die(mysqli_error($connection));
+                                    ");
 
                                     $z = 1;
                                     while ($row = mysqli_fetch_array($sql_events)) {
@@ -235,8 +246,8 @@ $active = $row['is_active'];
                                             <td><?php echo $roletitle; ?></td>
                                             <td>
                                                 <?php echo ($access == 1) ? 
-                                                    '<span style="color: green; font-weight: bold;">Yes</span>' :
-                                                    '<span style="color: red; font-weight: bold;">No</span>'; 
+                                                    '<span class="m-badge m-badge--success m-badge--wide">Yes</span>' : 
+                                                    '<span class="m-badge m-badge--danger m-badge--wide">No</span>';
                                                 ?>
                                             </td>
                                             <td><?php echo date_format($date_s, 'd/m/Y g:i a'); ?></td>
