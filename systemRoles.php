@@ -19,19 +19,20 @@ $stmt->execute();
 $result = $stmt->get_result();
 $row = mysqli_fetch_assoc($result);
 
+
 $role = $row['roletitle'];
 $active = $row['is_active'];
 
-if (
-    ($role != 'IT Administrator' && $role != 'Super Administrator')
-    || $active != 1
-) {
-    echo "<script>
-            alert('Access denied. Only IT Administrators or Super Administrators can access this page.');
-            window.location.href='main.php';
-          </script>";
-    exit;
-}
+// if (
+//     ($role != 'IT Administrator' && $role != 'Super Administrator')
+//     || $active != 1
+// ) {
+//     echo "<script>
+//             alert('Access denied. Only IT Administrators or Super Administrators can access this page.');
+//             window.location.href='main.php';
+//           </script>";
+//     exit;
+// }
 ?>
 
 <!DOCTYPE html>
