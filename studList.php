@@ -8,6 +8,15 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     exit;
 }
 
+//legends
+//roleid 1 = Moderator
+//roleid 2 = IT Administrator
+//roleid 3 = Super Administrator
+$allowedroles = array(1,2,3); //roles allowed to access this page
+if (!in_array($_SESSION['roleid'], $allowedroles)) {
+    header("Location: logout.php");
+}
+
 $sid = $_GET["club_id"];
 ?>
 

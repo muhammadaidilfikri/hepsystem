@@ -7,6 +7,15 @@
 		header("location: index.php");
 		exit;
 	}
+	
+	//legends
+	//roleid 1 = Moderator
+	//roleid 2 = IT Administrator
+	//roleid 3 = Super Administrator
+	$allowedroles = array(1,2,3); //roles allowed to access this page
+	if (!in_array($_SESSION['roleid'], $allowedroles)) {
+		header("Location: logout.php");
+	}
 	//$sid = $_GET["club_id"];
 	$sid = filter_input(INPUT_GET, 'club_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 	
