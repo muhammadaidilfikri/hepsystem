@@ -9,10 +9,10 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 }
 
 //legends
-//roleid 1 = Moderator
-//roleid 2 = IT Administrator
-//roleid 3 = Super Administrator
-$allowedroles = array(1,2,3); //roles allowed to access this page
+//roleid 1 = SUPER ADMINISTRATOR
+//roleid 2 = IT ADMINISTRATOR
+//roleid 3 = HEP
+$allowedroles = array(2,3); //roles allowed to access this page
 if (!in_array($_SESSION['roleid'], $allowedroles)) {
     header("Location: logout.php");
 }
@@ -295,7 +295,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kod_sem']) && $_POST[
                                                     <td><?php echo $z++; ?></td>
                                                     <td><?php echo $row['kod_sem']; ?></td>
                                                     <td><?php echo $row['sem_english']; ?></td>
-                                                    <td><span style="color: #27ae60; font-weight: 600;">Active</span></td>
+                                                    <td ><span class="m-badge m-badge--info m-badge--wide">Active</span></td>
+                                                
                                                 </tr>
                                             <?php } ?>
                                         </tbody>
