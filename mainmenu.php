@@ -140,11 +140,10 @@ else {
 			}
 			?>
 
-			<!-- <?php
-			// if ($isModerator || $isITAdministrator || $isSuperAdministrator)
-			if($_SESSION['roleid'] == 1 || $_SESSION['roleid'] == 2 || $_SESSION['roleid'] == 3)
+			<?php
+			if($_SESSION['roleid'] == 3)
 			{
-			?> -->
+			?>
 			<li class="m-menu__section ">
 				<h4 class="m-menu__section-text">
 					 CRS Moderators
@@ -288,7 +287,14 @@ else {
 					</ul>
 				</div>
 			</li>
+			<?php
+			}
+			?>
 
+			<?php
+			if (isset($_SESSION['roleid']) && $_SESSION['roleid'] == 2 || $_SESSION['roleid'] == 3)
+			{
+			?> 
 			<li class="m-menu__section ">
 				<h4 class="m-menu__section-text">
 					 Preferences
@@ -340,7 +346,14 @@ else {
 					</ul>
 				</div>
 			</li>
+			<?php
+			}
+			?>
 
+			<?php
+			if (isset($_SESSION['roleid']) && $_SESSION['roleid'] == 3)
+			{
+			?> 
 			<li class="m-menu__section ">
 				<h4 class="m-menu__section-text">
 					 Reporting
@@ -393,14 +406,14 @@ else {
 					</ul>
 				</div>
 			</li>
-			<!-- <?php
+			<?php
 			}
-			?> -->
+			?>
 
-			<!-- <?php
-			if (isset($_SESSION['roleid']) && $_SESSION['roleid'] == 2 || $_SESSION['roleid'] == 3)
+			<?php
+			if (isset($_SESSION['roleid']) && $_SESSION['roleid'] == 1 || $_SESSION['roleid'] == 2)
 			{
-			?> -->
+			?> 
 			<li class="m-menu__section ">
 				<h4 class="m-menu__section-text">IT Administrator</h4>
 				<i class="m-menu__section-icon flaticon-more-v3"></i>
