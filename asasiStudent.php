@@ -7,9 +7,16 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     header("location: index.php");
     exit;
 }
+
+//legends
+//roleid 1 = SUPER ADMINISTRATOR
+//roleid 2 = IT ADMINISTRATOR
+//roleid 3 = HEP
+$allowedroles = array(2,3); //roles allowed to access this page
+if (!in_array($_SESSION['roleid'], $allowedroles)) {
+    header("Location: logout.php");
+}
 ?>
-
-
 
 <!DOCTYPE html>
 
@@ -74,7 +81,11 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 	<body  class="m-page--fluid m--skin- m-content--skin-light2 m-header--fixed m-header--fixed-mobile m-aside-left--enabled m-aside-left--skin-dark m-aside-left--offcanvas m-footer--push m-aside--offcanvas-default"  >
 		<!-- begin:: Page -->
 		<div class="m-grid m-grid--hor m-grid--root m-page">
+<<<<<<< HEAD
 			<!-- BEGIN: Header -->
+=======
+						<!-- BEGIN: Header -->
+>>>>>>> b666f8971a55824b894a49de9dcd86aeaec4d614
 			<?php include ("menuheader.php")?>
 			<!-- END: Header -->
 		<!-- begin::Body -->

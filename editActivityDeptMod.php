@@ -3,6 +3,20 @@ session_start();
 include("dbconnect.php");
 include("iqfunction.php");
 
+if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+    header("location: index.php");
+    exit;
+}
+
+//legends
+//roleid 1 = SUPER ADMINISTRATOR
+//roleid 2 = IT ADMINISTRATOR
+//roleid 3 = HEP
+$allowedroles = array(3); //roles allowed to access this page
+if (!in_array($_SESSION['roleid'], $allowedroles)) {
+    header("Location: logout.php");
+}
+
 // Get token from URL parameter
 $dact_ida = filter_input(INPUT_GET, "dact_id", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 

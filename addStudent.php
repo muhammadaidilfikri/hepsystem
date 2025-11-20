@@ -7,6 +7,15 @@
 		header("location: index.php");
 		exit;
 	}
+
+	//legends
+	//roleid 1 = SUPER ADMINISTRATOR
+	//roleid 2 = IT ADMINISTRATOR
+	//roleid 3 = HEP
+	$allowedroles = array(3); //roles allowed to access this page
+	if (!in_array($_SESSION['roleid'], $allowedroles)) {
+		header("Location: logout.php");
+	}
 	//$sid = $_GET["club_id"];
 	$sid = filter_input(INPUT_GET, 'club_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 	
@@ -98,7 +107,7 @@
 						<form action="regStudent.php" method="post">
 
 							<?php
-							$sql_events2 = mysqli_query($connection, "select * from club where token='$sid' ") or die (mysqli_error());
+							/*$sql_events2 = mysqli_query($connection, "select * from club where token='$sid' ") or die (mysqli_error());
 							while ($row = mysqli_fetch_array($sql_events2)) {
 
 								$club_id = $row["club_id"];
@@ -106,8 +115,18 @@
 								$club_max = $row["club_max"];
 								$club_stat = $row["club_stat"];
 								$club_obj = $row["club_obj"];
-
-									}
+							}	*/
+								//updated database record retrieval process
+								$sqlCheck = "SELECT * FROM club WHERE token = ?";
+								$stmtCheck = $mysqli->prepare($sqlCheck);
+								$stmtCheck->bind_param("s", $sid);
+								$stmtCheck->execute();
+								$resultCheck = $stmtCheck->get_result();
+								if($resultCheck->num_rows > 0) {
+									$row = $resultCheck->fetch_assoc();
+									$club_id = $row["club_id"];
+									$club_name = $row["club_name"];
+								}
 								?>
 
 								<input type="hidden" id="club_id" name="club_id" value="<?php echo $club_id ?>">
@@ -161,59 +180,70 @@
 	</div>
 	</div>
 	<div class="m-portlet__body">
-	<table class="table table-striped- table-bordered table-hover table-checkable" id="m_table_1">
-		<thead>
-		<tr>
-			<th>No</th>
-			<th>Student No</th>
-			<th>Name</th>
-			<th>Program</th>
-			<th>Club Name</th>
-			<th>Actions</th>
-		</tr>
-		</thead>
-		<tbody>
-		<?php
-		$sql_events = mysqli_query($connection, "select * from club,club_registration,student where  club.club_id=club_registration.club_id and student.stdNo=club_registration.stdNo and club_registration.club_id='$sid' ") or die (mysqli_error());
-		$z =1;
+    <table class="table table-striped- table-bordered table-hover table-checkable" id="m_table_1">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Student No</th>
+                <th>Name</th>
+                <th>Program</th>
+                <th>Club Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
 
-		while ($row = mysqli_fetch_array($sql_events)) {
-			$reg_id = $row["reg_id"];
-			$club_id = $row["club_id"];
-			$club_name = $row["club_name"];
-			$stdName = $row["stdName"];
-			$stdNo = $row["stdNo"];
-			$progCode = $row["progCode"];
-
-		?>
-		<tr>
-			<th scope="row"><?php echo $z ?></th>
-
-			<td><?php echo $stdNo ?></td>
-			<td><?php echo $stdName ?></td>
-			<td><?php echo $progCode ?></td>
-			<td><?php echo $club_name ?></td>
-			<td>
-			<a href="deleteRegisterStudent.php?reg_id=<?php echo $reg_id ?>&club_id=<?php echo $club_id ?>" class="btn btn-danger m-btn btn-sm 	m-btn m-btn--icon">
-				<span>
-				<i class="fa flaticon-delete"></i>
-				<span>Drop Student</span>
-				</span>
-			</a>
-
-			</td>
-
-		</tr>
-		<?php
-		$z++;
-		}
-		?>
-
-
-		</tbody>
-	</table>
-
-	</div>
+			// Retrieve and display all students registered to the selected club using a secure prepared statement
+            $sql_events = "SELECT c.*, cr.*, s.* 
+                          FROM club c, club_registration cr, student s 
+                          WHERE c.club_id = cr.club_id 
+                          AND s.stdNo = cr.stdNo 
+                          AND cr.club_id = ?";
+            
+            $stmt = $connection->prepare($sql_events);
+            $stmt->bind_param("s", $club_id); 
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            $z = 1;
+            
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $reg_id = $row["reg_id"];
+                    $club_id = $row["club_id"];
+                    $club_name = $row["club_name"];
+                    $stdName = $row["stdName"];
+                    $stdNo = $row["stdNo"];
+                    $progCode = $row["progCode"];
+            ?>
+            <tr>
+                <th scope="row"><?php echo $z ?></th>
+                <td><?php echo htmlspecialchars($stdNo) ?></td>
+                <td><?php echo htmlspecialchars($stdName) ?></td>
+                <td><?php echo htmlspecialchars($progCode) ?></td>
+                <td><?php echo htmlspecialchars($club_name) ?></td>
+                <td>
+                    <a href="deleteRegisterStudent.php?reg_id=<?php echo $reg_id ?>&club_id=<?php echo $club_id ?>" 
+                       class="btn btn-danger m-btn btn-sm m-btn--icon"
+                       onclick="return confirm('Are you sure you want to drop this student?')">
+                        <span>
+                            <i class="fa flaticon-delete"></i>
+                            <span>Drop Student</span>
+                        </span>
+                    </a>
+                </td>
+            </tr>
+            <?php
+                    $z++;
+                }
+            } else {
+                echo "<tr><td colspan='6' class='text-center'>No students registered for this club.</td></tr>";
+            }
+            ?>
+        </tbody>
+    </table>
+</div>
 	</div>
 	<!--end::Portlet-->
 	</div>
