@@ -43,26 +43,26 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
         <link href="assets/vendors/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
         <style>
         /* Donut charts get built from Pie charts but with a fundamentally difference in the drawing approach. The donut is drawn using arc strokes for maximum freedom in styling */
-.ct-series-a .ct-slice-donut {
-  /* give the donut slice a custom colour */
-  stroke: #8E44AD;
+        .ct-series-a .ct-slice-donut {
+          /* give the donut slice a custom colour */
+          stroke: #8E44AD;
 
-}
-.ct-series-b .ct-slice-donut {
-  /* give the donut slice a custom colour */
-  stroke: #26C281;
+        }
+        .ct-series-b .ct-slice-donut {
+          /* give the donut slice a custom colour */
+          stroke: #26C281;
 
-}
-.ct-series-c .ct-slice-donut {
-  /* give the donut slice a custom colour */
-  stroke: #E43A45;
+        }
+        .ct-series-c .ct-slice-donut {
+          /* give the donut slice a custom colour */
+          stroke: #E43A45;
 
-}
-.ct-series-d .ct-slice-donut {
-  /* give the donut slice a custom colour */
-  stroke: #F3C200;
+        }
+        .ct-series-d .ct-slice-donut {
+          /* give the donut slice a custom colour */
+          stroke: #F3C200;
 
-}
+        }
 
         </style>
 
@@ -75,7 +75,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 		<!-- begin:: Page -->
 		<div class="m-grid m-grid--hor m-grid--root m-page">
 			<!-- BEGIN: Header -->
-			<? include ("menuheader.php")?>
+			<?php include ("menuheader.php")?>
 			<!-- END: Header -->
 		<!-- begin::Body -->
 			<div class="m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body">
@@ -85,7 +85,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 				</button>
 				<!-- Start : Left Aside -->
 
-				<? include ("mainmenu.php")?>
+				<?php include ("mainmenu.php")?>
 				<!-- END: Left Aside -->
 				<div class="m-grid__item m-grid__item--fluid m-wrapper">
 					<!-- BEGIN: Subheader -->
@@ -110,7 +110,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                           Total Students
                         </span>
                         <span class="m-widget24__stats m--font-brand">
-                          <? countStudent();?>
+                          <?php countStudent();?>
                         </span>
                         <div class="m--space-10"></div>
                         <div class="progress m-progress--sm">
@@ -137,7 +137,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                           Total Staff
                         </span>
                         <span class="m-widget24__stats m--font-info">
-                          <? countAdministration();?>
+                          <?php countAdministration();?>
                         </span>
                         <div class="m--space-10"></div>
                         <div class="progress m-progress--sm">
@@ -163,7 +163,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                         <span class="m-widget24__desc">
                           Total Staff</span>
                         <span class="m-widget24__stats m--font-danger">
-                          <? countAcademic();?>
+                          <?php countAcademic();?>
                         </span>
                         <div class="m--space-10"></div>
                         <div class="progress m-progress--sm">
@@ -240,7 +240,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                     <th>Student ID</th>
                     <th>Name</th>
                     <th>Semester</th>
-                    <th>Gender </th>
+                    <th>Gender</th>
                     <th>Prog Code</th>
                     <th>Phone</th>
                     <th>Email</th>
@@ -248,7 +248,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                   </tr>
                 </thead>
                 <tbody>
-                  <?
+                  <?php
                   $sql_events = mysqli_query($connection, "select * from student,stdactive where stdactive.stdNo=student.stdNo  order by stdName asc  ") or die (mysqli_error());
                   $z =1;
 
@@ -265,18 +265,18 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
                   ?>
                   <tr>
-                    <th scope="row"><? echo $z ?></th>
+                    <th scope="row"><?php echo $z ?></th>
 
-                    <td><? echo $stdNo ?></td>
-                    <td><? echo $stdName ?></td>
-                    <td><? echo $kod_sem ?></td>
-                    <td><? echo $jantina ?></td>
-                    <td><? echo $progCode ?></td>
-                    <td><? echo $noPhone ?></td>
-                    <td><? echo $email ?></td>
-                    <td><? echo sumMarks($stdNo) ?></td>
+                    <td><?php echo $stdNo ?></td>
+                    <td><?php echo $stdName ?></td>
+                    <td><?php echo $kod_sem ?></td>
+                    <td><?php echo $jantina ?></td>
+                    <td><?php echo $progCode ?></td>
+                    <td><?php echo $noPhone ?></td>
+                    <td><?php echo $email ?></td>
+                    <td><?php echo sumMarks($stdNo) ?></td>
                   </tr>
-                  <?
+                  <?php
                   $z++;
                 }
                 ?>
@@ -301,7 +301,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       <!--end::Modal-->
 
 			<!-- end:: Body -->
-    <? include("footer.php"); ?>
+    <?php include("footer.php"); ?>
 		</div>
 		<!-- end:: Page -->
 	    <!-- begin::Scroll Top -->
