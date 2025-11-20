@@ -27,9 +27,48 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             active: function () {
                 sessionStorage.fonts = true;
             }
+<<<<<<< HEAD
+          });
+		</script>
+		<!--end::Web font -->
+        <!--begin::Base Styles -->
+        <!--begin::Page Vendors -->
+		<link href="assets/vendors/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" type="text/css" />
+		<!--end::Page Vendors -->
+		<link href="assets/vendors/base/vendors.bundle.css" rel="stylesheet" type="text/css" />
+		<link href="assets/demo/default/base/style.bundle.css" rel="stylesheet" type="text/css" />
+		<!--end::Base Styles -->
+		<link rel="shortcut icon" href="assets/demo/default/media/img/logo/favicon.ico" />
+	</head>
+	<!-- end::Head -->
+    <!-- end::Body -->
+	<body  class="m-page--fluid m--skin- m-content--skin-light2 m-header--fixed m-header--fixed-mobile m-aside-left--enabled m-aside-left--skin-dark m-aside-left--offcanvas m-footer--push m-aside--offcanvas-default"  >
+		<!-- begin:: Page -->
+		<div class="m-grid m-grid--hor m-grid--root m-page">
+			<!-- BEGIN: Header -->
+			<?php include ("menuheader.php")?>
+			<!-- END: Header -->
+		<!-- begin::Body -->
+			<div class="m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body">
+				<!-- BEGIN: Left Aside -->
+				<button class="m-aside-left-close  m-aside-left-close--skin-dark " id="m_aside_left_close_btn">
+					<i class="la la-close"></i>
+				</button>
+				<?php include ("mainmenu.php")?>
+				<!-- END: Left Aside -->
+				<div class="m-grid__item m-grid__item--fluid m-wrapper">
+					<!-- BEGIN: Subheader -->
+					<div class="m-subheader ">
+						<div class="d-flex align-items-center">
+							<div class="mr-auto">
+								<h3 class="m-subheader__title ">User Reporting Form</h3>
+							</div>
+							<div>
+=======
         });
     </script>
     <!--end::Web font -->
+>>>>>>> b666f8971a55824b894a49de9dcd86aeaec4d614
 
     <!--begin::Base Styles -->
     <link href="assets/vendors/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" type="text/css" />
@@ -120,11 +159,25 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
                                 </form>
 
+<<<<<<< HEAD
+						<!--End::Section-->
+					</div>
+				</div>
+			</div>
+			<!-- end:: Body -->
+<!-- begin::Footer -->
+			<?php include("footer.php"); ?>
+			<!-- end::Footer -->
+		</div>
+		<!-- end:: Page -->
+    		        <!-- begin::Quick Sidebar -->
+=======
                             </div>
                         </div>
 
                     </div>
                     <!--End::Section-->
+>>>>>>> b666f8971a55824b894a49de9dcd86aeaec4d614
 
                 </div>
             </div>

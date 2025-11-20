@@ -50,26 +50,26 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
         <link href="assets/vendors/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
         <style>
         /* Donut charts get built from Pie charts but with a fundamentally difference in the drawing approach. The donut is drawn using arc strokes for maximum freedom in styling */
-.ct-series-a .ct-slice-donut {
-  /* give the donut slice a custom colour */
-  stroke: #8E44AD;
+        .ct-series-a .ct-slice-donut {
+          /* give the donut slice a custom colour */
+          stroke: #8E44AD;
 
-}
-.ct-series-b .ct-slice-donut {
-  /* give the donut slice a custom colour */
-  stroke: #26C281;
+        }
+        .ct-series-b .ct-slice-donut {
+          /* give the donut slice a custom colour */
+          stroke: #26C281;
 
-}
-.ct-series-c .ct-slice-donut {
-  /* give the donut slice a custom colour */
-  stroke: #E43A45;
+        }
+        .ct-series-c .ct-slice-donut {
+          /* give the donut slice a custom colour */
+          stroke: #E43A45;
 
-}
-.ct-series-d .ct-slice-donut {
-  /* give the donut slice a custom colour */
-  stroke: #F3C200;
+        }
+        .ct-series-d .ct-slice-donut {
+          /* give the donut slice a custom colour */
+          stroke: #F3C200;
 
-}
+        }
 
         </style>
 
@@ -81,7 +81,11 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
 	<body  class="m-page--fluid m--skin- m-content--skin-light2 m-header--fixed m-header--fixed-mobile m-aside-left--enabled m-aside-left--skin-dark m-aside-left--offcanvas m-footer--push m-aside--offcanvas-default"  >
 		<!-- begin:: Page -->
 		<div class="m-grid m-grid--hor m-grid--root m-page">
+<<<<<<< HEAD
+			<!-- BEGIN: Header -->
+=======
 						<!-- BEGIN: Header -->
+>>>>>>> b666f8971a55824b894a49de9dcd86aeaec4d614
 			<?php include ("menuheader.php")?>
 			<!-- END: Header -->
 		<!-- begin::Body -->
@@ -117,7 +121,7 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
                           Total Students
                         </span>
                         <span class="m-widget24__stats m--font-brand">
-                          <? countStudent();?>
+                          <?php countStudent();?>
                         </span>
                         <div class="m--space-10"></div>
                         <div class="progress m-progress--sm">
@@ -144,7 +148,7 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
                           Total Staff
                         </span>
                         <span class="m-widget24__stats m--font-info">
-                          <? countAdministration();?>
+                          <?php countAdministration();?>
                         </span>
                         <div class="m--space-10"></div>
                         <div class="progress m-progress--sm">
@@ -170,7 +174,7 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
                         <span class="m-widget24__desc">
                           Total Staff</span>
                         <span class="m-widget24__stats m--font-danger">
-                          <? countAcademic();?>
+                          <?php countAcademic();?>
                         </span>
                         <div class="m--space-10"></div>
                         <div class="progress m-progress--sm">
@@ -247,7 +251,7 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
                     <th>Student ID</th>
                     <th>Name</th>
                     <th>Semester</th>
-                    <th>Gender </th>
+                    <th>Gender</th>
                     <th>Prog Code</th>
                     <th>Phone</th>
                     <th>Email</th>
@@ -255,7 +259,7 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
                   </tr>
                 </thead>
                 <tbody>
-                  <?
+                  <?php
                   $sql_events = mysqli_query($connection, "select * from student,stdactive where stdactive.stdNo=student.stdNo  order by stdName asc  ") or die (mysqli_error());
                   $z =1;
 
@@ -272,18 +276,18 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
 
                   ?>
                   <tr>
-                    <th scope="row"><? echo $z ?></th>
+                    <th scope="row"><?php echo $z ?></th>
 
-                    <td><? echo $stdNo ?></td>
-                    <td><? echo $stdName ?></td>
-                    <td><? echo $kod_sem ?></td>
-                    <td><? echo $jantina ?></td>
-                    <td><? echo $progCode ?></td>
-                    <td><? echo $noPhone ?></td>
-                    <td><? echo $email ?></td>
-                    <td><? echo sumMarks($stdNo) ?></td>
+                    <td><?php echo $stdNo ?></td>
+                    <td><?php echo $stdName ?></td>
+                    <td><?php echo $kod_sem ?></td>
+                    <td><?php echo $jantina ?></td>
+                    <td><?php echo $progCode ?></td>
+                    <td><?php echo $noPhone ?></td>
+                    <td><?php echo $email ?></td>
+                    <td><?php echo sumMarks($stdNo) ?></td>
                   </tr>
-                  <?
+                  <?php
                   $z++;
                 }
                 ?>
@@ -308,7 +312,7 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
       <!--end::Modal-->
 
 			<!-- end:: Body -->
-    <? include("footer.php"); ?>
+    <?php include("footer.php"); ?>
 		</div>
 		<!-- end:: Page -->
 	    <!-- begin::Scroll Top -->

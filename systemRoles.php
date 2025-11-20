@@ -19,6 +19,31 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
 // Get current user's staff ID
 $uid = $_SESSION['username'];
 
+<<<<<<< HEAD
+// Check the user's role
+$sql = "select sr.roletitle, sa.is_active from sysrole_acstaff sa join sysroles sr ON sr.roleid = sa.roleid where sa.staffID = ?";
+$stmt = $connection->prepare($sql);
+$stmt->bind_param("s", $uid);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = mysqli_fetch_assoc($result);
+
+
+$role = $row['roletitle'];
+$active = $row['is_active'];
+
+// if (
+//     ($role != 'IT Administrator' && $role != 'Super Administrator')
+//     || $active != 1
+// ) {
+//     echo "<script>
+//             alert('Access denied. Only IT Administrators or Super Administrators can access this page.');
+//             window.location.href='main.php';
+//           </script>";
+//     exit;
+// }
+=======
+>>>>>>> 94204b890ac13541a21cc996c09a60ee7fe6ca7a
 ?>
 
 <!DOCTYPE html>

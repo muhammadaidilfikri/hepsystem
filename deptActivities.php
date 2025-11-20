@@ -434,7 +434,7 @@ if ($has_active_semester) {
                       if (date_format($date_s, 'd/m/y')==date_format($date_e, 'd/m/y')) {
                         echo date_format($date_s, 'd/m/Y');
                       } else {
-                        echo date_format($date_s, 'd/m'); ?> to <?php echo date_format($date_e, 'd/m/Y');
+                        echo date_format($date_s, 'd/m/Y'); ?> to <?php echo date_format($date_e, 'd/m/Y');
                       }
                       ?><br>
                       <?php echo date_format($date_s, 'G:i a'); ?> to <?php echo date_format($date_e, 'G:i a'); ?>

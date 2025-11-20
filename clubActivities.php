@@ -464,7 +464,7 @@ $regError = 0;
                         echo date_format($date_s, 'd/m/Y');
                       }
                       else {
-                        echo date_format($date_s, 'd/m'); ?> to <?php echo date_format($date_e, 'd/m/Y');
+                        echo date_format($date_s, 'd/m/Y'); ?> to <?php echo date_format($date_e, 'd/m/Y');
                       }
                       ?>
                       <br>
@@ -580,7 +580,7 @@ $regError = 0;
                     } else {
                         // If user can see all clubs, show dropdown with all clubs
                         echo "<option value=\"\">Select Club Name</option>";
-                        $sql_events1 = mysqli_query($connection, "SELECT * FROM club ORDER BY club_name") or die(mysqli_error($connection));
+                        $sql_events1 = mysqli_query($connection, "SELECT * FROM club ORDER BY club_name");
                         while ($row = mysqli_fetch_array($sql_events1)) {
                             $club_id = $row['club_id'];
                             $club_name = $row['club_name'];
@@ -664,7 +664,7 @@ $regError = 0;
                     <select class="custom-select form-control" name="kew_id" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required>
                       <option value='0'>No Fund</option>
                       <?php
-                      $sql_events1 = mysqli_query($connection, "select * from kew order by kew_name ") or die (mysqli_error());
+                      $sql_events1 = mysqli_query($connection, "SELECT * from kew order by kew_name ");
                       while ($row = mysqli_fetch_array($sql_events1)) {
                         $kew_id = $row['kew_id'];
                         $kew_name = $row['kew_name'];
