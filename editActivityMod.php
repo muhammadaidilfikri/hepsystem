@@ -115,7 +115,7 @@ if (!$act_ida) {
                                                      LEFT JOIN club c ON ca.club_id = c.club_id 
                                                      LEFT JOIN club_advisor caa ON c.club_id = caa.club_id 
                                                      LEFT JOIN kew k ON ca.kew_id = k.kew_id 
-                                                     WHERE ca.token = '$act_ida'") or die(mysqli_error($connection));
+                                                     WHERE ca.token = '$act_ida'");
                                                 
                                                 if (mysqli_num_rows($sql_events) > 0) {
                                                     $row = mysqli_fetch_array($sql_events);

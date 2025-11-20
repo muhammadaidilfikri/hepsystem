@@ -30,7 +30,7 @@ $sql_events = mysqli_query($connection, "SELECT da.*, d.dept_name, k.kew_name
                                        FROM dept_activities da 
                                        JOIN dept d ON da.dept_id = d.dept_id 
                                        LEFT JOIN kew k ON da.kew_id = k.kew_id 
-                                       WHERE da.token = '$dact_ida'") or die(mysqli_error($connection));
+                                       WHERE da.token = '$dact_ida'");
 
 if (mysqli_num_rows($sql_events) > 0) {
     $row = mysqli_fetch_array($sql_events);
