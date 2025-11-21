@@ -302,7 +302,7 @@ if ($has_active_semester) {
                         WHERE ca.club_id IN (SELECT club_id FROM club_advisor WHERE staffID='$sxid')
                         AND ca.kod_sem = '$active_semester'
                         AND (ca.is_active = 1 OR ca.is_active IS NULL)
-                        ORDER BY ca.date_start ASC") or die ("SQL Error: " . mysqli_error($connection));
+                        ORDER BY ca.date_start ASC");
                   } else {
                       $sql_events = mysqli_query($connection, "SELECT * FROM club_activities WHERE 1=0");
                   }
@@ -411,7 +411,7 @@ if ($has_active_semester) {
                       if (date_format($date_s, 'd/m/y')==date_format($date_e, 'd/m/y')) {
                         echo date_format($date_s, 'd/m/Y');
                       } else {
-                        echo date_format($date_s, 'd/m'); ?> to <?php echo date_format($date_e, 'd/m/Y');
+                        echo date_format($date_s, 'd/m/Y'); ?> to <?php echo date_format($date_e, 'd/m/Y');
                       }
                       ?><br>
                       <?php echo date_format($date_s, 'G:i a'); ?> to <?php echo date_format($date_e, 'G:i a'); ?>
@@ -510,7 +510,7 @@ if ($has_active_semester) {
                             FROM club c 
                             JOIN club_advisor ca ON c.club_id = ca.club_id 
                             WHERE ca.staffID = '$sxid' 
-                            ORDER BY c.club_name") or die (mysqli_error($connection));
+                            ORDER BY c.club_name");
                         
                         if (mysqli_num_rows($sql_events1) > 0) {
                             while ($row = mysqli_fetch_array($sql_events1)) {
@@ -612,7 +612,7 @@ if ($has_active_semester) {
                   <label for="Name"><b>Budget From</b></label>
                   <select class="custom-select form-control" name="kew_id" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required>
                     <?php
-                    $sql_events1 = mysqli_query($connection, "SELECT * FROM kew ORDER BY kew_name") or die (mysqli_error($connection));
+                    $sql_events1 = mysqli_query($connection, "SELECT * FROM kew ORDER BY kew_name");
                     while ($row = mysqli_fetch_array($sql_events1)) {
                         $kew_id = $row['kew_id'];
                         $kew_name = $row['kew_name'];
