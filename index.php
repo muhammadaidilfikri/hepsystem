@@ -134,7 +134,7 @@ if (isset($_GET['code'])) {
                     </div>
 
                     <!-- Sign In Form -->
-                    <form class="m-login__form m-form" action="checkLogin.php" method="post">
+                    <form class="m-login__form m-form" action="checkLogin.php" method="post" style="margin-bottom: 10px;">
                         <div class="form-group m-form__group">
                             <input class="form-control m-input" type="text" placeholder="Staff ID" name="staffID" autocomplete="off">
                         </div>
@@ -142,7 +142,7 @@ if (isset($_GET['code'])) {
                             <input class="form-control m-input m-login__form-input--last" type="password" placeholder="IC Number (eg 880115-01-1132)" name="nokp">
                         </div>
 
-                        <div class="m-login__form-action">
+                        <div class="m-login__form-action" style="margin-bottom: 15px;">
                             <button id="m_login_signin_submit"
                                 class="btn btn-focus m-btn m-btn--pill m-btn--custom m-btn--air m-login__btn"
                                 style="width: 50%; padding: 10px 0; font-size: 13px;">
@@ -152,7 +152,7 @@ if (isset($_GET['code'])) {
                     </form>
 
                     <!-- Google Login -->
-                    <div class="m-login__form-action text-center">
+                    <div class="m-login__form-action text-center" style="margin-top: 15px;">
                         <a href="<?php echo htmlspecialchars($login_url); ?>" 
                            class="btn btn-danger m-btn m-btn--pill m-btn--custom m-btn--air m-login__btn"
                            style="width: 50%; padding: 10px 0; font-size: 13px;">
