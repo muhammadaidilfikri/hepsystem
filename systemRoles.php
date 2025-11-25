@@ -8,9 +8,10 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     exit;
 }
 //legends
-//roleid 1 = SUPER ADMINISTRATOR
+//roleid 1 = SUPER ADMNISTRATOR
 //roleid 2 = IT ADMINISTRATOR
 //roleid 3 = HEP
+//roleid 4 = HEA
 $allowedroles = array(1,2); //roles allowed to access this page
 if (!in_array($_SESSION['roleid'], $allowedroles)) {
     header("Location: logout.php");

@@ -265,11 +265,11 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
                     if($club_stat=='e')
                     {
-                      $c_stat="Enable";
+                      $c_stat='<span class="m-badge m-badge--success m-badge--wide">Enable</span>';
                     }
                     else if($club_stat=='d')
                     {
-                      $c_stat="Waiting for Approval";
+                      $c_stat='<span class="m-badge m-badge--warning m-badge--wide">Waiting for Approval</span>';
                     }
 
                   ?>
