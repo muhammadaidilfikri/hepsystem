@@ -12,7 +12,7 @@ function checkMyD($username)
 
 	global $connection;
 	$xx = 0;
-	$sql_events = mysqli_query($connection, "select * from dept,dept_advisor where dept.dept_id=dept_advisor.dept_id and dept_advisor.staffID='193632'") or die (mysqli_error());
+	$sql_events = mysqli_query($connection, "select * from dept,dept_advisor where dept.dept_id=dept_advisor.dept_id and dept_advisor.staffID='193632'");
 	$num_rows = mysqli_num_rows($sql_events);
 	if(empty($num_rows))
 	{
@@ -1082,7 +1082,7 @@ function sumMarks($vid)
 {
 
 	global $connection;
-	$sql_events = mysqli_query($connection, "select * from dept_activities as A ,dactreg as B where A.dact_id=B.dact_id and B.stdNo='$vid'") or die (mysqli_error());
+	$sql_events = mysqli_query($connection, "select * from dept_activities as A ,dactreg as B where A.dact_id=B.dact_id and B.stdNo='$vid'");
 
 	$MarksA = 0;
 
@@ -1235,7 +1235,10 @@ function sumMarks($vid)
 		$MarksA += $stdMark;
 	}
 
-	$sql_events1 = mysqli_query($connection, "select * from club_activities as A ,actreg as B where A.act_id=B.act_id and B.stdNo=?");
+	$sql_events1 = mysqli_query($connection, 
+"select * from club_activities as A ,actreg as B 
+ where A.act_id=B.act_id and B.stdNo='$vid'");
+
 
 	$MarksB = 0;
 
@@ -1388,7 +1391,13 @@ function sumMarks($vid)
 		$MarksB += $stdMark;
 	}
 
-	$sql_events2 = mysqli_query($connection, "select sum(com_marks) as com_marks from student, regcom, com_marks where student.stdNo=regcom.stdNo and com_marks.com_id=regcom.com_id and regcom.stdNo=?");
+	$sql_events2 = mysqli_query($connection, 
+"select sum(com_marks) as com_marks 
+ from student, regcom, com_marks 
+ where student.stdNo=regcom.stdNo 
+ and com_marks.com_id=regcom.com_id 
+ and regcom.stdNo='$vid'");
+
 
 	while ($row = mysqli_fetch_array($sql_events2)) {
 
@@ -1399,6 +1408,83 @@ function sumMarks($vid)
 		$tots = $MarksA+$MarksB+$com_marks;
 		return $tots;
 }
+
+// Batch version of sumMarks - calculates marks for multiple students at once (much faster)
+function sumMarksBatch($studentNos) {
+	global $connection;
+	
+	$marksCache = array();
+	
+	if (empty($studentNos)) {
+		return $marksCache;
+	}
+	
+	// Escape student numbers for SQL
+	$escapedNos = array();
+	foreach ($studentNos as $stdNo) {
+		$escapedNos[] = mysqli_real_escape_string($connection, $stdNo);
+	}
+	$studentList = "'" . implode("','", $escapedNos) . "'";
+	
+	// Initialize marks cache
+	foreach ($studentNos as $stdNo) {
+		$marksCache[$stdNo] = 0;
+	}
+	
+	// Helper function to calculate mark based on level and regpoint
+	$calculateMark = function($level_id, $regpoint) {
+		if ($level_id == 1 && ($regpoint == 'c' || $regpoint == 'p')) return 20;
+		else if ($level_id == 1 && $regpoint == 'a') return 2;
+		else if (in_array($level_id, [2,3,4,5]) && ($regpoint == 'c' || $regpoint == 'p')) return 10;
+		else if (in_array($level_id, [2,3,4,5]) && $regpoint == 'a') return 2;
+		else if (in_array($level_id, [6,7,8]) && $regpoint == 'c') return 5;
+		else if (in_array($level_id, [6,7,8]) && $regpoint == 'p') return 4;
+		else if (in_array($level_id, [6,7,8]) && $regpoint == 'a') return 2;
+		else if ($level_id == 9) return 25;
+		else if ($level_id == 10) return 5;
+		return 0;
+	};
+	
+	// Query 1: Get all department activity marks at once
+	$deptQuery = mysqli_query($connection, "
+		SELECT B.stdNo, A.level_id, B.regpoint
+		FROM dept_activities AS A
+		INNER JOIN dactreg AS B ON A.dact_id = B.dact_id
+		WHERE B.stdNo IN ($studentList)
+	");
+	
+	while ($row = mysqli_fetch_array($deptQuery)) {
+		$marksCache[$row['stdNo']] += $calculateMark($row['level_id'], $row['regpoint']);
+	}
+	
+	// Query 2: Get all club activity marks at once
+	$clubQuery = mysqli_query($connection, "
+		SELECT B.stdNo, A.level_id, B.regpoint
+		FROM club_activities AS A
+		INNER JOIN actreg AS B ON A.act_id = B.act_id
+		WHERE B.stdNo IN ($studentList)
+	");
+	
+	while ($row = mysqli_fetch_array($clubQuery)) {
+		$marksCache[$row['stdNo']] += $calculateMark($row['level_id'], $row['regpoint']);
+	}
+	
+	// Query 3: Get all committee marks at once
+	$comQuery = mysqli_query($connection, "
+		SELECT regcom.stdNo, SUM(com_marks.com_marks) as com_marks
+		FROM regcom
+		INNER JOIN com_marks ON regcom.com_id = com_marks.com_id
+		WHERE regcom.stdNo IN ($studentList)
+		GROUP BY regcom.stdNo
+	");
+	
+	while ($row = mysqli_fetch_array($comQuery)) {
+		$marksCache[$row['stdNo']] += $row['com_marks'] ? $row['com_marks'] : 0;
+	}
+	
+	return $marksCache;
+}
+
 function getClubToken($club_id)
 {
 	global $connection;
