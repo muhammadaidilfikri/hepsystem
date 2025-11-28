@@ -428,25 +428,25 @@ $regError = 0;
                       }
                       else {
                       ?>
-                      <a href="registerStdActivity-a.php?act_id=<?php echo $act_id ?>&amp;regpoint=c&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Committee" class="btn btn-primary m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="registerStdActivity-a.php?act_id=<?php echo $token ?>&amp;regpoint=c&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Committee" class="btn btn-primary m-btn btn-sm 	m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-user-add"></i>
                           <span>Committee</span>
                         </span>
                       </a>
-                      <a href="registerStdActivity-a.php?act_id=<?php echo $act_id ?>&amp;regpoint=p&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Participant" class="btn btn-primary m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="registerStdActivity-a.php?act_id=<?php echo $token ?>&amp;regpoint=p&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Participant" class="btn btn-primary m-btn btn-sm 	m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-user-add"></i>
                           <span>Contestant</span>
                         </span>
                       </a>
-                      <a href="registerStdActivity-a.php?act_id=<?php echo $act_id ?>&amp;regpoint=a&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Audience" class="btn btn-primary m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="registerStdActivity-a.php?act_id=<?php echo $token ?>&amp;regpoint=a&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Audience" class="btn btn-primary m-btn btn-sm 	m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-user-add"></i>
                           <span>Audience</span>
                         </span>
                       </a>
-                      <a href="RegisteredList.php?act_id=<?php echo $act_id ?>&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Overall List" class="btn btn-info m-btn btn-sm 	m-btn m-btn--icon">
+                      <a href="RegisteredList.php?act_id=<?php echo $token ?>&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Overall List" class="btn btn-info m-btn btn-sm 	m-btn m-btn--icon">
                         <span>
                           <i class="fa flaticon-list"></i>
                           <span>Overall List</span>
