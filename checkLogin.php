@@ -7,7 +7,7 @@ if (isset($_POST['staffID']) and isset($_POST['nokp'])){
     $userID = $_POST['staffID'];
     $password = $_POST['nokp'];
 
-    //3.1.1 Checking the values are existing in the database or not
+    //3.1.2 Checking the values are existing in the database or not
     $stmt = $connection->prepare("SELECT staffID, nokp FROM acstaff WHERE staffID = ? AND nokp = ?");
     $stmt->bind_param("ss", $userID, $password);
     $stmt->execute();

@@ -1,5 +1,5 @@
 <?php
- session_start();
+session_start();
 require('dbconnect.php');
 require_once 'google-api/vendor/autoload.php';
 
