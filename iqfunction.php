@@ -1409,6 +1409,48 @@ function sumMarks($vid)
 		return $tots;
 }
 
+function countStudentInvolvementBatch($studentNos)
+{
+    global $connection;
+
+    if (empty($studentNos)) return [];
+
+    // Escape student numbers
+    $safeNos = array_map(function($no) use ($connection) {
+        return "'" . mysqli_real_escape_string($connection, $no) . "'";
+    }, $studentNos);
+
+    $inList = implode(",", $safeNos);
+
+    // Query counts from dactreg
+    $sql1 = "SELECT stdNo, COUNT(*) AS cnt FROM dactreg WHERE stdNo IN ($inList) GROUP BY stdNo";
+    $res1 = mysqli_query($connection, $sql1);
+    $counts = [];
+    while ($row = mysqli_fetch_assoc($res1)) {
+        $counts[$row['stdNo']] = (int)$row['cnt'];
+    }
+
+    // Query counts from actreg
+    $sql2 = "SELECT stdNo, COUNT(*) AS cnt FROM actreg WHERE stdNo IN ($inList) GROUP BY stdNo";
+    $res2 = mysqli_query($connection, $sql2);
+    while ($row = mysqli_fetch_assoc($res2)) {
+        if (isset($counts[$row['stdNo']])) {
+            $counts[$row['stdNo']] += (int)$row['cnt'];
+        } else {
+            $counts[$row['stdNo']] = (int)$row['cnt'];
+        }
+    }
+
+    // Ensure all requested students exist in array (even with 0)
+    foreach ($studentNos as $stdNo) {
+        if (!isset($counts[$stdNo])) {
+            $counts[$stdNo] = 0;
+        }
+    }
+
+    return $counts;
+}
+
 // Batch version of sumMarks - calculates marks for multiple students at once (much faster)
 function sumMarksBatch($studentNos) {
 	global $connection;
@@ -1420,10 +1462,9 @@ function sumMarksBatch($studentNos) {
 	}
 	
 	// Escape student numbers for SQL
-	$escapedNos = array();
-	foreach ($studentNos as $stdNo) {
-		$escapedNos[] = mysqli_real_escape_string($connection, $stdNo);
-	}
+	$escapedNos = array_map(function($stdNo) use ($connection) {
+		return mysqli_real_escape_string($connection, $stdNo);
+	}, $studentNos);
 	$studentList = "'" . implode("','", $escapedNos) . "'";
 	
 	// Initialize marks cache
@@ -1445,31 +1486,29 @@ function sumMarksBatch($studentNos) {
 		return 0;
 	};
 	
-	// Query 1: Get all department activity marks at once
+	// Dept/Asasi activities
 	$deptQuery = mysqli_query($connection, "
 		SELECT B.stdNo, A.level_id, B.regpoint
 		FROM dept_activities AS A
 		INNER JOIN dactreg AS B ON A.dact_id = B.dact_id
 		WHERE B.stdNo IN ($studentList)
 	");
-	
-	while ($row = mysqli_fetch_array($deptQuery)) {
+	while ($row = mysqli_fetch_assoc($deptQuery)) {
 		$marksCache[$row['stdNo']] += $calculateMark($row['level_id'], $row['regpoint']);
 	}
 	
-	// Query 2: Get all club activity marks at once
+	// Club activities
 	$clubQuery = mysqli_query($connection, "
 		SELECT B.stdNo, A.level_id, B.regpoint
 		FROM club_activities AS A
 		INNER JOIN actreg AS B ON A.act_id = B.act_id
 		WHERE B.stdNo IN ($studentList)
 	");
-	
-	while ($row = mysqli_fetch_array($clubQuery)) {
+	while ($row = mysqli_fetch_assoc($clubQuery)) {
 		$marksCache[$row['stdNo']] += $calculateMark($row['level_id'], $row['regpoint']);
 	}
 	
-	// Query 3: Get all committee marks at once
+	// Committee/Class participation
 	$comQuery = mysqli_query($connection, "
 		SELECT regcom.stdNo, SUM(com_marks.com_marks) as com_marks
 		FROM regcom
@@ -1477,13 +1516,13 @@ function sumMarksBatch($studentNos) {
 		WHERE regcom.stdNo IN ($studentList)
 		GROUP BY regcom.stdNo
 	");
-	
-	while ($row = mysqli_fetch_array($comQuery)) {
+	while ($row = mysqli_fetch_assoc($comQuery)) {
 		$marksCache[$row['stdNo']] += $row['com_marks'] ? $row['com_marks'] : 0;
 	}
 	
 	return $marksCache;
 }
+
 
 function getClubToken($club_id)
 {
