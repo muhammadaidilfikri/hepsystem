@@ -218,7 +218,7 @@ if (!empty($token)) {
                                                                                         JOIN actreg ON student.stdNo = actreg.stdNo 
                                                                                         JOIN club_activities ON club_activities.act_id = actreg.act_id 
                                                                                         WHERE club_activities.act_id = '$actual_act_id' AND actreg.regpoint = '$regpoint' 
-                                                                                        ORDER BY student.stdName");
+                                                                                        ORDER BY student.stdName") or die(mysqli_error($connection));
                                                 
                                                 $z = 1;
                                                 if (mysqli_num_rows($sql_events) > 0) {

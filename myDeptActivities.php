@@ -283,11 +283,11 @@ if ($has_active_semester) {
                 <thead>
                   <tr>
                     <th>No</th>
-                    <th>Department Name</th>
+                    <th>Dept Name</th>
                     <th>Activities / Events</th>
-                    <th>Added By</th>
+                    <th>Created By</th>
                     <th>Semester</th>
-                    <th>Date</th>
+                    <th>Date &amp Time</th>
                     <th>Registered</th>
                     <th>Level</th>
                     <th>Status</th>
@@ -377,32 +377,32 @@ if ($has_active_semester) {
                 ?>
                 <tr>
                   <td scope="row"><?php echo $z ?></td>
-                  <td><?php echo $dept_name ?></td>
+                  <td><b><?php echo $dept_name ?></td>
                   <td><?php echo $dact_name ?>(<?php echo $dact_id ?>)<br><br>
                     <?php
                     if($dept_stat!='a') {
                       // No buttons for non-approved activities
                     } else {
                     ?>
-                    <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=c&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Committee" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
+                    <a href="registerStdActivity-b.php?dact_id=<?php echo $token ?>&amp;regpoint=c&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Committee" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
                       <span>
                         <i class="fa flaticon-user-add"></i>
                         <span>Committee</span>
                       </span>
                     </a>
-                    <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=p&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Participant" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
+                    <a href="registerStdActivity-b.php?dact_id=<?php echo $token ?>&amp;regpoint=p&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Participant" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
                       <span>
                         <i class="fa flaticon-user-add"></i>
                         <span>Contestant</span>
                       </span>
                     </a>
-                    <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=a&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Audience" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
+                    <a href="registerStdActivity-b.php?dact_id=<?php echo $token ?>&amp;regpoint=a&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Add Audience" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
                       <span>
                         <i class="fa flaticon-user-add"></i>
                         <span>Audience</span>
                       </span>
                     </a>
-                    <a href="RegisteredListD.php?dact_id=<?php echo $dact_id ?>&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Overall List" class="btn btn-info m-btn btn-sm m-btn m-btn--icon">
+                    <a href="RegisteredListD.php?dact_id=<?php echo $token ?>&amp;resultSearch=<?php echo $resultSearch ?>&amp;regError=<?php echo $regError ?>" title="Overall List" class="btn btn-info m-btn btn-sm m-btn m-btn--icon">
                       <span>
                         <i class="fa flaticon-list"></i>
                         <span>Overall List</span>

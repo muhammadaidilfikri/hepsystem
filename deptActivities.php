@@ -115,127 +115,130 @@ if ($has_active_semester) {
             <!--Begin::Section-->
             <!--begin:: Widgets/Stats-->
             <div class="m-portlet ">
-              <div class="m-portlet__body  m-portlet__body--no-padding">
-                <div class="row m-row--no-padding m-row--col-separator-xl">
-                  <div class="col-md-12 col-lg-6 col-xl-3">
-                    <!--begin::Total Profit-->
-                    <div class="m-widget24">
-                      <div class="m-widget24__item">
-                        <h4 class="m-widget24__title">
-                          Department
-                        </h4>
-                        <br>
-                        <span class="m-widget24__desc">
-                          Total Department
-                        </span>
-                        <span class="m-widget24__stats m--font-brand">
-                          <?php 
-                          $dept_count = mysqli_query($connection, "SELECT COUNT(*) as total FROM dept");
-                          echo ($dept_count && mysqli_num_rows($dept_count) > 0) ? mysqli_fetch_assoc($dept_count)['total'] : '0';
-                          ?>
-                        </span>
-                        <div class="m--space-10"></div>
-                        <div class="progress m-progress--sm">
-                          <div class="progress-bar m--bg-brand" role="progressbar" style="width: 100%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="m-portlet__body  m-portlet__body--no-padding">
+                    <div class="row m-row--no-padding m-row--col-separator-xl">
+                        <div class="col-md-12 col-lg-6 col-xl-3">
+                            <!--begin::Total Profit-->
+                            <div class="m-widget24">
+                                <div class="m-widget24__item">
+                                    <h4 class="m-widget24__title">
+                                        Department
+                                    </h4>
+                                    <br>
+                                    <span class="m-widget24__desc">
+                                        Total Department
+                                    </span>
+                                    <span class="m-widget24__stats m--font-brand">
+                                        <?php 
+                                        $dept_count = mysqli_query($connection, "SELECT COUNT(*) as total FROM dept");
+                                        echo ($dept_count && mysqli_num_rows($dept_count) > 0) ? mysqli_fetch_assoc($dept_count)['total'] : '0';
+                                        ?>
+                                    </span>
+                                    <div class="m--space-10"></div>
+                                    <div class="progress m-progress--sm">
+                                        <div class="progress-bar m--bg-brand" role="progressbar" style="width: 100%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <span class="m-widget24__change">
+                                        Registered Department
+                                    </span>
+                                    <span class="m-widget24__number">
+                                        100%
+                                    </span>
+                                </div>
+                            </div>
+                            <!--end::Total Profit-->
                         </div>
-                        <span class="m-widget24__change">
-                          Registered Department
-                        </span>
-                        <span class="m-widget24__number">
-                          100%
-                        </span>
-                      </div>
-                    </div>
-                    <!--end::Total Profit-->
-                  </div>
-                  <div class="col-md-12 col-lg-6 col-xl-3">
-                    <!--begin::New Feedbacks-->
-                    <div class="m-widget24">
-                      <div class="m-widget24__item">
-                        <h4 class="m-widget24__title">
-                          Advisor</h4>
-                        <br>
-                        <span class="m-widget24__desc">
-                          Total Advisors
-                        </span>
-                        <span class="m-widget24__stats m--font-info">
-                          <?php echo countAdvisor()?>
-                        </span>
-                        <div class="m--space-10"></div>
-                        <div class="progress m-progress--sm">
-                          <div class="progress-bar m--bg-info" role="progressbar" style="width: 100%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="col-md-12 col-lg-6 col-xl-3">
+                            <!--begin::New Feedbacks-->
+                            <div class="m-widget24">
+                                <div class="m-widget24__item">
+                                    <h4 class="m-widget24__title">
+                                        Advisor
+                                    </h4>
+                                    <br>
+                                    <span class="m-widget24__desc">
+                                        Total Advisors
+                                    </span>
+                                    <span class="m-widget24__stats m--font-info">
+                                        <?php echo countAdvisor()?>
+                                    </span>
+                                    <div class="m--space-10"></div>
+                                    <div class="progress m-progress--sm">
+                                        <div class="progress-bar m--bg-info" role="progressbar" style="width: 100%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <span class="m-widget24__change">
+                                        Registered Advisor(s)
+                                    </span>
+                                    <span class="m-widget24__number">
+                                        100%
+                                    </span>
+                                </div>
+                            </div>
+                            <!--end::New Feedbacks-->
                         </div>
-                        <span class="m-widget24__change">
-                        Registered Advisor(s)
-                        </span>
-                        <span class="m-widget24__number">
-                          100%
-                        </span>
-                      </div>
-                    </div>
-                    <!--end::New Feedbacks-->
-                  </div>
-                  <div class="col-md-12 col-lg-6 col-xl-3">
-                    <!--begin::New Orders-->
-                    <div class="m-widget24">
-                      <div class="m-widget24__item">
-                        <h4 class="m-widget24__title">
-                          Student</h4>
-                        <br>
-                        <span class="m-widget24__desc">
-                          Total Student Offered</span>
-                        <span class="m-widget24__stats m--font-danger">
-                          <?php echo countStudent() ?>
-                        </span>
-                        <div class="m--space-10"></div>
-                        <div class="progress m-progress--sm">
-                          <div class="progress-bar m--bg-danger" role="progressbar" style="width: 78%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="col-md-12 col-lg-6 col-xl-3">
+                            <!--begin::New Orders-->
+                            <div class="m-widget24">
+                                <div class="m-widget24__item">
+                                    <h4 class="m-widget24__title">
+                                        Student
+                                    </h4>
+                                    <br>
+                                    <span class="m-widget24__desc">
+                                        Total Student Offered
+                                    </span>
+                                    <span class="m-widget24__stats m--font-danger">
+                                        <?php echo countStudent() ?>
+                                    </span>
+                                    <div class="m--space-10"></div>
+                                    <div class="progress m-progress--sm">
+                                        <div class="progress-bar m--bg-danger" role="progressbar" style="width: 78%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <span class="m-widget24__change">
+                                        Total Registered Students
+                                    </span>
+                                    <span class="m-widget24__number">
+                                        78%
+                                    </span>
+                                </div>
+                            </div>
+                            <!--end::New Orders-->
                         </div>
-                        <span class="m-widget24__change">
-                          Total Registered Students
-                        </span>
-                        <span class="m-widget24__number">
-                          78%
-                        </span>
-                      </div>
-                    </div>
-                    <!--end::New Orders-->
-                  </div>
-                <div class="col-md-12 col-lg-6 col-xl-3">
-                    <!--begin::New Users-->
-                    <div class="m-widget24">
-                      <div class="m-widget24__item">
-                        <h4 class="m-widget24__title">
-                          Department Registrations
-                        </h4>
-                        <br>
-                        <span class="m-widget24__desc">
-                          Total Student Registered
-                        </span>
-                        <span class="m_widget24__stats m--font-success">
-                          <?php echo countStudentRegistered() ?>
-                        </span>
-                        <div class="m--space-10"></div>
-                        <div class="progress m-progress--sm">
-                          <div class="progress-bar m--bg-success" role="progressbar" style="width: 2%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="col-md-12 col-lg-6 col-xl-3">
+                            <!--begin::New Users-->
+                            <div class="m-widget24">
+                                <div class="m-widget24__item">
+                                    <h4 class="m-widget24__title">
+                                        Department Registrations
+                                    </h4>
+                                    <br>
+                                    <span class="m-widget24__desc">
+                                        Total Student Registered
+                                    </span>
+                                    <span class="m-widget24__stats m--font-success">
+                                        <?php echo countStudentRegistered() ?>
+                                    </span>
+                                    <div class="m--space-10"></div>
+                                    <div class="progress m-progress--sm">
+                                        <div class="progress-bar m--bg-success" role="progressbar" style="width: 2%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <span class="m-widget24__change">
+                                        Total Opening
+                                    </span>
+                                    <span class="m-widget24__number">
+                                        <?php 
+                                        $dept_count = mysqli_query($connection, "SELECT COUNT(*) as total FROM dept");
+                                        $dept_total = ($dept_count && mysqli_num_rows($dept_count) > 0) ? mysqli_fetch_assoc($dept_count)['total'] : 0;
+                                        $tot = $dept_total * 50;
+                                        echo $tot;
+                                        ?>
+                                    </span>
+                                </div>
+                            </div>
+                            <!--end::New Users-->
                         </div>
-                        <span class="m-widget24__change">
-                        Total Opening
-                        </span>
-                        <span class="m-widget24__number">
-                          <?php 
-                          $dept_count = mysqli_query($connection, "SELECT COUNT(*) as total FROM dept");
-                          $dept_total = ($dept_count && mysqli_num_rows($dept_count) > 0) ? mysqli_fetch_assoc($dept_count)['total'] : 0;
-                          $tot = $dept_total * 50;
-                          echo $tot;
-                          ?>
-                        </span>
-                      </div>
                     </div>
-                    <!--end::New Users-->
-                  </div>
                 </div>
-              </div>
             </div>
 
             <!-- Current Semester Display -->
@@ -289,9 +292,9 @@ if ($has_active_semester) {
                     <th>No</th>
                     <th>Activities / Events</th>
                     <th>Organized By</th>
-                    <th>Added By</th>
+                    <th>Created By</th>
                     <th>Semester</th>
-                    <th>Date</th>
+                    <th>Date &amp Time</th>
                     <th>Registered</th>
                     <th>Level</th>
                     <th>Status</th>
@@ -388,45 +391,46 @@ if ($has_active_semester) {
                             $lvl = "Unknown";
                         }
                   ?>
-                  <tr>
-                    <td scope="row"><?php echo $z ?></td>
-                    <td><?php echo $dact_name ?>(<?php echo $dact_id ?>)<br><br>
-                      <?php
-                      if($dept_stat!='a') {
-                        // No buttons for non-approved activities
-                      } else {
-                      ?>
-                      <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=c" title="Add Committee" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
-                        <span>
-                          <i class="fa flaticon-user-add"></i>
-                          <span>Committee</span>
-                        </span>
-                      </a>
-                      <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=p" title="Add Participant" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
-                        <span>
-                          <i class="fa flaticon-user-add"></i>
-                          <span>Contestant</span>
-                        </span>
-                      </a>
-                      <a href="registerStdActivity-b.php?dact_id=<?php echo $dact_id ?>&amp;regpoint=a" title="Add Audience" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
-                        <span>
-                          <i class="fa flaticon-user-add"></i>
-                          <span>Audience</span>
-                        </span>
-                      </a>
-                      <a href="RegisteredListD.php?dact_id=<?php echo $dact_id ?>" title="Overall List" class="btn btn-info m-btn btn-sm m-btn m-btn--icon">
-                        <span>
-                          <i class="fa flaticon-list"></i>
-                          <span>Overall List</span>
-                        </span>
-                      </a>
-                      <td><b><?php echo $dept_name ?></b></td>
-                      <?php
-                      }
-                      ?>
-                    </td>
-                    <td><?php echo $addedBy ?></td>
-                    <td>
+                 <tr>
+                      <td scope="row"><?php echo $z ?></td>
+                      <td>
+                          <?php echo $dact_name ?>(<?php echo $dact_id ?>)<br><br>
+                          <?php
+                          if($dept_stat!='a') {
+                              // No buttons for non-approved activities
+                          } else {
+                          ?>
+                          <a href="registerStdActivity-b.php?dact_id=<?php echo $token ?>&amp;regpoint=c" title="Add Committee" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
+                              <span>
+                                  <i class="fa flaticon-user-add"></i>
+                                  <span>C</span>
+                              </span>
+                          </a>
+                          <a href="registerStdActivity-b.php?dact_id=<?php echo $token ?>&amp;regpoint=p" title="Add Participant" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
+                              <span>
+                                  <i class="fa flaticon-user-add"></i>
+                                  <span>P</span>
+                              </span>
+                          </a>
+                          <a href="registerStdActivity-b.php?dact_id=<?php echo $token ?>&amp;regpoint=a" title="Add Audience" class="btn btn-primary m-btn btn-sm m-btn m-btn--icon">
+                              <span>
+                                  <i class="fa flaticon-user-add"></i>
+                                  <span>A</span>
+                              </span>
+                          </a>
+                          <a href="RegisteredListD.php?dact_id=<?php echo $token ?>" title="Overall List" class="btn btn-info m-btn btn-sm m-btn m-btn--icon">
+                              <span>
+                                  <i class="fa flaticon-list"></i>
+                                  <span>Overall List</span>
+                              </span>
+                          </a>
+                          <?php
+                          }
+                          ?>
+                      </td>
+                      <td><?php echo $dept_name ?></b></td>  <!-- Organized By -->
+                      <td><?php echo $addedBy ?></td>  <!-- Added By -->
+                      <td>
                       <strong><?php echo $kod_sem; ?></strong><br>
                       <?php echo $sem_english; ?>
                     </td>

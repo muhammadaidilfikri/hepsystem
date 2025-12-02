@@ -17,9 +17,9 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
     header("Location: logout.php");
 }
 
-$sid = $_GET["dact_id"];
-$resultSearch = $_GET["resultSearch"];
-$regError = $_GET["regError"];
+$sid = isset($_GET["dact_id"]) ? $_GET["dact_id"] : "";
+$resultSearch = isset($_GET["resultSearch"]) ? $_GET["resultSearch"] : "";
+$regError = isset($_GET["regError"]) ? $_GET["regError"] : "";
 
 ?>
 
@@ -85,7 +85,7 @@ $regError = $_GET["regError"];
                 <div class="m-portlet__head">
                   <div class="m-portlet__head-caption">
                     <div class="m-portlet__head-title">
-                      <h3 class="m-portlet__head-text"> <?phpecho $resultSearch; ?></h3>
+                      <h3 class="m-portlet__head-text"> <?php echo $resultSearch; ?></h3>
                     </div>
                   </div>
                 </div>
@@ -100,7 +100,7 @@ $regError = $_GET["regError"];
                 <div class="m-portlet__head">
                   <div class="m-portlet__head-caption">
                     <div class="m-portlet__head-title">
-                      <h3 class="m-portlet__head-text"> <?phpecho $resultSearch; ?></h3>
+                      <h3 class="m-portlet__head-text"> <?php echo $resultSearch; ?></h3>
                     </div>
                   </div>
                 </div>
