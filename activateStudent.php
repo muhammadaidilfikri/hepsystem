@@ -17,22 +17,22 @@ if (!$reg_id) {
     exit;
 }
 
-// Update the student status to inactive
-$sql = "UPDATE club_registration SET is_active = 0 WHERE reg_id = ?";
+// Update the student status to active
+$sql = "UPDATE club_registration SET is_active = 1 WHERE reg_id = ?";
 $stmt = $mysqli->prepare($sql);
 
 if ($stmt) {
     $stmt->bind_param("i", $reg_id);
 
     if ($stmt->execute()) {
-        // Success - redirect back with success message (EXACT same style)
+        // Success - redirect back with success message
         $redirect = isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : ('regStudent.php?club_id=' . urlencode($club_id));
-        $msg = urlencode('Student Successfully Deactivated.');
+        $msg = urlencode('Student Successfully Activated.');
         $separator = (strpos($redirect, '?') !== false) ? '&' : '?';
         header('Location: ' . $redirect . $separator . 'msg=' . $msg);
         exit;
     } else {
-        echo "<script>alert('Error deactivating student.'); history.back();</script>";
+        echo "<script>alert('Error activating student.'); history.back();</script>";
     }
     $stmt->close();
 } else {

@@ -4,7 +4,7 @@ include ("dbconnect.php");
 include("iqfunction.php");
 
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
-    header("location: index.php");
+    header("location: index.php"); 
     exit;
 }
 
@@ -208,7 +208,7 @@ $sid = filter_input(INPUT_GET, 'club_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         <td><?php echo $staffID ?></td>
         <td><?php echo $name ?></td>
         <td><?php echo $gred_code ?></td>
-				<td><?php echo ($is_active === 1) ? 'YES' : 'NO'; ?></td>
+				<td><?php echo ($is_active === 1) ? '<span class="m-badge m-badge--success m-badge--wide">YES</span>' : '<span class="m-badge m-badge--danger m-badge--wide">NO</span>'; ?></td>
 
 				<td>
 					<?php if ($is_active === 0): ?>

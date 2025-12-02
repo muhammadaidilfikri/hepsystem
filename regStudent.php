@@ -4,7 +4,7 @@ include("dbconnect.php");
 include("iqfunction.php");
 
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
-    header("location: index.php");
+    header("location: index.php"); 
     exit;
 }
 
@@ -15,65 +15,77 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 $allowedroles = array(3); //roles allowed to access this page
 if (!in_array($_SESSION['roleid'], $allowedroles)) {
     header("Location: logout.php");
+    exit;
 }
 
-$stdNo = $_POST['stdNo'];
-$club_id = $_POST['club_id'];
+$stdNo = filter_input(INPUT_POST, 'stdNo', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$club_id = filter_input(INPUT_POST, 'club_id', FILTER_VALIDATE_INT);                                                        
 $club_token = getClubToken($club_id);
 
-//check student in student table
-//using bind param to prevent SQL injection
+// Check student in student table
 $query = "SELECT * FROM student WHERE stdNo = ?";
 $stmt = $mysqli->prepare($query);
 $stmt->bind_param("s", $stdNo);
 $stmt->execute();
 $result = $stmt->get_result();
 
-//retrieve club_id from token
 if ($result->num_rows == 0) {
     echo "<script>
             alert('Error!! No student with that ID number.');
-            document.location.href = 'addStudent.php?club_id=$club_token'
+            document.location.href = 'addStudent.php?club_id=$club_token'; // FIXED: Changed from regStudent.php to addStudent.php
           </script>";
     exit();
 }
 
-//Check student already registered or not
-//using bind param to prevent SQL injection
-$sqlcheck = "SELECT * FROM club_registration WHERE stdNo = ? AND club_id = ?"; 
+// Check if student is already registered AND ACTIVE for this club
+$sqlcheck = "SELECT * FROM club_registration WHERE stdNo = ? AND club_id = ? AND is_active = 1"; 
 $stmt = $mysqli->prepare($sqlcheck);
 $stmt->bind_param("si", $stdNo, $club_id);
 $stmt->execute();
 $resultCheck = $stmt->get_result();
 
-//if student already registered
-//retrieve club_id from token
+// If student already registered and active
 if ($resultCheck->num_rows > 0) {
     echo "<script>
-            alert('Error!! Student already registered for this club.');
-            document.location.href = 'addStudent.php?club_id=$club_token'
+            alert('Error!! Student is already registered and active for this club.');
+            document.location.href = 'addStudent.php?club_id=$club_token'; // FIXED: Changed from regStudent.php to addStudent.php
           </script>";
     exit();
 }
 
-//register student
-//using bind param to prevent SQL injection
-$token = generateToken(32);
-$sql = "INSERT INTO club_registration (stdNo, club_id, token) VALUES (?, ?, ?)";
-$stmt = $mysqli->prepare($sql);
-$stmt->bind_param("sis", $stdNo, $club_id, $token);
+// Check if student has an inactive registration (to prevent duplicates)
+$sqlInactiveCheck = "SELECT * FROM club_registration WHERE stdNo = ? AND club_id = ? AND is_active = 0"; 
+$stmtInactive = $mysqli->prepare($sqlInactiveCheck);
+$stmtInactive->bind_param("si", $stdNo, $club_id);
+$stmtInactive->execute();
+$resultInactiveCheck = $stmtInactive->get_result();
 
-//execute and check for success
-//retrieve club_id from token
+if ($resultInactiveCheck->num_rows > 0) {
+    echo "<script>
+            alert('Error!! Student already has a pending registration. Please activate the existing registration instead.');
+            document.location.href = 'addStudent.php?club_id=$club_token'; // FIXED: Changed from regStudent.php to addStudent.php
+          </script>";
+    exit();
+}
+
+// Register student with is_active = 0 (requires activation)
+$token = generateToken(32);
+$is_active = 0; // New students are inactive by default
+
+$sql = "INSERT INTO club_registration (stdNo, club_id, token, is_active) VALUES (?, ?, ?, ?)";
+$stmt = $mysqli->prepare($sql);
+$stmt->bind_param("sisi", $stdNo, $club_id, $token, $is_active);
+
+// Execute and check for success
 if ($stmt->execute()) {
     echo "<script>
-            alert('Record successfully updated.');
-            document.location.href = 'addStudent.php?club_id=$club_token'
+            alert('Student successfully registered. Please activate the student to make them active.');
+            document.location.href = 'addStudent.php?club_id=$club_token'; // FIXED: Changed from regStudent.php to addStudent.php
           </script>";
 } else {
     echo "<script>
             alert('Error!! Failed to register student.');
-            document.location.href = 'addStudent.php?club_id=$club_token'
+            document.location.href = 'addStudent.php?club_id=$club_token'; // FIXED: Changed from regStudent.php to addStudent.php
           </script>";
 }
 ?>
