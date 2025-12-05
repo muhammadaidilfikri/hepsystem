@@ -12,7 +12,8 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 //roleid 1 = SUPER ADMINISTRATOR
 //roleid 2 = IT ADMINISTRATOR
 //roleid 3 = HEP
-$allowedroles = array(3); //roles allowed to access this page
+//roleid 4 = HEA
+$allowedroles = array(3,4); //roles allowed to access this page
 if (!in_array($_SESSION['roleid'], $allowedroles)) {
     header("Location: logout.php");
 }
@@ -220,6 +221,14 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
               </div>
             </div>
 
+                            <!-- Export button -->
+                <div align="right">
+                    <a href="conExcel.php" class="btn btn-outline-success m-btn m-btn--icon">
+                        <span><i class="fa flaticon-graphic"></i> <span>Export to Excel</span></span>
+                    </a>
+                </div>
+                <br>
+
             <!-- begin section -->
           <div class="m-portlet m-portlet--mobile">
             <div class="m-portlet__head">
@@ -249,25 +258,25 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
                 </thead>
                 <tbody>
                   <?php
-                  $sql_events = mysqli_query($connection, "select * from club order by club_name desc  ") or die (mysqli_error());
-                  $z =1;
+                  $stmt = $connection->prepare("SELECT * FROM club ORDER BY club_name DESC");
+                  $stmt->execute();
+                  $result = $stmt->get_result();
 
-                  while ($row = mysqli_fetch_array($sql_events)) {
+                  $z = 1;
+                  while ($row = $result->fetch_assoc()) {
+                      $club_id = $row["club_id"];
+                      $club_name = $row["club_name"];
+                      $club_max = $row["club_max"];
+                      $club_stat = $row["club_stat"];
 
-                    $club_id = $row["club_id"];
-                    $club_name = $row["club_name"];
-                    $club_max = $row["club_max"];
-                    $club_stat = $row["club_stat"];
-
-                    if($club_stat=='e')
-                    {
-                      $c_stat="Enable";
-                    }
-                    else if($club_stat=='d')
-                    {
-                      $c_stat="Disable";
-                    }
-
+                      if($club_stat=='e') 
+                        { 
+                          $c_stat="Enable"; 
+                        } 
+                        else if($club_stat=='d') 
+                        { 
+                          $c_stat="Disable";
+                        }
                   ?>
                   <tr>
                     <th scope="row"><?php echo $z ?></th>
@@ -282,6 +291,7 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
                   <?php
                   $z++;
                 }
+                $stmt->close();
                 ?>
 
 

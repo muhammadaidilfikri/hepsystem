@@ -22,32 +22,44 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
 if (isset($_GET['ajax_sem'])) {
     $sem = $_GET['ajax_sem'];
 
-    // Step 1: Get all students
-    $sql = mysqli_query($connection, "
+    // Prepare the SQL statement
+    $stmt = $connection->prepare("
         SELECT stdNo, stdName, kod_sem, jantina, progCode, noPhone, email_uitm
         FROM student
-        WHERE kod_sem = '$sem'
+        WHERE kod_sem = ?
         ORDER BY stdName ASC
     ");
 
-    if (!$sql) {
-        die("SQL Error: " . mysqli_error($connection));
+    if (!$stmt) {
+        die("Prepare failed: " . $connection->error);
     }
 
-    if(mysqli_num_rows($sql) == 0){
+    // Bind the parameter (s = string)
+    $stmt->bind_param("s", $sem);
+
+    // Execute the statement
+    $stmt->execute();
+
+    // Get the result
+    $result = $stmt->get_result();
+
+    if (!$result) {
+        die("SQL Error: " . $connection->error);
+    }
+
+    if ($result->num_rows == 0) {
         echo "No students found for this semester.";
         exit;
     }
 
     // Store students and get their numbers
-    $students = array();
-    $studentNos = array();
-    while ($row = mysqli_fetch_array($sql)) {
+    $students = [];
+    $studentNos = [];
+    while ($row = $result->fetch_assoc()) {
         $students[] = $row;
         $studentNos[] = $row['stdNo'];
     }
-    
-    // Get all marks for all students at once (much faster - 3 queries total instead of 3 per student)
+
     $marksCache = sumMarksBatch($studentNos);
 
     // Display results
@@ -69,16 +81,17 @@ if (isset($_GET['ajax_sem'])) {
         $z++;
     }
 
+    // Close statement
+    $stmt->close();
     exit;
 }
-
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>AsidApps | Asasi Students</title>
+    <title>CRS | Asasi Students</title>
     <meta name="description" content="Latest updates and statistic charts">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -225,12 +238,28 @@ if (isset($_GET['ajax_sem'])) {
                             <div class="m-portlet__head-tools">
                                 <select id="semesterSelect" class="form-control">
                                     <option value="">Select Semester</option>
-                                    <?php
-                                    $semQuery = mysqli_query($connection, "SELECT kod_sem FROM semesters ORDER BY kod_sem ASC");
-                                    while ($s = mysqli_fetch_array($semQuery)) {
-                                        echo '<option value="'.$s['kod_sem'].'">'.$s['kod_sem'].'</option>';
-                                    }
-                                    ?>
+                                <?php
+                                // Prepare statement (no parameters needed here, just good practice)
+                                $stmt = $connection->prepare("SELECT kod_sem FROM semesters ORDER BY kod_sem ASC");
+
+                                if (!$stmt) {
+                                    die("Prepare failed: " . $connection->error);
+                                }
+
+                                // Execute statement
+                                $stmt->execute();
+
+                                // Get result
+                                $result = $stmt->get_result();
+
+                                while ($s = $result->fetch_assoc()) {
+                                    echo '<option value="' . htmlspecialchars($s['kod_sem']) . '">' . htmlspecialchars($s['kod_sem']) . '</option>';
+                                }
+
+                                // Close statement
+                                $stmt->close();
+                                ?>
+
                                 </select>
                             </div>
                         </div>

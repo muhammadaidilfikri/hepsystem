@@ -23,22 +23,19 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
 if (isset($_GET['ajax_sem'])) {
     $sem = $_GET['ajax_sem'];
 
-    // Get all students in the semester
-    $sql = mysqli_query($connection, "
-        SELECT stdNo, stdName, noIc, progCode
-        FROM student
-        WHERE kod_sem = '$sem'
-        ORDER BY stdName ASC
-    ");
+ if ($stmt = $connection->prepare("SELECT stdNo, stdName, noIc, progCode FROM student WHERE kod_sem = ? ORDER BY stdName ASC")) {
+    $stmt->bind_param("s", $sem); 
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if (mysqli_num_rows($sql) == 0) {
+    if ($result->num_rows === 0) {
         echo "No students found for this semester.";
         exit;
     }
 
     $students = [];
     $studentNos = [];
-    while ($row = mysqli_fetch_assoc($sql)) {
+    while ($row = $result->fetch_assoc()) {
         $students[] = $row;
         $studentNos[] = $row['stdNo'];
     }
@@ -57,8 +54,8 @@ if (isset($_GET['ajax_sem'])) {
         $noIc = $row['noIc'];
         $progCode = $row['progCode'];
 
-        $activitiesJoint = $activitiesCache[$stdNo] ?? 0; // Total activities (dept + club + com)
-        $totalMarks = $marksCache[$stdNo] ?? 0;           // Total marks from activities
+        $activitiesJoint = $activitiesCache[$stdNo] ?? 0; 
+        $totalMarks = $marksCache[$stdNo] ?? 0;          
 
         echo "
         <tr>
@@ -74,8 +71,12 @@ if (isset($_GET['ajax_sem'])) {
         $z++;
     }
 
-    exit;
+    $stmt->close();
+} else {
+    echo "Failed to prepare statement.";
 }
+exit;
+}  
 
 ?>
 
@@ -227,9 +228,10 @@ if (isset($_GET['ajax_sem'])) {
 
                 <!-- Export button -->
                 <div align="right">
-                    <a href="conExcel.php" class="btn btn-outline-success m-btn m-btn--icon">
-                        <span><i class="fa flaticon-graphic"></i> <span>Export to Excel</span></span>
+                    <a href="conExcel.php?sem=" id="exportExcelBtn" class="btn btn-outline-success m-btn m-btn--icon">
+                    <span><i class="fa flaticon-graphic"></i> <span>Export to Excel</span></span>
                     </a>
+
                 </div>
                 <br>
 
@@ -245,10 +247,14 @@ if (isset($_GET['ajax_sem'])) {
                                 <select id="semesterSelect" class="form-control">
                                     <option value="">Select Semester</option>
                                     <?php
-                                    $semQuery = mysqli_query($connection, "SELECT kod_sem FROM semesters ORDER BY kod_sem ASC");
-                                    while ($s = mysqli_fetch_array($semQuery)) {
-                                        echo '<option value="'.$s['kod_sem'].'">'.$s['kod_sem'].'</option>';
+                                    $stmt = $connection->prepare("SELECT kod_sem FROM semesters ORDER BY kod_sem ASC");
+                                    $stmt->execute();
+                                    $result = $stmt->get_result();
+
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo '<option value="'.$row['kod_sem'].'">'.$row['kod_sem'].'</option>';
                                     }
+                                    $stmt->close();
                                     ?>
                                 </select>
                             </div>
@@ -274,10 +280,8 @@ if (isset($_GET['ajax_sem'])) {
 
         </div>
     </div>
-                                  </div>
-
+</div>
     <?php include("footer.php"); ?>
-
 </div>
 
 <div id="m_scroll_top" class="m-scroll-top">
@@ -349,6 +353,11 @@ function loadSemester(sem) {
     xmlhttp.open("GET", "<?php echo $_SERVER['PHP_SELF']; ?>?ajax_sem=" + sem + "&t=" + new Date().getTime(), true);
     xmlhttp.send();
 }
+$('#semesterSelect').on('change', function() {
+    let sem = this.value;
+    $('#exportExcelBtn').attr('href', 'conExcel.php?sem=' + sem);
+});
+
 </script>
 
 </body>

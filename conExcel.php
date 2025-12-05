@@ -1,30 +1,57 @@
 <?php
-include ("dbconnect.php");
-include ("crsfunction.php");
-include ("class-excel-xml.inc.php");
+include("dbconnect.php");
+include("iqfunction.php");
+include("class-excel-xml.inc.php");
 
-$sql_events = mysqli_query($mysqli, "select * from student order by stdName asc") or die (mysqli_error());
-$myarray = array();
-$y=1;
-while($row = mysqli_fetch_array($sql_events)) {
+// Get semester from GET, validate
+$sem = $_GET['sem'] ?? '';
+$sem = trim($sem);
 
-  $stdName = $row["stdName"];
-  $stdNo = $row["stdNo"];
-  $noic = $row["noIc"];
-  $kod_sem = $row["kod_sem"];
-  $jantina = $row["jantina"];
-  $progCode = $row["progCode"];
-  $noPhone = $row["noPhone"];
-  $email = $row["email"];
-  $cstd = countStudentInvolvement($stdNo);
-  $smark = sumMarks($stdNo);
-  $doc = array (1 => array("BIL","NO PELAJAR","NAMA PELAJAR","NO IC","KOD KURSUS","JUMLAH PENGLIBATAN AKTIVITI", "JUMLAH MARKAH"));
-  $myarray[] = array($y,$stdNo,strtoupper($stdName),$noic,$progCode,$cstd,$smark);
-  $y++;
-  }
+if ($sem === '') {
+    die("Please select a semester first.");
+}
 
-  $xls = new Excel_XML;
-  $xls->addArray ( $doc );
-  $xls->addArray ( $myarray );
-  $xls->generateXML ( "Senarai Nama Pelajar dan Markah KOKO");
-  ?>
+// Fetch students for that semester
+$stmt = $mysqli->prepare("SELECT stdNo, stdName, noIc, progCode FROM student WHERE kod_sem = ? ORDER BY stdName ASC");
+$stmt->bind_param("s", $sem);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$students = [];
+$studentNos = [];
+while ($row = $result->fetch_assoc()) {
+    $students[] = $row;
+    $studentNos[] = $row['stdNo'];
+}
+
+// Batch fetch marks and involvement counts
+$marksCache = sumMarksBatch($studentNos);            // Returns array[stdNo] => totalMarks
+$activitiesCache = countStudentInvolvementBatch($studentNos);  // Returns array[stdNo] => count
+
+$myarray = [];
+$y = 1;
+foreach ($students as $row) {
+    $stdNo = $row['stdNo'];
+    $stdName = strtoupper($row['stdName']);
+    $noic = $row['noIc'];
+    $progCode = $row['progCode'];
+
+    $activitiesJoint = $activitiesCache[$stdNo] ?? 0;
+    $totalMarks = $marksCache[$stdNo] ?? 0;
+
+    $myarray[] = [$y, $stdNo, $stdName, $noic, $progCode, $activitiesJoint, $totalMarks];
+    $y++;
+}
+
+// Header row
+$header = [
+    ["BIL", "NO PELAJAR", "NAMA PELAJAR", "NO IC", "KOD KURSUS", "JUMLAH PENGLIBATAN AKTIVITI", "JUMLAH MARKAH"]
+];
+
+// Export
+$xls = new Excel_XML();
+$xls->setWorksheetTitle("Semester_$sem");
+$xls->addArray($header);
+$xls->addArray($myarray);
+$xls->generateXML("Senarai_Nama_Pelajar_$sem");
+?>

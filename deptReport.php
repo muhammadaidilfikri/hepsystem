@@ -219,6 +219,13 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
                 </div>
               </div>
             </div>
+                            <!-- Export button -->
+                <div align="right">
+                    <a href="conExcel.php" class="btn btn-outline-success m-btn m-btn--icon">
+                        <span><i class="fa flaticon-graphic"></i> <span>Export to Excel</span></span>
+                    </a>
+                </div>
+                <br>
 
             <!-- begin section -->
           <div class="m-portlet m-portlet--mobile">
@@ -245,27 +252,32 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
                   </tr>
                 </thead>
                 <tbody>
-                  <?php
-                  $sql_events = mysqli_query($connection, "select * from dept order by dept_name asc  ") or die (mysqli_error());
-                  $z =1;
+                <?php
+                // Prepare the SQL statement
+                $stmt = $connection->prepare("SELECT * FROM dept ORDER BY dept_name ASC");
 
-                  while ($row = mysqli_fetch_array($sql_events)) {
+                // Execute the statement
+                $stmt->execute();
 
+                // Get the result
+                $result = $stmt->get_result();
+
+                $z = 1;
+                while ($row = $result->fetch_assoc()) {
                     $dept_id = $row["dept_id"];
                     $dept_name = $row["dept_name"];
                     $dept_acro = $row["dept_acro"];
-
-                  ?>
-                  <tr>
+                ?>
+                <tr>
                     <th scope="row"><?php echo $z ?></th>
                     <td><?php echo $dept_name ?></td>
                     <td><?php echo countDeptActivity($dept_id) ?></td>
                     <td><?php echo countDeptStdRegisteredA($dept_id) ?></td>
-
-                  </tr>
-                  <?php
-                  $z++;
+                </tr>
+                <?php
+                    $z++;
                 }
+                $stmt->close();
                 ?>
 
 

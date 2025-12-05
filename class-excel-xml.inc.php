@@ -60,8 +60,8 @@ class Excel_XML
      * @access private
      * @var string
      */
-    private $header = "<?xml version=\"1.0\" encoding=\"UTF-8\"?\>
-<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\"
+private $header = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" .
+"<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\"
  xmlns:x=\"urn:schemas-microsoft-com:office:excel\"
  xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"
  xmlns:html=\"http://www.w3.org/TR/REC-html40\">";
@@ -110,7 +110,10 @@ class Excel_XML
         // foreach key -> write value into cells
         foreach ($array as $k => $v):
 
-            $cells .= "<Cell><Data ss:Type=\"String\">" .$v. "</Data></Cell>\n"; 
+            $cells .= "<Cell><Data ss:Type=\"String\">" 
+        . htmlspecialchars($v, ENT_QUOTES | ENT_XML1, 'UTF-8') 
+        . "</Data></Cell>\n"; 
+
 
         endforeach;
 
@@ -182,7 +185,7 @@ class Excel_XML
 
         // print out document to the browser
         // need to use stripslashes for the damn ">"
-        echo stripslashes ($this->header);
+        echo $this->header;
         echo "\n<Worksheet ss:Name=\"" . $this->worksheet_title . "\">\n<Table>\n";
         echo "<Column ss:Index=\"1\" ss:AutoFitWidth=\"0\" ss:Width=\"110\"/>\n";
         echo implode ("\n", $this->lines);
