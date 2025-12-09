@@ -8,7 +8,8 @@ $sem = $_GET['sem'] ?? '';
 $sem = trim($sem);
 
 if ($sem === '') {
-    die("Please select a semester first.");
+    echo "<script>alert('Please select a semester first.'); window.history.back();</script>";
+    exit;
 }
 
 // Fetch students for that semester

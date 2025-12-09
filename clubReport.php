@@ -221,12 +221,12 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
               </div>
             </div>
 
-                            <!-- Export button -->
+                            <!-- Export button
                 <div align="right">
                     <a href="conExcel.php" class="btn btn-outline-success m-btn m-btn--icon">
                         <span><i class="fa flaticon-graphic"></i> <span>Export to Excel</span></span>
                     </a>
-                </div>
+                </div> -->
                 <br>
 
             <!-- begin section -->
