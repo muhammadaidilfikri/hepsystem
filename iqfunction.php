@@ -5,8 +5,6 @@ date_default_timezone_set("Asia/Kuala_Lumpur");
 $date_today = date("Y-m-d");
 $today = date("d M Y");
 
-date_default_timezone_set('Asia/Kuala_Lumpur');
-
 function checkMyD($username)
 {
 
@@ -1409,47 +1407,45 @@ function sumMarks($vid)
 		return $tots;
 }
 
-function countStudentInvolvementBatch($studentNos)
-{
+function countStudentInvolvementBatch($studentNos) {
     global $connection;
 
     if (empty($studentNos)) return [];
 
-    // Escape student numbers
+    // Escape student numbers for SQL safety
     $safeNos = array_map(function($no) use ($connection) {
         return "'" . mysqli_real_escape_string($connection, $no) . "'";
     }, $studentNos);
 
-    $inList = implode(",", $safeNos);
+    $nosString = implode(",", $safeNos);
 
-    // Query counts from dactreg
-    $sql1 = "SELECT stdNo, COUNT(*) AS cnt FROM dactreg WHERE stdNo IN ($inList) GROUP BY stdNo";
-    $res1 = mysqli_query($connection, $sql1);
-    $counts = [];
-    while ($row = mysqli_fetch_assoc($res1)) {
-        $counts[$row['stdNo']] = (int)$row['cnt'];
+    // Query both actreg and dactreg tables
+    $sql = "
+        SELECT stdNo, SUM(cnt) AS totalCount FROM (
+            SELECT stdNo, COUNT(*) AS cnt FROM actreg WHERE stdNo IN ($nosString) GROUP BY stdNo
+            UNION ALL
+            SELECT stdNo, COUNT(*) AS cnt FROM dactreg WHERE stdNo IN ($nosString) GROUP BY stdNo
+        ) AS combined
+        GROUP BY stdNo
+    ";
+
+    $result = mysqli_query($connection, $sql);
+    if (!$result) {
+        die("Database error: " . mysqli_error($connection));
     }
 
-    // Query counts from actreg
-    $sql2 = "SELECT stdNo, COUNT(*) AS cnt FROM actreg WHERE stdNo IN ($inList) GROUP BY stdNo";
-    $res2 = mysqli_query($connection, $sql2);
-    while ($row = mysqli_fetch_assoc($res2)) {
-        if (isset($counts[$row['stdNo']])) {
-            $counts[$row['stdNo']] += (int)$row['cnt'];
-        } else {
-            $counts[$row['stdNo']] = (int)$row['cnt'];
-        }
-    }
+    // Initialize counts with 0
+    $counts = array_fill_keys($studentNos, 0);
 
-    // Ensure all requested students exist in array (even with 0)
-    foreach ($studentNos as $stdNo) {
-        if (!isset($counts[$stdNo])) {
-            $counts[$stdNo] = 0;
-        }
+    // Fill counts from DB results
+    while ($row = mysqli_fetch_assoc($result)) {
+        $counts[$row['stdNo']] = (int)$row['totalCount'];
     }
 
     return $counts;
 }
+
+
 
 // Batch version of sumMarks - calculates marks for multiple students at once (much faster)
 function sumMarksBatch($studentNos) {
