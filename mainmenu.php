@@ -10,21 +10,6 @@ if(empty($num_rows))
 else {
 	$xx=1;
 }
-
-// // Get user role from sysrole_acstaff & sysroles
-// $userRole = 0;
-// $allowAccess = 0;
-
-// $getRole = mysqli_query($connection, " select sr.roleid, sa.is_active from sysrole_acstaff sa join sysroles sr on sr.roleid = sa.roleid where sa.staffID = '$uid' limit 1")or die(mysqli_error($connection));
-// if ($row = mysqli_fetch_assoc($getRole)) {
-// 	$userRole = (int)$row['roleid']; 
-// 	$allowAccess = $row['is_active'];
-// }
-
-// // $isModerator = ($userRole == 1 && $allowAccess == 1);
-// // $isITAdministrator   = ($userRole == 2 && $allowAccess == 1);
-// // $isSuperAdministrator   = ($userRole == 3 && $allowAccess == 1);
-// // 
 ?>
 
 <div id="m_aside_left" class="m-grid__item	m-aside-left  m-aside-left--skin-dark ">
@@ -141,7 +126,7 @@ else {
 			?>
 
 			<?php
-			if($_SESSION['roleid'] == 3)
+			if (isset($_SESSION['roleid']) && $_SESSION['roleid'] == 3 || $_SESSION['roleid'] == 4)
 			{
 			?>
 			<li class="m-menu__section ">
@@ -292,7 +277,7 @@ else {
 			?>
 
 			<?php
-			if (isset($_SESSION['roleid']) && $_SESSION['roleid'] == 2 || $_SESSION['roleid'] == 3)
+			if (isset($_SESSION['roleid']) && $_SESSION['roleid'] == 2 || $_SESSION['roleid'] == 3 || $_SESSION['roleid'] == 4)
 			{
 			?> 
 			<li class="m-menu__section ">
@@ -351,7 +336,7 @@ else {
 			?>
 
 			<?php
-			if (isset($_SESSION['roleid']) && $_SESSION['roleid'] == 3)
+			if (isset($_SESSION['roleid']) && $_SESSION['roleid'] == 3 || $_SESSION['roleid'] == 4)
 			{
 			?> 
 			<li class="m-menu__section ">
