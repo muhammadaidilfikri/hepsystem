@@ -30,10 +30,6 @@ if (isset($_GET['ajax_sem'])) {
         ORDER BY stdName ASC
     ");
 
-    if (!$stmt) {
-        die("Prepare failed: " . $connection->error);
-    }
-
     // Bind the parameter (s = string)
     $stmt->bind_param("s", $sem);
 
@@ -42,10 +38,6 @@ if (isset($_GET['ajax_sem'])) {
 
     // Get the result
     $result = $stmt->get_result();
-
-    if (!$result) {
-        die("SQL Error: " . $connection->error);
-    }
 
     if ($result->num_rows == 0) {
         echo "No students found for this semester.";
@@ -241,10 +233,6 @@ if (isset($_GET['ajax_sem'])) {
                                 <?php
                                 // Prepare statement (no parameters needed here, just good practice)
                                 $stmt = $connection->prepare("SELECT kod_sem FROM semesters ORDER BY kod_sem ASC");
-
-                                if (!$stmt) {
-                                    die("Prepare failed: " . $connection->error);
-                                }
 
                                 // Execute statement
                                 $stmt->execute();

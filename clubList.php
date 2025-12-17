@@ -355,7 +355,7 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $sql_events = mysqli_query($connection, "select * from club order by club_name asc") or die (mysqli_error());
+                                        $sql_events = mysqli_query($connection, "select * from club order by club_name asc");
                                         $z = 1;
 
                                         while ($row = mysqli_fetch_array($sql_events)) {

@@ -257,7 +257,7 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
                 </thead>
                 <tbody>
                   <?php
-                  $sql_events = mysqli_query($connection, "select * from acstaff,jawatanhakiki where jawatanhakiki.jh_code=acstaff.jh_code order by staffID asc  ") or die (mysqli_error());
+                  $sql_events = mysqli_query($connection, "select * from acstaff,jawatanhakiki where jawatanhakiki.jh_code=acstaff.jh_code order by staffID asc  ");
                   $z =1;
 
                   while ($row = mysqli_fetch_array($sql_events)) {

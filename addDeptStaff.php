@@ -108,7 +108,7 @@ $sid = filter_input(INPUT_GET, 'dept_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 					<form action="addDStaff.php" method="post">
 
 						<?php
-						$sql_events2 = mysqli_query($connection, "select * from dept where token='$sid' ") or die (mysqli_error());
+						$sql_events2 = mysqli_query($connection, "select * from dept where token='$sid' ");
 						while ($row = mysqli_fetch_array($sql_events2)) {
 
 							$dept_id = $row["dept_id"];
@@ -179,7 +179,7 @@ $sid = filter_input(INPUT_GET, 'dept_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     </thead>
     <tbody>
       <?php
-      $sql_events = mysqli_query($connection, "select * from dept,dept_advisor,acstaff,jawatanhakiki where jawatanhakiki.jh_code=acstaff.jh_code and acstaff.staffID=dept_advisor.staffID and dept.dept_id=dept_advisor.dept_id  and dept_advisor.dept_id='$sid'  ") or die (mysqli_error());
+      $sql_events = mysqli_query($connection, "select * from dept,dept_advisor,acstaff,jawatanhakiki where jawatanhakiki.jh_code=acstaff.jh_code and acstaff.staffID=dept_advisor.staffID and dept.dept_id=dept_advisor.dept_id  and dept_advisor.dept_id='$sid'  ");
       $z =1;
 
       while ($row = mysqli_fetch_array($sql_events)) {
