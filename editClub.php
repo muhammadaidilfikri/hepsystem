@@ -108,7 +108,7 @@ $sid = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 					<form action="updateClub.php" method="post">
 
 						<?php
-						$sql_events2 = mysqli_query($connection, "select * from club where token='$sid' ") or die (mysqli_error());
+						$sql_events2 = mysqli_query($connection, "select * from club where token='$sid' ");
 						while ($row = mysqli_fetch_array($sql_events2)) {
 
 							$club_id = $row["club_id"];

@@ -148,7 +148,7 @@ $regError = isset($_GET["regError"]) ? $_GET["regError"] : "";
     </thead>
     <tbody>
       <?php
-      $sql_events = mysqli_query($connection, "select * from student,dept,dept_activities,dactreg where student.stdNo=dactreg.stdNo and dept.dept_id=dept_activities.dept_id and dept_activities.dact_id=dactreg.dact_id and dept_activities.dact_id='$sid' order by regpoint desc") or die (mysqli_error());
+      $sql_events = mysqli_query($connection, "select * from student,dept,dept_activities,dactreg where student.stdNo=dactreg.stdNo and dept.dept_id=dept_activities.dept_id and dept_activities.dact_id=dactreg.dact_id and dept_activities.dact_id='$sid' order by regpoint desc");
       $z =1;
 
       while ($row = mysqli_fetch_array($sql_events)) {

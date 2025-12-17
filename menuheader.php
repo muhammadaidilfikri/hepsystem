@@ -1,7 +1,7 @@
 <?php
 $uid = $_SESSION['username']; //staffID
 
-$sql_events = mysqli_query($connection, "select * from acstaff where staffID='$uid' ") or die (mysql_error());
+$sql_events = mysqli_query($connection, "select * from acstaff where staffID='$uid' ");
 
 while ($row = mysqli_fetch_array($sql_events)) {
 

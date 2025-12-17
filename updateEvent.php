@@ -11,7 +11,7 @@ $ssid = $_SESSION[username];
 $id=$_POST['id'];
 
 $sql2 = "update ical  set eventname='$eventname',date_start='$date_start',date_end='$date_end',status='$statz',dept='$dept',addedBy='$ssid' where id='$id'";
-$mysqli->query($sql2) or die($mysqli -> error);
+$mysqli->query($sql2);
 
 echo "<script>
 			alert('Data Sucessfully updated.');

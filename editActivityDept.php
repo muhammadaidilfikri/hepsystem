@@ -173,7 +173,7 @@ if (mysqli_num_rows($sql_events) > 0) {
 							<select class="custom-select form-control" name="kew_id">
 								<option selected>Select source of funding</option>
 								<?php
-								$sql_events1 = mysqli_query($connection, "SELECT * FROM kew ORDER BY kew_name") or die(mysqli_error($connection));
+								$sql_events1 = mysqli_query($connection, "SELECT * FROM kew ORDER BY kew_name");
                                 while ($row = mysqli_fetch_array($sql_events1)) {
                                     $kew_id = $row['kew_id'];
                                     $kew_name = $row['kew_name'];

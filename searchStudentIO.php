@@ -22,12 +22,12 @@ $timestamp = time()+28800;
 $date = new DateTime("@$timestamp");
 
 
-  $sql_events = mysqli_query($connection, "select * from student where stdNo='$stdNo' ") or die (mysql_error());
+  $sql_events = mysqli_query($connection, "select * from student where stdNo='$stdNo' ");
   $count = mysqli_num_rows($sql_events);
 
   if ($count == 1){
 
-    $sql_events1 = mysqli_query($connection, "select * from stdaccess,student where  student.stdNo=stdaccess.stdNo and stdAccess.stdNo='$stdNo' ") or die (mysql_error());
+    $sql_events1 = mysqli_query($connection, "select * from stdaccess,student where  student.stdNo=stdaccess.stdNo and stdAccess.stdNo='$stdNo' ");
     $count = mysqli_num_rows($sql_events1);
 
     if ($count == 1){

@@ -81,7 +81,7 @@ $vid = $_POST['stdVi'];
 
 								<?
 
-								$sql_events1 = mysqli_query($connection, "select * from student where stdNo='$vid' ") or die (mysqli_error());
+								$sql_events1 = mysqli_query($connection, "select * from student where stdNo='$vid' ");
 								while ($row = mysqli_fetch_array($sql_events1)) {
 
 
@@ -193,7 +193,7 @@ $vid = $_POST['stdVi'];
 		</thead>
 		<tbody>
 			<?
-			$sql_events = mysqli_query($connection, "select * from student,dept,dept_activities,dactreg where student.stdNo=dactreg.stdNo and dept.dept_id=dept_activities.dept_id and dept_activities.dact_id=dactreg.dact_id and dactreg.stdNo='$vid'") or die (mysqli_error());
+			$sql_events = mysqli_query($connection, "select * from student,dept,dept_activities,dactreg where student.stdNo=dactreg.stdNo and dept.dept_id=dept_activities.dept_id and dept_activities.dact_id=dactreg.dact_id and dactreg.stdNo='$vid'");
 			$z =1;
 
 			while ($row = mysqli_fetch_array($sql_events)) {
@@ -280,7 +280,7 @@ $vid = $_POST['stdVi'];
 		    </thead>
 		    <tbody>
 		      <?
-		      $sql_events = mysqli_query($connection, " select * from student, regcom, com_marks where student.stdNo=regcom.stdNo and com_marks.com_id=regcom.com_id and regcom.stdNo='$vid' ") or die (mysqli_error());
+		      $sql_events = mysqli_query($connection, " select * from student, regcom, com_marks where student.stdNo=regcom.stdNo and com_marks.com_id=regcom.com_id and regcom.stdNo='$vid' ");
 		      $z =1;
 
 		      while ($row = mysqli_fetch_array($sql_events)) {
@@ -339,7 +339,7 @@ $vid = $_POST['stdVi'];
     </thead>
     <tbody>
       <?
-      $sql_events = mysqli_query($connection, "select * from student,club,club_activities,actreg where student.stdNo=actreg.stdNo and club.club_id=club_activities.club_id and club_activities.act_id=actreg.act_id and actreg.stdNo='$vid' ") or die (mysqli_error());
+      $sql_events = mysqli_query($connection, "select * from student,club,club_activities,actreg where student.stdNo=actreg.stdNo and club.club_id=club_activities.club_id and club_activities.act_id=actreg.act_id and actreg.stdNo='$vid' ");
       $z =1;
 
       while ($row = mysqli_fetch_array($sql_events)) {

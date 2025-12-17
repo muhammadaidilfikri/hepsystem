@@ -92,7 +92,7 @@ $sid = $_GET[id];
 					<form action="updateEvent.php" method="post">
 
 						<?
-						$sql_events2 = mysqli_query($connection, "select * from ical, dept where id='$sid' ") or die (mysqli_error());
+						$sql_events2 = mysqli_query($connection, "select * from ical, dept where id='$sid' ");
 						while ($row = mysqli_fetch_array($sql_events2)) {
 
 							$id = $row["id"];
@@ -147,7 +147,7 @@ $sid = $_GET[id];
 							<select class="custom-select form-control" name="dept">
 								<option selected>Select Organizer / Holidays</option>
 								<?
-								$sql_events1 = mysqli_query($connection, "select * from dept ") or die (mysqli_error());
+								$sql_events1 = mysqli_query($connection, "select * from dept ");
 								while ($row = mysqli_fetch_array($sql_events1)) {
 
 									$dept_id = $row['dept_id'];

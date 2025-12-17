@@ -45,7 +45,7 @@ $dact_name = "";
 $dept_name = "";
 $actual_dact_id = "";
 if (!empty($token)) {
-    $sql_events2 = mysqli_query($connection, "SELECT * FROM dept, dept_activities WHERE dept.dept_id=dept_activities.dept_id AND dept_activities.token='$token'") or die(mysqli_error($connection));
+    $sql_events2 = mysqli_query($connection, "SELECT * FROM dept, dept_activities WHERE dept.dept_id=dept_activities.dept_id AND dept_activities.token='$token'");
     if ($row = mysqli_fetch_array($sql_events2)) {
         $dept_name = $row["dept_name"];
         $dact_name = $row["dact_name"];
@@ -228,7 +228,7 @@ if (!empty($token)) {
                                                                                             JOIN dactreg ON student.stdNo = dactreg.stdNo 
                                                                                             JOIN dept_activities ON dept_activities.dact_id = dactreg.dact_id 
                                                                                             WHERE dept_activities.dact_id = '$actual_dact_id' AND dactreg.regpoint = '$regpoint' 
-                                                                                            ORDER BY student.stdName") or die(mysqli_error($connection));
+                                                                                            ORDER BY student.stdName");
                                                     
                                                     $z = 1;
                                                     if (mysqli_num_rows($sql_events) > 0) {

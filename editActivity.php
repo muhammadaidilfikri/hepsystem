@@ -180,7 +180,7 @@ if (!$act_ida) {
 								 <select class="custom-select form-control" name="kew_id">
 									 <option selected>Select source of funding</option>
 									 <?php
-									 $sql_events1 = mysqli_query($connection, "select * from kew order by kew_name ") or die (mysqli_error());
+									 $sql_events1 = mysqli_query($connection, "select * from kew order by kew_name ");
 									 while ($row = mysqli_fetch_array($sql_events1)) {
 
 										 $kew_id = $row['kew_id'];

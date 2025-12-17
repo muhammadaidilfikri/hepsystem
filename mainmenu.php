@@ -1,7 +1,7 @@
 <?php
 $uid = $_SESSION['username'];
 $xx = 0;
-$sql_events = mysqli_query($connection, "select * from dept,dept_advisor where dept.dept_id=dept_advisor.dept_id and dept_advisor.staffID='$uid'")or die(mysqli_error($connection));
+$sql_events = mysqli_query($connection, "select * from dept,dept_advisor where dept.dept_id=dept_advisor.dept_id and dept_advisor.staffID='$uid'");
 $num_rows = mysqli_num_rows($sql_events);
 if(empty($num_rows))
 {

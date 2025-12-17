@@ -108,7 +108,7 @@ $sid = filter_input(INPUT_GET, 'dept_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 					<form action="updateDept.php" method="post">
 
 						<?php
-						$sql_events2 = mysqli_query($connection, "select * from dept where token='$sid' ") or die (mysqli_error());
+						$sql_events2 = mysqli_query($connection, "select * from dept where token='$sid' ");
 						while ($row = mysqli_fetch_array($sql_events2)) {
 
 							$dept_id = $row["dept_id"];

@@ -249,7 +249,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                     </thead>
                     <tbody>
                       <?
-                      $sql_events = mysqli_query($connection, "select * from stdaccess, student,bkp where bkp.stdNo=student.stdNo and  student.stdNo=stdaccess.stdNo ") or die (mysqli_error());
+                      $sql_events = mysqli_query($connection, "select * from stdaccess, student,bkp where bkp.stdNo=student.stdNo and  student.stdNo=stdaccess.stdNo ");
                       $z =1;
 
                       while ($row = mysqli_fetch_array($sql_events)) {

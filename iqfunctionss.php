@@ -78,7 +78,7 @@ function checkMarks($actreg_id)
 {
 
 	global $connection;
-	$sql_events = mysqli_query($connection, "select * from club_activities as A ,actreg as B where A.act_id=B.act_id and B.actreg_id='$actreg_id'") or die (mysqli_error());
+	$sql_events = mysqli_query($connection, "select * from club_activities as A ,actreg as B where A.act_id=B.act_id and B.actreg_id='$actreg_id'");
 
 
 	while ($row = mysqli_fetch_array($sql_events)) {
@@ -237,7 +237,7 @@ function checkMarksD($dactreg_id)
 {
 
 	global $connection;
-	$sql_events = mysqli_query($connection, "select * from dept_activities as A ,dactreg as B where A.dact_id=B.dact_id and B.dactreg_id='$dactreg_id'") or die (mysqli_error());
+	$sql_events = mysqli_query($connection, "select * from dept_activities as A ,dactreg as B where A.dact_id=B.dact_id and B.dactreg_id='$dactreg_id'");
 
 
 	while ($row = mysqli_fetch_array($sql_events)) {

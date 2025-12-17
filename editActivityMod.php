@@ -192,7 +192,7 @@ if (!$act_ida) {
                                                     <select class="custom-select form-control" name="kew_id" id="kew_id">
                                                         <option value="">Select Budget From</option>
                                                         <?php
-                                                        $sql_events1 = mysqli_query($connection, "SELECT * FROM kew ORDER BY kew_name") or die(mysqli_error($connection));
+                                                        $sql_events1 = mysqli_query($connection, "SELECT * FROM kew ORDER BY kew_name");
                                                         while ($row = mysqli_fetch_array($sql_events1)) {
                                                             $kew_id = $row['kew_id'];
                                                             $kew_name = $row['kew_name'];

@@ -45,7 +45,7 @@ $activity_name = "";
 $club_name = "";
 $actual_act_id = "";
 if (!empty($token)) {
-    $sql_events2 = mysqli_query($connection, "SELECT * FROM club, club_activities WHERE club.club_id=club_activities.club_id AND club_activities.token='$token'") or die(mysqli_error($connection));
+    $sql_events2 = mysqli_query($connection, "SELECT * FROM club, club_activities WHERE club.club_id=club_activities.club_id AND club_activities.token='$token'");
     if ($row = mysqli_fetch_array($sql_events2)) {
         $club_name = $row["club_name"];
         $activity_name = $row["act_name"];
@@ -219,7 +219,7 @@ if (!empty($token)) {
                                                                                         JOIN actreg ON student.stdNo = actreg.stdNo 
                                                                                         JOIN club_activities ON club_activities.act_id = actreg.act_id 
                                                                                         WHERE club_activities.act_id = '$actual_act_id' AND actreg.regpoint = '$regpoint' 
-                                                                                        ORDER BY student.stdName") or die(mysqli_error($connection));
+                                                                                        ORDER BY student.stdName");
                                                 
                                                 $z = 1;
                                                 if (mysqli_num_rows($sql_events) > 0) {

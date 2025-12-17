@@ -541,7 +541,7 @@ if ($has_active_semester) {
                     } else {
                         // If user can see all departments, show dropdown with all departments
                         echo "<option value=\"\">Select Department</option>";
-                        $sql_events1 = mysqli_query($connection, "SELECT * FROM dept ORDER BY dept_name") or die(mysqli_error($connection));
+                        $sql_events1 = mysqli_query($connection, "SELECT * FROM dept ORDER BY dept_name");
                         while ($row = mysqli_fetch_array($sql_events1)) {
                             $dept_id = $row['dept_id'];
                             $dept_name = $row['dept_name'];
@@ -641,7 +641,7 @@ if ($has_active_semester) {
                   <select class="custom-select form-control" name="kew_id" <?php echo !$has_active_semester ? 'disabled' : ''; ?> required>
                     <option value='0'>No Fund</option>
                     <?php
-                    $sql_events1 = mysqli_query($connection, "SELECT * FROM kew ORDER BY kew_name") or die(mysqli_error($connection));
+                    $sql_events1 = mysqli_query($connection, "SELECT * FROM kew ORDER BY kew_name");
                     while ($row = mysqli_fetch_array($sql_events1)) {
                       $kew_id = $row['kew_id'];
                       $kew_name = $row['kew_name'];

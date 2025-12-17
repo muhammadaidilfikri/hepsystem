@@ -146,7 +146,7 @@ $regError = $_GET["regError"];
                 <select class="custom-select form-control" name="com_id">
                   <option value='0'>Please Select</option>
                   <?php
-                  $sql_events1 = mysqli_query($connection, "select * from com_marks kew order by com_id ") or die (mysqli_error());
+                  $sql_events1 = mysqli_query($connection, "select * from com_marks kew order by com_id ");
                   while ($row = mysqli_fetch_array($sql_events1)) {
                     $com_id = $row['com_id'];
                     $com_name = $row['com_name'];
@@ -211,7 +211,7 @@ $regError = $_GET["regError"];
     </thead>
     <tbody>
       <?php
-      $sql_events = mysqli_query($connection, "select * from student, regcom, com_marks where student.stdNo=regcom.stdNo and com_marks.com_id=regcom.com_id order by com_marks desc") or die (mysqli_error());
+      $sql_events = mysqli_query($connection, "select * from student, regcom, com_marks where student.stdNo=regcom.stdNo and com_marks.com_id=regcom.com_id order by com_marks desc");
       $z =1;
 
       while ($row = mysqli_fetch_array($sql_events)) {

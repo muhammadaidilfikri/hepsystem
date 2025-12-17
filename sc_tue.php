@@ -130,7 +130,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                     </thead>
                     <tbody>
                       <?
-                      $sql_events = mysqli_query($connection, "select * from student, stdcard where student.stdNo=stdcard.stdNo order by stdName asc") or die (mysqli_error());
+                      $sql_events = mysqli_query($connection, "select * from student, stdcard where student.stdNo=stdcard.stdNo order by stdName asc");
                       $z =1;
 
                       while ($row = mysqli_fetch_array($sql_events)) {

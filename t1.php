@@ -80,7 +80,7 @@ $vid = $_GET['vid'];
 
 								<?
 
-								$sql_events1 = mysqli_query($connection, "select * from student,bkp where bkp.stdNo=student.stdNo and bkp.stdNo='$vid' ") or die (mysqli_error());
+								$sql_events1 = mysqli_query($connection, "select * from student,bkp where bkp.stdNo=student.stdNo and bkp.stdNo='$vid' ");
 								while ($row = mysqli_fetch_array($sql_events1)) {
 
 
@@ -428,7 +428,7 @@ $vid = $_GET['vid'];
 								</thead>
 								<tbody>
 									<?
-									$sql_events = mysqli_query($connection, "select * from student, bkp_log where student.stdNo=bkp_log.stdNo and bkp_log.stdNo='$stdNo' ") or die (mysqli_error());
+									$sql_events = mysqli_query($connection, "select * from student, bkp_log where student.stdNo=bkp_log.stdNo and bkp_log.stdNo='$stdNo' ");
 									$z =1;
 
 									while ($row = mysqli_fetch_array($sql_events)) {
