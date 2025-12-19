@@ -1,6 +1,7 @@
 <?php
 session_start();
 include ("dbconnect.php");
+include ("iqfunction.php");
 
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     header("location: index.php");
@@ -16,39 +17,76 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
     header("Location: logout.php");
 }
 
-$staffID = $_POST['staffID'];
-$dept_id= $_POST['dept_id'];
+// Validate and sanitize inputs
+$staffID = filter_input(INPUT_POST, 'staffID', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$dept_id = filter_input(INPUT_POST, 'dept_id', FILTER_VALIDATE_INT);
+
+// Check if inputs are valid
+if (!$staffID || !$dept_id) {
+    echo "<script>
+            alert('Invalid input data.');
+            history.back();
+          </script>";
+    exit;
+}
+
+// Get department token for redirection
+$dept_token = getDeptToken($dept_id);
+if (!$dept_token) {
+    echo "<script>
+            alert('Department not found.');
+            history.back();
+          </script>";
+    exit;
+}
+
 $token = generateToken(32);
 
-//$query = "select * from acstaff where staffID='$staffID' ";
-$query = "select * from acstaff where staffID=? ";
+// Check if staff exists
+$query = "SELECT * FROM acstaff WHERE staffID=?";
 $stmt = $mysqli->prepare($query);
 $stmt->bind_param("s", $staffID);
 $stmt->execute();
-
-//$result = $mysqli->query($query);
 $result = $stmt->get_result();
-//if (mysqli_num_rows($result)==0) {
+
 if ($result->num_rows == 0) {
-
-	echo "<script>
-				alert('Error!! Such no staff in Pusat Asasi');
-				document.location.href = 'addDeptStaff.php?dept_id=$token'
-				 </script>";
-}
-else {
-	//$sql = "insert into dept_advisor (staffID,dept_id) values ('$staffID','$dept_id','$token')";
-	//$mysqli->query($sql);
-	$sql = "insert into dept_advisor (staffID,dept_id,token) values (?,?,?)";
-	$stmt = $mysqli->prepare($sql);
-	$stmt->bind_param("sis", $staffID,$dept_id,$token);
-	$stmt->execute();
-
-	echo "<script>
-				alert('Record Sucessfully updated.');
-				document.location.href = 'addDeptStaff.php?dept_id=$token'
-				 </script>";
+    echo "<script>
+            alert('Error!! No such staff in Pusat Asasi.');
+            document.location.href = 'addDeptStaff.php?dept_id=$dept_token'
+          </script>";
+    exit;
 }
 
+// Check if staff is already assigned to this department as active
+$sqlCheck = "SELECT * FROM dept_advisor WHERE staffID=? AND dept_id=? AND is_active=1";
+$stmtCheck = $mysqli->prepare($sqlCheck);
+$stmtCheck->bind_param("si", $staffID, $dept_id);
+$stmtCheck->execute();
+$resultCheck = $stmtCheck->get_result();
 
+if($resultCheck->num_rows > 0) {
+    echo "<script>
+            alert('Error!! This staff is already assigned as advisor for this department.');
+            document.location.href = 'addDeptStaff.php?dept_id=$dept_token'
+          </script>";
+    exit();
+}
+
+// Insert new department advisor
+$isactive = 1;
+$sql = "INSERT INTO dept_advisor (staffID, dept_id, token, is_active) VALUES (?, ?, ?, ?)";
+$stmt = $mysqli->prepare($sql);
+$stmt->bind_param("sisi", $staffID, $dept_id, $token, $isactive);
+
+if ($stmt->execute()) {
+    echo "<script>
+            alert('Record successfully added.');
+            document.location.href = 'addDeptStaff.php?dept_id=$dept_token'
+          </script>";
+} else {
+    echo "<script>
+            alert('Error adding record: " . $mysqli->error . "');
+            document.location.href = 'addDeptStaff.php?dept_id=$dept_token'
+          </script>";
+}
 ?>

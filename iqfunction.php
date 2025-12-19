@@ -1539,7 +1539,7 @@ function getClubToken($club_id)
 function getDeptToken($dept_id)
 {
 	global $connection;
-	$sql = "select * from department where dept_id=?";
+	$sql = "select * from dept where dept_id=?";
 	$stmt = $connection->prepare($sql);
 	$stmt->bind_param("i", $dept_id);
 	$stmt->execute();

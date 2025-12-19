@@ -13,7 +13,7 @@ $dad_id = filter_input(INPUT_GET, 'dad_id', FILTER_VALIDATE_INT);
 $dept_id = filter_input(INPUT_GET, 'dept_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 if (!$dad_id) {
-    // Just redirect back without alert
+    // Just redirect back without message
     $redirect = isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER']) 
                 ? $_SERVER['HTTP_REFERER'] 
                 : 'depList.php';
@@ -21,8 +21,8 @@ if (!$dad_id) {
     exit;
 }
 
-// Update the staff status to inactive
-$sql = "UPDATE dept_advisor SET is_active = 0 WHERE dad_id = ?";
+// Update the staff status to active
+$sql = "UPDATE dept_advisor SET is_active = 1 WHERE dad_id = ?";
 $stmt = $mysqli->prepare($sql);
 
 if ($stmt) {
