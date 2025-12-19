@@ -1,4 +1,4 @@
-<?php
+<?php//new file activateDStaff.php
 session_start();
 include ("dbconnect.php");
 

@@ -1536,7 +1536,7 @@ function getClubToken($club_id)
 	}	
 }
 
-function getDeptToken($dept_id)
+function getDeptToken($dept_id)//new function 
 {
 	global $connection;
 	$sql = "select * from dept where dept_id=?";
