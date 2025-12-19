@@ -206,7 +206,7 @@ if (!empty($token)) {
                                         </table>
                                     <?php endif; ?>
                                     <div class="button-container" style="text-align: center;">
-                                    <br><button type="button" onclick="window.location.href='clubActivities.php'" class="btn btn-information" style="margin-right: 10px; display: inline-block;">
+                                    <br><button type="button" onclick="window.history.back()" class="btn btn-information" style="margin-right: 10px; display: inline-block;">
                                         Back
                                     </button>
                                 </div>

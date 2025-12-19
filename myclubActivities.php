@@ -8,6 +8,9 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     exit;
 }
 
+// Store current page as the one to return to
+$_SESSION['return_to_page'] = basename($_SERVER['PHP_SELF']);
+
 $sxid = $_SESSION["username"];
 $user_role = $_SESSION["role"] ?? 'staff';
 
@@ -472,7 +475,7 @@ if ($has_active_semester) {
               </table>
             </div>
           </div>
-            <!-- end section -->
+            <!-- end section. -->
           </div>
 				</div>
 			</div>

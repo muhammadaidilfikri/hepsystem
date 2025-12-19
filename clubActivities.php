@@ -18,6 +18,9 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
     header("Location: logout.php");
 }
 
+// Store current page as the one to return to
+$_SESSION['return_to_page'] = basename($_SERVER['PHP_SELF']);
+
 $sxid = $_SESSION["username"];
 $user_role = $_SESSION["role"] ?? 'staff'; // Default to staff if role not set
 

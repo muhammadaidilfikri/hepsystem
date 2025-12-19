@@ -18,14 +18,24 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
     header("Location: logout.php");
 }
 
-$sid = isset($_GET["dact_id"]) ? $_GET["dact_id"] : "";
+// Get token from URL
+$token = isset($_GET["dact_id"]) ? $_GET["dact_id"] : "";
 $resultSearch = isset($_GET["resultSearch"]) ? $_GET["resultSearch"] : "";
 $regError = isset($_GET["regError"]) ? $_GET["regError"] : "";
 
+// Get the actual dact_id using the token
+$actual_dact_id = "";
+if (!empty($token)) {
+    $sql_events2 = mysqli_query($connection, "SELECT dact_id FROM dept_activities WHERE token='$token'") or die(mysqli_error($connection));
+    if ($row = mysqli_fetch_array($sql_events2)) {
+        $actual_dact_id = $row["dact_id"];
+    }
+}
+
+// Now use $actual_dact_id in your query instead of $sid
 ?>
 
 <!DOCTYPE html>
-
 <html lang="en" >
 	<!-- begin::Head -->
 	<head>
@@ -148,50 +158,69 @@ $regError = isset($_GET["regError"]) ? $_GET["regError"] : "";
     </thead>
     <tbody>
       <?php
-      $sql_events = mysqli_query($connection, "select * from student,dept,dept_activities,dactreg where student.stdNo=dactreg.stdNo and dept.dept_id=dept_activities.dept_id and dept_activities.dact_id=dactreg.dact_id and dept_activities.dact_id='$sid' order by regpoint desc");
-      $z =1;
+      if (!empty($actual_dact_id)) {
+          $sql_events = mysqli_query($connection, "SELECT student.stdNo, student.stdName, student.progCode, dactreg.dactreg_id, dactreg.regpoint, dept_activities.dact_name, dept.dept_name 
+                                                   FROM student 
+                                                   JOIN dactreg ON student.stdNo = dactreg.stdNo 
+                                                   JOIN dept_activities ON dept_activities.dact_id = dactreg.dact_id 
+                                                   JOIN dept ON dept.dept_id = dept_activities.dept_id 
+                                                   WHERE dept_activities.dact_id = '$actual_dact_id' 
+                                                   ORDER BY dactreg.regpoint desc, student.stdName") or die (mysqli_error($connection));
+          $z =1;
 
-      while ($row = mysqli_fetch_array($sql_events)) {
-        $stdNo = $row["stdNo"];
-        $dactreg_id = $row["dactreg_id"];
-        $stdName = $row["stdName"];
-        $dact_id = $row["dact_id"];
-        $dact_name = $row["dact_name"];
-        $progCode = $row["progCode"];
-        $regpoint = $row["regpoint"];
+          if (mysqli_num_rows($sql_events) > 0) {
+              while ($row = mysqli_fetch_array($sql_events)) {
+                $stdNo = $row["stdNo"];
+                $dactreg_id = $row["dactreg_id"];
+                $stdName = $row["stdName"];
+                $dact_name = $row["dact_name"];
+                $progCode = $row["progCode"];
+                $regpoint = $row["regpoint"];
 
-        if($regpoint=='a')
-        {
-          $regs = "Audience";
-        }
-        else if($regpoint=='p')
-        {
-          $regs = "Contestant";
-        }
-        else if($regpoint=='c')
-        {
-          $regs = "Committee";
-        }
+                if($regpoint=='a')
+                {
+                  $regs = "Audience";
+                }
+                else if($regpoint=='p')
+                {
+                  $regs = "Contestant";
+                }
+                else if($regpoint=='c')
+                {
+                  $regs = "Committee";
+                }
+                else {
+                  $regs = "Unknown";
+                }
 
+              ?>
+              <tr>
+                <th scope="row"><?php echo $z ?></th>
+                <td><?php echo htmlspecialchars($stdNo) ?></td>
+                <td><?php echo htmlspecialchars($stdName) ?></td>
+                <td><?php echo htmlspecialchars($progCode) ?></td>
+                <td><?php echo $regs ?></td>
+                <td><?php echo checkMarksD($dactreg_id) ?></td>
+              </tr>
+              <?php
+              $z++;
+              }
+          } else {
+              echo '<tr><td colspan="6" class="text-center">No students registered for this activity yet.</td></tr>';
+          }
+      } else {
+          echo '<tr><td colspan="6" class="text-center">Invalid activity token or activity not found.</td></tr>';
+      }
       ?>
-      <tr>
-        <th scope="row"><?php echo $z ?></th>
-
-        <td><?php echo $stdNo ?></td>
-        <td><?php echo $stdName ?></td>
-        <td><?php echo $progCode ?></td>
-        <td><?php echo $regs ?></td>
-        <td><?php echo checkMarksD($dactreg_id) ?></td>
-
-      </tr>
-      <?php
-      $z++;
-    }
-    ?>
 
 
     </tbody>
   </table>
+  <div class="button-container" style="text-align: center;">
+                                    <br><button type="button" onclick="window.history.back()" class="btn btn-information" style="margin-right: 10px; display: inline-block;">
+                                        Back
+                                    </button>
+                                </div>
 
 </div>
 </div>
