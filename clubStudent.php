@@ -12,7 +12,8 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 //roleid 1 = SUPER ADMINISTRATOR
 //roleid 2 = IT ADMINISTRATOR
 //roleid 3 = HEP
-$allowedroles = array(3); //roles allowed to access this page
+//roleid 4 = HEA
+$allowedroles = array(3,4); //roles allowed to access this page
 if (!in_array($_SESSION['roleid'], $allowedroles)) {
     header("Location: logout.php");
 }
@@ -257,7 +258,7 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
                 </thead>
                 <tbody>
                   <?php
-                  $sql_events = mysqli_query($connection, "select * from club order by club_name asc  ") or die (mysqli_error());
+                  $sql_events = mysqli_query($connection, "select * from club order by club_name asc  ");
                   $z =1;
 
                   while ($row = mysqli_fetch_array($sql_events)) {

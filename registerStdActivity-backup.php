@@ -102,7 +102,7 @@ else if ($regpoint=='p')
 					<form action="regStdA.php" method="post">
 
 						<?
-						$sql_events2 = mysqli_query($connection, "select * from club,club_activities where club.club_id=club_activities.club_id and club_activities.act_id='$sid' ") or die (mysqli_error());
+						$sql_events2 = mysqli_query($connection, "select * from club,club_activities where club.club_id=club_activities.club_id and club_activities.act_id='$sid' ");
 						while ($row = mysqli_fetch_array($sql_events2)) {
 
 							$club_id = $row["club_id"];
@@ -175,7 +175,7 @@ else if ($regpoint=='p')
     </thead>
     <tbody>
       <?
-      $sql_events = mysqli_query($connection, "select * from student,club,club_activities,actreg where student.stdNo=actreg.stdNo and club.club_id=club_activities.club_id and club_activities.act_id=actreg.act_id and club_activities.act_id='$sid' and regpoint='$regpoint'") or die (mysqli_error());
+      $sql_events = mysqli_query($connection, "select * from student,club,club_activities,actreg where student.stdNo=actreg.stdNo and club.club_id=club_activities.club_id and club_activities.act_id=actreg.act_id and club_activities.act_id='$sid' and regpoint='$regpoint'");
       $z =1;
 
       while ($row = mysqli_fetch_array($sql_events)) {

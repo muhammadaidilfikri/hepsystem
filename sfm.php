@@ -351,7 +351,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                     </thead>
                     <tbody>
                       <?
-                      $sql_events = mysqli_query($connection, "select * from student, bkp where student.stdNo=bkp.stdNo  order by timestamp desc limit 10 ") or die (mysqli_error());
+                      $sql_events = mysqli_query($connection, "select * from student, bkp where student.stdNo=bkp.stdNo  order by timestamp desc limit 10 ");
                       $z =1;
 
                       while ($row = mysqli_fetch_array($sql_events)) {

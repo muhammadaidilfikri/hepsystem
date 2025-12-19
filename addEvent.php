@@ -132,7 +132,7 @@ include ("iqfunction.php");
 							<select class="custom-select form-control" name="dept">
 								<option selected>Select Organizer / Holidays</option>
 								<?
-								$sql_events1 = mysqli_query($connection, "select * from dept ") or die (mysqli_error());
+								$sql_events1 = mysqli_query($connection, "select * from dept ");
 								while ($row = mysqli_fetch_array($sql_events1)) {
 
 

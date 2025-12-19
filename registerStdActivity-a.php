@@ -12,7 +12,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 //roleid 1 = SUPER ADMINISTRATOR
 //roleid 2 = IT ADMINISTRATOR
 //roleid 3 = HEP
-$allowedroles = array(3); //roles allowed to access this page
+//roleid 4 = HEA
+$allowedroles = array(3,4); //roles allowed to access this page
 if (!in_array($_SESSION['roleid'], $allowedroles)) {
     header("Location: logout.php");
 }
@@ -44,7 +45,7 @@ $activity_name = "";
 $club_name = "";
 $actual_act_id = "";
 if (!empty($token)) {
-    $sql_events2 = mysqli_query($connection, "SELECT * FROM club, club_activities WHERE club.club_id=club_activities.club_id AND club_activities.token='$token'") or die(mysqli_error($connection));
+    $sql_events2 = mysqli_query($connection, "SELECT * FROM club, club_activities WHERE club.club_id=club_activities.club_id AND club_activities.token='$token'");
     if ($row = mysqli_fetch_array($sql_events2)) {
         $club_name = $row["club_name"];
         $activity_name = $row["act_name"];
@@ -145,7 +146,7 @@ if (!empty($token)) {
                                     <!--begin::Section-->
                                     <div class="m-section">
                                         <span class="m-section__sub">
-                                            <form action="regStdA.php" method="post">
+                                            <form action="regStdA.php" method="post" id="registrationForm">
                                                 <!-- CSRF Token -->
                                                 <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                                                 
@@ -158,17 +159,40 @@ if (!empty($token)) {
                                                 <span class="m--font-primary">Organized by: <?php echo htmlspecialchars($club_name); ?></span>
                                                 <br><br>
                                                 
+                                                <!-- Toggle between single and bulk registration -->
                                                 <div class="form-group m-form__group">
+                                                    <div class="m-radio-inline">
+                                                        <label class="m-radio">
+                                                            <input type="radio" name="regType" id="singleReg" value="single" checked> Single Registration
+                                                            <span></span>
+                                                        </label>
+                                                        <label class="m-radio">
+                                                            <input type="radio" name="regType" id="bulkReg" value="bulk"> Bulk Registration
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Single Registration Field -->
+                                                <div class="form-group m-form__group" id="singleField">
                                                     <div>
                                                         <span class="m-form__help">Enter the student ID to register as <?php echo strtolower($sttName); ?></span><br>
-                                                        <br><input type="text" class="form-control m-input m-input--solid" name="stdNo" id="stdNo" aria-describedby="staffID" placeholder="Enter Student ID" autofocus required>
+                                                        <br><input type="text" class="form-control m-input m-input--solid" name="stdNo" id="stdNo" aria-describedby="staffID" placeholder="Enter Student ID (e.g., 123456)" autofocus required>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Bulk Registration Field -->
+                                                <div class="form-group m-form__group" id="bulkField" style="display: none;">
+                                                    <div>
+                                                        <span class="m-form__help">Enter multiple student IDs to register as <?php echo strtolower($sttName); ?> (one per line, or separated by commas/semicolons)</span><br>
+                                                        <br><textarea class="form-control m-input m-input--solid" name="bulkStdNo" id="bulkStdNo" rows="5" placeholder="Enter multiple Student IDs:"></textarea>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="m-portlet__foot" align="center">
                                                     <div class="m-form__actions">
                                                         <button type="submit" class="btn btn-success">Register</button>
-                                                        <button type="button" onclick="window.location.href='clubActivities.php'" class="btn btn-information" style="margin-right: 10px;">Back</button>
+                                                        <button type="button" onclick="window.location.href='<?php echo $_SESSION['return_to_page'] ?? 'myclubActivities.php'; ?>'" class="btn btn-information" style="margin-right: 10px;">Back</button>
                                                     </div>
                                                 </div>
                                             </form>
@@ -218,7 +242,7 @@ if (!empty($token)) {
                                                                                         JOIN actreg ON student.stdNo = actreg.stdNo 
                                                                                         JOIN club_activities ON club_activities.act_id = actreg.act_id 
                                                                                         WHERE club_activities.act_id = '$actual_act_id' AND actreg.regpoint = '$regpoint' 
-                                                                                        ORDER BY student.stdName") or die(mysqli_error($connection));
+                                                                                        ORDER BY student.stdName");
                                                 
                                                 $z = 1;
                                                 if (mysqli_num_rows($sql_events) > 0) {
@@ -324,27 +348,100 @@ if (!empty($token)) {
     <!--end::Page Vendors -->
 
     <script>
-        // Delete confirmation function
+        // Toggle between single and bulk registration fields
+        $(document).ready(function() {
+            $('input[name="regType"]').change(function() {
+                if ($(this).val() === 'single') {
+                    $('#singleField').show();
+                    $('#bulkField').hide();
+                    $('#stdNo').attr('required', true);
+                    $('#bulkStdNo').attr('required', false);
+                    $('#stdNo').focus();
+                } else {
+                    $('#singleField').hide();
+                    $('#bulkField').show();
+                    $('#stdNo').attr('required', false);
+                    $('#bulkStdNo').attr('required', true);
+                    $('#bulkStdNo').focus();
+                }
+            });
+            
+            // Auto-focus on student ID input
+            $('#stdNo').focus();
+            
+            // Initialize DataTable
+            $('#m_table_1').DataTable({
+                responsive: true,
+                "pageLength": 10,
+                "order": [[0, 'asc']]
+            });
+            
+            // Form validation
+            $('#registrationForm').submit(function() {
+                var regType = $('input[name="regType"]:checked').val();
+                
+                if (regType === 'single') {
+                    var stdNo = $('#stdNo').val().trim();
+                    if (!stdNo) {
+                        alert('Please enter a student ID');
+                        return false;
+                    }
+                } else {
+                    var bulkStdNo = $('#bulkStdNo').val().trim();
+                    if (!bulkStdNo) {
+                        alert('Please enter at least one student ID');
+                        return false;
+                    }
+                    
+                    // Parse bulk input
+                    var studentIds = parseBulkInput(bulkStdNo);
+                    if (studentIds.length === 0) {
+                        alert('No valid student IDs found. Please check your input.');
+                        return false;
+                    }
+                    
+                    // Show loading message
+                    var submitBtn = $(this).find('button[type="submit"]');
+                    var originalText = submitBtn.text();
+                    submitBtn.text('Processing...').prop('disabled', true);
+                    
+                    // Create a hidden input with all student IDs
+                    studentIds.forEach(function(id, index) {
+                        $('<input>').attr({
+                            type: 'hidden',
+                            name: 'bulkStdNos[]',
+                            value: id.trim()
+                        }).appendTo('#registrationForm');
+                    });
+                }
+                
+                return true;
+            });
+        });
+        
+        // Function to parse bulk input
+        function parseBulkInput(input) {
+            // Split by new lines, commas, semicolons
+            var lines = input.split(/[\n,;]+/);
+            var studentIds = [];
+            
+            lines.forEach(function(line) {
+                var id = line.trim();
+                if (id) {
+                    studentIds.push(id);
+                }
+            });
+            
+            return studentIds;
+        }
+
+        // Delete confirmation function..
         function confirmDelete(actregId, studentName, token, regpoint) {
             if (confirm('Are you sure you want to remove ' + studentName + ' from this activity?\n\nThis action cannot be undone.')) {
                 // Redirect to delete page with token instead of act_id
                 window.location.href = 'deleteRegStudent.php?actreg_id=' + actregId + '&token=' + token + '&regpoint=' + regpoint;
             }
         }
-
-        // Initialize DataTable
-        $(document).ready(function() {
-            $('#m_table_1').DataTable({
-                responsive: true,
-                "pageLength": 10,
-                "order": [[0, 'asc']]
-            });
-        });
-
-        // Auto-focus on student ID input
-        $(document).ready(function() {
-            $('#stdNo').focus();
-        });
     </script>
 </body>
 </html>

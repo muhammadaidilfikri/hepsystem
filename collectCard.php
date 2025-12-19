@@ -81,7 +81,7 @@ $vid = $_GET['vid'];
 
 								<?
 
-								$sql_events1 = mysqli_query($connection, "select * from student where stdNo='$vid' ") or die (mysqli_error());
+								$sql_events1 = mysqli_query($connection, "select * from student where stdNo='$vid' ");
 								while ($row = mysqli_fetch_array($sql_events1)) {
 
 

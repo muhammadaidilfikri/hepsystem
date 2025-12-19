@@ -247,7 +247,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                 </thead>
                 <tbody>
                   <?php
-                  $sql_events = mysqli_query($connection, "select * from club order by club_name desc  ") or die (mysqli_error());
+                  $sql_events = mysqli_query($connection, "select * from club order by club_name desc  ");
                   $z =1;
 
                   while ($row = mysqli_fetch_array($sql_events)) {

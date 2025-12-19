@@ -12,7 +12,8 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 //roleid 1 = SUPER ADMINISTRATOR
 //roleid 2 = IT ADMINISTRATOR
 //roleid 3 = HEP
-$allowedroles = array(3); //roles allowed to access this page
+//roleid 4 = HEA
+$allowedroles = array(3,4); //roles allowed to access this page
 if (!in_array($_SESSION['roleid'], $allowedroles)) {
     header("Location: logout.php");
 }
@@ -107,7 +108,7 @@ $sid = filter_input(INPUT_GET, 'dept_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 					<form action="updateDept.php" method="post">
 
 						<?php
-						$sql_events2 = mysqli_query($connection, "select * from dept where token='$sid' ") or die (mysqli_error());
+						$sql_events2 = mysqli_query($connection, "select * from dept where token='$sid' ");
 						while ($row = mysqli_fetch_array($sql_events2)) {
 
 							$dept_id = $row["dept_id"];

@@ -3,7 +3,7 @@ session_start();
 include ("dbconnect.php");
 
 $stdNo = $_POST['stdNo'];
-$sql_events = mysqli_query($connection, "select * from bkp where stdNo='$stdNo' ") or die (mysql_error());
+$sql_events = mysqli_query($connection, "select * from bkp where stdNo='$stdNo' ");
 $count = mysqli_num_rows($sql_events);
 //3.1.2 If the posted values are equal to the database values, then session will be created for the user.
 if ($count == 1){

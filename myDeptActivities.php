@@ -378,7 +378,7 @@ if ($has_active_semester) {
                 <tr>
                   <td scope="row"><?php echo $z ?></td>
                   <td><b><?php echo $dept_name ?></td>
-                  <td><?php echo $dact_name ?>(<?php echo $dact_id ?>)<br><br>
+                  <td><?php echo $dact_name ?>(<?php echo $dact_id ?>) ( <a href="download/dept_activity.xlsx">Download Template </a>)<br><br>
                     <?php
                     if($dept_stat!='a') {
                       // No buttons for non-approved activities
@@ -488,7 +488,7 @@ if ($has_active_semester) {
         </div>
       </div>
 
-      <!--begin::Add Modal-->
+      <!--begin::Add Modal..-->
       <div class="modal fade" id="m_modal_add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content">

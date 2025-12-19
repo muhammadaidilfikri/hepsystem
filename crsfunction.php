@@ -25,7 +25,7 @@ function sumMarks($vid)
 {
 
 	global $connection;
-	$sql_events = mysqli_query($connection, "select * from dept_activities as A ,dactreg as B where A.dact_id=B.dact_id and B.stdNo='$vid'") or die (mysqli_error());
+	$sql_events = mysqli_query($connection, "select * from dept_activities as A ,dactreg as B where A.dact_id=B.dact_id and B.stdNo='$vid'");
 
 	$MarksA = 0;
 
@@ -178,7 +178,7 @@ function sumMarks($vid)
 		$MarksA += $stdMark;
 	}
 
-	$sql_events1 = mysqli_query($connection, "select * from club_activities as A ,actreg as B where A.act_id=B.act_id and B.stdNo='$vid'") or die (mysqli_error());
+	$sql_events1 = mysqli_query($connection, "select * from club_activities as A ,actreg as B where A.act_id=B.act_id and B.stdNo='$vid'");
 
 	$MarksB = 0;
 

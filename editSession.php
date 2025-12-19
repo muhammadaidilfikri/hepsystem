@@ -97,7 +97,7 @@ $sid = $_GET["sesi_id"];
 					<form action="updateSession.php" method="post">
 
 						<?
-						$sql_events2 = mysqli_query($connection, "select * from sesi where sesi_id='$sid' ") or die (mysqli_error());
+						$sql_events2 = mysqli_query($connection, "select * from sesi where sesi_id='$sid' ");
 						while ($row = mysqli_fetch_array($sql_events2)) {
 
 							$sesi_id = $row["sesi_id"];

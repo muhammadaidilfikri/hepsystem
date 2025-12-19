@@ -12,7 +12,8 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 //roleid 1 = SUPER ADMINISTRATOR
 //roleid 2 = IT ADMINISTRATOR
 //roleid 3 = HEP
-$allowedroles = array(3); //roles allowed to access this page
+//roleid 4 = HEA
+$allowedroles = array(3,4); //roles allowed to access this page
 if (!in_array($_SESSION['roleid'], $allowedroles)) {
     header("Location: logout.php");
 }
@@ -101,6 +102,7 @@ $sid = filter_input(INPUT_GET, 'dept_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 							</div>
 
 					<div class="m-portlet__body">
+<<<<<<< HEAD
 						<!--begin::Section-->
 						<div class="m-section">
 							<span class="m-section__sub">
@@ -132,6 +134,38 @@ $sid = filter_input(INPUT_GET, 'dept_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 									aria-describedby="staffID" placeholder="Enter Staff ID" required>
 								<span class="m-form__help"></span>
 							</div>
+=======
+								<!--begin::Section-->
+								<div class="m-section">
+									<span class="m-section__sub">
+					<form action="addDStaff.php" method="post">
+
+						<?php
+						$sql_events2 = mysqli_query($connection, "select * from dept where token='$sid' ");
+						while ($row = mysqli_fetch_array($sql_events2)) {
+
+							$dept_id = $row["dept_id"];
+							$dept_name = $row["dept_name"];
+
+								}
+							?>
+
+							<input type="hidden" id="dept_id" name="dept_id" value="<?php echo $dept_id ?>">
+							<h3><? echo $dept_name ?></h3>
+
+
+								<div class="form-group m-form__group">
+										<div class="col-lg-9 col-md-9 col-sm-12">
+								<input type="text" class="form-control m-input m-input--solid" name="staffID" id="staffID" aria-describedby="staffID" placeholder="Enter Staff ID">
+									<span class="m-form__help"></span>
+								</div>
+								</div>
+
+
+					<div class="m-portlet__foot " align="center">
+						<div class="m-form__actions">
+							<button type="submit" class="btn btn-success">Add Staff</button>
+>>>>>>> 3af5f2522831a2182fa6cd6046282db4502749ce
 						</div>
 						
 						<div class="m-portlet__foot " align="center">
@@ -144,6 +178,7 @@ $sid = filter_input(INPUT_GET, 'dept_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 			</div>
 		</div>
 
+<<<<<<< HEAD
 		<div class="m-portlet__body">
 			<table class="table table-striped- table-bordered table-hover table-checkable" id="m_table_1">
 				<thead>
@@ -225,6 +260,80 @@ $sid = filter_input(INPUT_GET, 'dept_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 				</tbody>
 			</table>
 		</div>
+=======
+    <div class="m-content">
+      <div class="row">
+<div class="col-lg-12">
+<!--begin::Portlet-->
+<div class="m-portlet" id="m_portlet">
+<div class="m-portlet__head">
+  <div class="m-portlet__head-caption">
+    <div class="m-portlet__head-title">
+      <span class="m-portlet__head-icon">
+        <i class="flaticon-calendar-2"></i>
+      </span>
+      <h3 class="m-portlet__head-text">
+        List of Department / Unit Staff(s)
+      </h3>
+    </div>
+  </div>
+</div>
+<div class="m-portlet__body">
+  <table class="table table-striped- table-bordered table-hover table-checkable" id="m_table_1">
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>staff ID</th>
+        <th>Staff Name</th>
+        <th>Position</th>
+        <th>dept Name</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php
+      $sql_events = mysqli_query($connection, "select * from dept,dept_advisor,acstaff,jawatanhakiki where jawatanhakiki.jh_code=acstaff.jh_code and acstaff.staffID=dept_advisor.staffID and dept.dept_id=dept_advisor.dept_id  and dept_advisor.dept_id='$sid'  ");
+      $z =1;
+
+      while ($row = mysqli_fetch_array($sql_events)) {
+        $dad_id = $row["dad_id"];
+        $dept_id = $row["dept_id"];
+        $dept_name = $row["dept_name"];
+        $name = $row["nama"];
+        $staffID = $row["staffID"];
+        $gred_code = $row["jawatanhakiki"];
+
+
+      ?>
+      <tr>
+        <th scope="row"><?php echo $z ?></th>
+
+        <td><?php echo $staffID ?></td>
+        <td><?php echo $name ?></td>
+        <td><?php echo $gred_code ?></td>
+        <td><?php echo $dept_name ?></td>
+        <td>
+          <a href="deleteDStaff.php?dad_id=<?php echo $dad_id ?>" class="btn btn-danger m-btn btn-sm 	m-btn m-btn--icon">
+            <span>
+              <i class="fa flaticon-delete"></i>
+              <span>Delete Staff</span>
+            </span>
+          </a>
+
+        </td>
+
+      </tr>
+      <?php
+      $z++;
+    }
+    ?>
+
+
+    </tbody>
+  </table>
+
+</div>
+>>>>>>> 3af5f2522831a2182fa6cd6046282db4502749ce
 </div>
 <!--end::Portlet-->
 </div>
