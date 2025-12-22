@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
                             <div class="card-header" style="background:#F7FBFF; color:black;">Staff Details</div>
                             <div class="card-body">
                                 <form method="post">
-                                    <div class="row mb-3">
+                                    <div class="row mb-2">
                                         <div class="col-md-3">
                                             <label>Staff No</label>
                                             <input type="text" name="staffID" value="<?php echo htmlspecialchars($staff['staffID']); ?>" class="form-control" readonly>
@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
                                             <label>Email</label>
                                             <input type="email" name="email" value="<?php echo htmlspecialchars($staff['email']); ?>" class="form-control" readonly>
                                         </div>
-                                        <div class="col-md-5">
+                                        <div class="col-md-6">
                                             <label>Name</label>
                                             <input type="text" name="nama" value="<?php echo htmlspecialchars($staff['nama']); ?>" class="form-control" readonly>
                                         </div>
