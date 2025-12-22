@@ -172,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
                                     <div class="card-body">
                                         <form method="post">
                                             <div class="row mb-3">
-                                                <div class="col-md-3">
+                                                <div class="col-md-2">
                                                     <label>Staff No</label>
                                                     <input type="text" name="staffID" value="<?php echo htmlspecialchars($staffData['staffID']); ?>" class="form-control" readonly>
                                                 </div>
@@ -180,7 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
                                                     <label>Email</label>
                                                     <input type="email" name="email" value="<?php echo htmlspecialchars($staffData['email']); ?>" class="form-control" readonly>
                                                 </div>
-                                                <div class="col-md-5">
+                                                <div class="col-md-6">
                                                     <label>Name</label>
                                                     <input type="text" name="nama" value="<?php echo htmlspecialchars($staffData['nama']); ?>" class="form-control" readonly>
                                                 </div>
