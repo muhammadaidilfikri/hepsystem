@@ -26,7 +26,7 @@ $regError = isset($_GET["regError"]) ? $_GET["regError"] : "";
 // Get the actual dact_id using the token
 $actual_dact_id = "";
 if (!empty($token)) {
-    $sql_events2 = mysqli_query($connection, "SELECT dact_id FROM dept_activities WHERE token='$token'") or die(mysqli_error($connection));
+    $sql_events2 = mysqli_query($connection, "SELECT dact_id FROM dept_activities WHERE token='$token'");
     if ($row = mysqli_fetch_array($sql_events2)) {
         $actual_dact_id = $row["dact_id"];
     }

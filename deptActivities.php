@@ -318,7 +318,7 @@ if ($has_active_semester) {
                         }
                         
                         $sql_events .= " ORDER BY da.date_start ASC";
-                        $sql_events = mysqli_query($connection, $sql_events) or die ("SQL Error: " . mysqli_error($connection));
+                        $sql_events = mysqli_query($connection, $sql_events);
                     } else {
                         $sql_events = mysqli_query($connection, "SELECT * FROM dept_activities WHERE 1=0");
                     }
