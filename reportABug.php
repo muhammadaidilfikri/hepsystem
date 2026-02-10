@@ -76,7 +76,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                             <div class="m-portlet__head-caption">
                                 <div class="m-portlet__head-title">
                                     <h3 class="m-portlet__head-text">
-                                        Help! I found a bug. Please let us know your problem, we will attend it as soon as humanly possible.
+                                        Please let us know the issue you found, we will attend it as soon as humanly possible.
                                     </h3>
                                 </div>
                             </div>
@@ -96,7 +96,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                                                 <input type="text"
                                                        class="form-control m-input m-input--solid"
                                                        name="bugMenu" id="bugMenu"
-                                                       placeholder="Specify which menu/section/division that you found the problem">
+                                                       placeholder="Specify which menu/section/division that you found the issue">
                                             </div>
 
                                             <div class="form-group m-form__group row">
