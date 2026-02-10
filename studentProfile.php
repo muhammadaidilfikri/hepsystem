@@ -41,7 +41,7 @@ $vid = $_POST['stdVi'];
 		<!-- begin:: Page -->
 		<div class="m-grid m-grid--hor m-grid--root m-page">
 			<!-- BEGIN: Header -->
-			<? include ("menuheader.php")?>
+			<?php include ("menuheader.php")?>
 			<!-- END: Header -->
 		<!-- begin::Body -->
 			<div class="m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body">
@@ -49,7 +49,7 @@ $vid = $_POST['stdVi'];
 				<button class="m-aside-left-close  m-aside-left-close--skin-dark " id="m_aside_left_close_btn">
 					<i class="la la-close"></i>
 				</button>
-				<? include ("mainmenu.php")?>
+				<?php include ("mainmenu.php")?>
 				<!-- END: Left Aside -->
 				<div class="m-grid__item m-grid__item--fluid m-wrapper">
 					<!-- BEGIN: Subheader -->
@@ -72,14 +72,14 @@ $vid = $_POST['stdVi'];
 							<div class="m-portlet__head">
 								<div class="m-portlet__head-caption">
 									<div class="m-portlet__head-title">
-										<h3 class="m-portlet__head-text">Student Details (<? echo $vid ?>) </h3>
+										<h3 class="m-portlet__head-text">Student Details (<?php echo $vid ?>) </h3>
 									</div>
 								</div>
 							</div>
 
 							<div class="m-portlet__body">
 
-								<?
+								<?php
 
 								$sql_events1 = mysqli_query($connection, "select * from student where stdNo='$vid' ");
 								while ($row = mysqli_fetch_array($sql_events1)) {
@@ -100,29 +100,29 @@ $vid = $_POST['stdVi'];
 											<div class="m-portlet__body">
 												<div class="form-group m-form__group">
 													<label for="Username">Student Name</label>
-													<input type="text" class="form-control m-input m-input--solid" name="fName" id="fName" aria-describedby="fName" value="<? echo $stdName ?>" readonly>
+													<input type="text" class="form-control m-input m-input--solid" name="fName" id="fName" aria-describedby="fName" value="<?php echo $stdName ?>" readonly>
 													<span class="m-form__help"></span>
 												</div>
 
 												<div class="form-group m-form__group">
 													<label for="Name">IC Number</label>
-													<input type="text" class="form-control m-input m-input--solid" name="fNoic" id="fNoic" aria-describedby="fNoic" value="<? echo $noIc ?>" readonly>
+													<input type="text" class="form-control m-input m-input--solid" name="fNoic" id="fNoic" aria-describedby="fNoic" value="<?php echo $noIc ?>" readonly>
 													<span class="m-form__help"></span>
 												</div>
 
 												<div class="form-group m-form__group">
 													<label for="Position">Course Code</label>
-													<input type="text" class="form-control m-input m-input--solid" name="fPosition" id="fPosition" aria-describedby="fPosition" value="<? echo $progCode ?>" readonly>
+													<input type="text" class="form-control m-input m-input--solid" name="fPosition" id="fPosition" aria-describedby="fPosition" value="<?php echo $progCode ?>" readonly>
 												</div>
 
 												<div class="form-group m-form__group">
 													<label for="Position">Email</label>
-													<input type="text" class="form-control m-input m-input--solid" name="fPosition" id="fPosition" aria-describedby="fPosition" value="<? echo $email ?>" readonly>
+													<input type="text" class="form-control m-input m-input--solid" name="fPosition" id="fPosition" aria-describedby="fPosition" value="<?php echo $email ?>" readonly>
 												</div>
 
 												<div class="form-group m-form__group">
 													<label for="Position">Phone Number</label>
-													<input type="text" class="form-control m-input m-input--solid" name="fPosition" id="fPosition" aria-describedby="fPosition" value="<? echo $noPhone ?>" readonly>
+													<input type="text" class="form-control m-input m-input--solid" name="fPosition" id="fPosition" aria-describedby="fPosition" value="<?php echo $noPhone ?>" readonly>
 												</div>
 
 
@@ -133,7 +133,7 @@ $vid = $_POST['stdVi'];
 
 
 							 </div>
-							 <?
+							 <?php
 						 		}
 							 ?>
 						 </div>
@@ -144,7 +144,7 @@ $vid = $_POST['stdVi'];
 							<div class="m-portlet__head">
 								<div class="m-portlet__head-caption">
 									<div class="m-portlet__head-title">
-										<h3 class="m-portlet__head-text">Club Registered  :  <? echo checkCocoReg($vid) ?></h3>
+										<h3 class="m-portlet__head-text">Club Registered  :  <?php echo checkCocoReg($vid) ?></h3>
 									</div>
 								</div>
 							</div>
@@ -153,7 +153,7 @@ $vid = $_POST['stdVi'];
 							<div class="m-portlet__head">
 								<div class="m-portlet__head-caption">
 									<div class="m-portlet__head-title">
-										<h3 class="m-portlet__head-text">Overall Marks  :  <? echo sumMarks($vid) ?></h3>
+										<h3 class="m-portlet__head-text">Overall Marks  :  <?php echo sumMarks($vid) ?></h3>
 									</div>
 								</div>
 							</div>
@@ -192,7 +192,7 @@ $vid = $_POST['stdVi'];
 			</tr>
 		</thead>
 		<tbody>
-			<?
+			<?php
 			$sql_events = mysqli_query($connection, "select * from student,dept,dept_activities,dactreg where student.stdNo=dactreg.stdNo and dept.dept_id=dept_activities.dept_id and dept_activities.dact_id=dactreg.dact_id and dactreg.stdNo='$vid'");
 			$z =1;
 
@@ -221,15 +221,15 @@ $vid = $_POST['stdVi'];
 
 			?>
 			<tr>
-				<th scope="row"><? echo $z ?></th>
+				<th scope="row"><?php echo $z ?></th>
 
-				<td><? echo $dact_name ?></td>
-				<th><? echo $dept_name ?></th>
-				<td><? echo $regs ?></td>
-				<td><? echo checkMarksD($dactreg_id) ?></td>
+				<td><?php echo $dact_name ?></td>
+				<th><?php echo $dept_name ?></th>
+				<td><?php echo $regs ?></td>
+				<td><?php echo checkMarksD($dactreg_id) ?></td>
 
 			</tr>
-			<?
+			<?php
 			$z++;
 		}
 		?>
@@ -279,7 +279,7 @@ $vid = $_POST['stdVi'];
 		      </tr>
 		    </thead>
 		    <tbody>
-		      <?
+		      <?php
 		      $sql_events = mysqli_query($connection, " select * from student, regcom, com_marks where student.stdNo=regcom.stdNo and com_marks.com_id=regcom.com_id and regcom.stdNo='$vid' ");
 		      $z =1;
 
@@ -291,11 +291,11 @@ $vid = $_POST['stdVi'];
 
 		      ?>
 		      <tr>
-		        <th scope="row"><? echo $z ?></th>
-		        <td><? echo $com_name ?></td>
-		        <td><? echo $com_marks ?></td>
+		        <th scope="row"><?php echo $z ?></th>
+		        <td><?php echo $com_name ?></td>
+		        <td><?php echo $com_marks ?></td>
 		      </tr>
-		      <?
+		      <?php
 		      $z++;
 		    }
 		    ?>
@@ -338,7 +338,7 @@ $vid = $_POST['stdVi'];
       </tr>
     </thead>
     <tbody>
-      <?
+      <?php
       $sql_events = mysqli_query($connection, "select * from student,club,club_activities,actreg where student.stdNo=actreg.stdNo and club.club_id=club_activities.club_id and club_activities.act_id=actreg.act_id and actreg.stdNo='$vid' ");
       $z =1;
 
@@ -367,14 +367,14 @@ $vid = $_POST['stdVi'];
 
       ?>
       <tr>
-        <th scope="row"><? echo $z ?></th>
-        <td><? echo $act_name ?></td>
-        <td><? echo $club_name ?></td>
-				  <td><? echo $regs ?></td>
-        <td><? echo checkMarks($actreg_id) ?></td>
+        <th scope="row"><?php echo $z ?></th>
+        <td><?php echo $act_name ?></td>
+        <td><?php echo $club_name ?></td>
+				  <td><?php echo $regs ?></td>
+        <td><?php echo checkMarks($actreg_id) ?></td>
 
       </tr>
-      <?
+      <?php
       $z++;
     }
     ?>
