@@ -90,9 +90,9 @@ while ($row = mysqli_fetch_array($sql_events)) {
 											<ul class="m-menu__subnav">
 												<li class="m-menu__item "  aria-haspopup="true">
 													<a  href="reportABug.php" class="m-menu__link ">
-														<i class="m-menu__link-icon flaticon-file"></i>
+														<!-- <i class="m-menu__link-icon flaticon-file"></i> -->
 														<span class="m-menu__link-text">
-														Report A Bug
+														🛠️  Help Us Improve 
 														</span>
 													</a>
 												</li>
