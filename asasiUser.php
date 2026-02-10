@@ -118,7 +118,7 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
                           Total Students
                         </span>
                         <span class="m-widget24__stats m--font-brand">
-                          <? countStudent();?>
+                          <?php countStudent();?>
                         </span>
                         <div class="m--space-10"></div>
                         <div class="progress m-progress--sm">
@@ -145,7 +145,7 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
                           Total Staff
                         </span>
                         <span class="m-widget24__stats m--font-info">
-                          <? countAdministration();?>
+                          <?php countAdministration();?>
                         </span>
                         <div class="m--space-10"></div>
                         <div class="progress m-progress--sm">
@@ -171,7 +171,7 @@ if (!in_array($_SESSION['roleid'], $allowedroles)) {
                         <span class="m-widget24__desc">
                           Total Staff</span>
                         <span class="m-widget24__stats m--font-danger">
-                          <? countAcademic();?>
+                          <?php countAcademic();?>
                         </span>
                         <div class="m--space-10"></div>
                         <div class="progress m-progress--sm">
